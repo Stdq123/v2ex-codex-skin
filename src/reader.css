@@ -1,0 +1,318 @@
+html.vcx[data-vcx-page="topic"] #Main {
+  --vcx-reader-dim: #737477;
+  --vcx-reader-faint: #a2a3a5;
+  --vcx-reader-inset: #fafafa;
+  --vcx-reader-accent: #2a98ff;
+  padding: 20px clamp(16px, 5%, 40px) 28px;
+}
+html.vcx.vcx-dark[data-vcx-page="topic"] #Main {
+  --vcx-reader-dim: #909090;
+  --vcx-reader-faint: #646464;
+  --vcx-reader-inset: #212223;
+  --vcx-reader-accent: var(--vcx-blue);
+}
+
+html.vcx #Main .vcx-native-topic, html.vcx #Main #topic-replies .reply-threads { border: 0; background: transparent; }
+html.vcx #Main .vcx-native-topic + .sep20 { height: 14px; }
+html.vcx #Main .vcx-post-bubble {
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 85%;
+  min-width: 0;
+  margin: 0 0 6px auto;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--vcx-bubble);
+  font: 400 13.5px/1.6 var(--vcx-font);
+  overflow-wrap: anywhere;
+  scroll-margin-top: 12px;
+}
+html.vcx #Main .vcx-original-post > h1 { margin: 0; font: inherit; }
+html.vcx #Main .vcx-topic-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 8px;
+  font: 400 12px/1.5 var(--vcx-font);
+}
+html.vcx #Main .vcx-original-post .vcx-topic-tags a:any-link {
+  color: var(--vcx-blue);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+html.vcx #Main .vcx-native-topic > .subtle.vcx-post-bubble { margin-top: 8px; }
+html.vcx #Main .vcx-native-topic > .outdated {
+  margin: 6px 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--vcx-reader-dim);
+  font-size: 12px;
+}
+html.vcx #Main .vcx-op-meta {
+  padding: 0;
+  border: 0;
+  overflow: visible;
+  font-size: 0;
+  line-height: 0;
+}
+html.vcx #Main .vcx-op-meta > :is(.fr, .flex-one-row, .sep10) { display: none; }
+html.vcx #Main .vcx-turn-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font: 400 12.5px/1.4 var(--vcx-font);
+}
+html.vcx #Main .vcx-op-meta .vcx-turn-footer { padding: 3px 2px; }
+html.vcx #Main .vcx-reply-meta { margin-top: 6px; }
+html.vcx #Main .vcx-turn-byline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+  min-width: 0;
+  color: var(--vcx-reader-faint);
+  opacity: .55;
+  transition: opacity .15s;
+  overflow-wrap: anywhere;
+}
+html.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-byline {
+  color: var(--vcx-reader-dim);
+  opacity: .9;
+}
+html.vcx #Main .vcx-turn-byline :is(small, strong, .ago, .small, .topic_stats) {
+  color: inherit !important;
+  font: inherit;
+  text-shadow: none;
+}
+html.vcx #Main .vcx-turn-byline a { color: inherit; text-decoration: none; }
+html.vcx #Main .vcx-turn-byline a:hover { color: var(--vcx-fg); text-decoration: underline; }
+html.vcx #Main .vcx-turn-byline svg { width: 14px; height: 14px; flex: none; }
+html.vcx #Main .vcx-turn-byline .vcx-reply-thanks { display: inline-flex; align-items: center; gap: 3px; }
+html.vcx #Main .vcx-reply-thanks img { display: none; }
+html.vcx #Main .vcx-post-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--vcx-reader-dim); }
+html.vcx #Main .vcx-turn-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-inline-start: auto;
+}
+html.vcx #Main .vcx-turn-actions :is(.topic_buttons, .votes) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  font-size: 0;
+}
+html.vcx #Main .vcx-turn-actions .topic_buttons .fr:not(:has(a, button)) { display: none; }
+html.vcx #Main .vcx-turn-actions :is(.vcx-native-reply-actions, .vcx-native-reply-actions .flex-one-row) { display: contents; }
+html.vcx #Main .vcx-turn-actions .badges { display: none; }
+html.vcx #Main .vcx-turn-actions .vcx-reply-action :is(img, .fa) { display: none; }
+html.vcx #Main .vcx-turn-actions :is(a, button, .thanked, .topic_thanked, .vcx-reply-action) {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 22px;
+  padding: 3px 10px;
+  border: 1px solid var(--vcx-line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--vcx-reader-dim);
+  font: 400 12px/1.2 var(--vcx-font);
+  text-decoration: none;
+  text-shadow: none;
+  white-space: nowrap;
+}
+html.vcx #Main .vcx-turn-actions .vote { min-width: 0; padding-inline: 7px; }
+html.vcx #Main .vcx-turn-actions :is(a, button):hover { background: var(--vcx-raised); color: var(--vcx-fg); cursor: pointer; }
+html.vcx #Main .vcx-turn-actions :is(.thanked, .topic_thanked) { background: var(--vcx-blue-bg); color: var(--vcx-blue); }
+html.vcx #Main .vcx-turn-actions svg { width: 13px; height: 13px; flex: none; }
+@media (hover: hover) and (min-width: 700px) {
+  html.vcx #Main .vcx-turn-actions { opacity: 0; pointer-events: none; transition: opacity .15s; }
+  html.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-actions,
+  html.vcx #Main .vcx-turn-actions:has(.thanked, .topic_thanked) { opacity: 1; pointer-events: auto; }
+}
+
+html.vcx #Main :is(.topic_content, .reply_content, .markdown_body) {
+  color: var(--vcx-fg);
+  font: 400 13.5px/1.6 var(--vcx-font);
+  overflow-wrap: anywhere;
+}
+html.vcx #Main :is(.reply_content, .reply_content .markdown_body) { line-height: 1.75; }
+html.vcx #Main .topic_content p { margin: 6px 0; }
+html.vcx #Main .reply_content p { margin: 9px 0; }
+html.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :first-child { margin-top: 0; }
+html.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :last-child { margin-bottom: 0; }
+html.vcx #Main :is(.topic_content, .reply_content) :is(h1, h2, h3, h4, h5, h6) { margin: 14px 0 7px; font-weight: 600; line-height: 1.4; }
+html.vcx #Main :is(.topic_content, .reply_content) h2 { font-size: 17px; }
+html.vcx #Main :is(.topic_content, .reply_content) h3 { font-size: 15px; }
+html.vcx #Main :is(.topic_content, .reply_content) :is(ol, ul) { margin: 8px 0; padding-inline-start: 20px; }
+html.vcx #Main :is(.topic_content, .reply_content) li { margin: 4px 0; line-height: 1.8; }
+html.vcx #Main :is(.topic_content, .reply_content) a { color: var(--vcx-blue); text-decoration: none; text-underline-offset: 2px; }
+html.vcx #Main :is(.topic_content, .reply_content) a:hover { text-decoration: underline; }
+html.vcx #Main :is(.topic_content, .reply_content) img { max-width: 100%; height: auto; border-radius: 6px; }
+html.vcx #Main :is(.topic_content, .reply_content) code:not(pre code) {
+  padding: 2.5px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--vcx-bubble);
+  color: var(--vcx-fg);
+  font: 12px var(--vcx-mono);
+}
+html.vcx #Main .vcx-post-bubble code:not(pre code) { background: var(--vcx-reader-inset); }
+html.vcx #Main :is(.topic_content, .reply_content) hr { margin: 16px 0; border: 0; border-top: 1px solid var(--vcx-soft-line); }
+html.vcx #Main :is(.topic_content, .reply_content) table { display: block; max-width: 100%; margin: 12px 0; overflow: auto; border-collapse: collapse; font-size: 13px; }
+html.vcx #Main :is(.topic_content, .reply_content) :is(th, td) { padding: 6px 10px; border: 1px solid var(--vcx-line); }
+html.vcx #Main :is(.topic_content, .reply_content) th { background: var(--vcx-raised); font-weight: 600; }
+
+html.vcx #Main .vcx-think {
+  margin: 10px 0;
+  color: var(--vcx-reader-dim);
+  font: 400 12.5px/1.4 var(--vcx-font);
+  overflow-wrap: anywhere;
+}
+html.vcx #Main .vcx-think-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+html.vcx #Main :is(.vcx-think-head, .vcx-quote > summary)::-webkit-details-marker { display: none; }
+html.vcx #Main :is(.vcx-think-head, .vcx-quote > summary):focus-visible { outline: 2px solid var(--vcx-blue); outline-offset: 2px; }
+html.vcx #Main .vcx-think-head:hover { color: var(--vcx-muted); }
+html.vcx #Main .vcx-think-star { color: var(--vcx-reader-accent); }
+html.vcx #Main .vcx-think-chev { font-size: 10px; }
+html.vcx #Main .vcx-think[open] .vcx-think-chev::after { content: "▾"; }
+html.vcx #Main .vcx-think:not([open]) .vcx-think-chev::after { content: "▸"; }
+html.vcx #Main .vcx-think-body {
+  margin: 7px 0 2px;
+  padding-inline-start: 10px;
+  border-inline-start: 1px solid var(--vcx-soft-line);
+  color: var(--vcx-muted);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+html.vcx #Main .vcx-runline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 12px 0;
+  color: var(--vcx-reader-dim);
+  font: 400 12.5px/1.4 var(--vcx-font);
+  overflow-wrap: anywhere;
+}
+html.vcx #Main .vcx-runline svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-faint); }
+html.vcx #Main .vcx-runline code {
+  min-width: 0;
+  padding: 1.5px 7px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--vcx-bubble);
+  color: var(--vcx-fg);
+  font: 11.5px var(--vcx-mono);
+}
+
+html.vcx #Main .vcx-quote {
+  margin: 14px 0;
+  border: 1px solid var(--vcx-line);
+  border-radius: 10px;
+  background: var(--vcx-raised);
+}
+html.vcx #Main .vcx-quote > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: var(--vcx-muted);
+  font: 400 12.5px/1.4 var(--vcx-mono);
+  list-style: none;
+  cursor: pointer;
+}
+html.vcx #Main .vcx-quote > summary svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-dim); }
+html.vcx #Main .vcx-quote > summary .chev { margin-inline-start: auto; }
+html.vcx #Main .vcx-quote[open] > summary .chev { transform: rotate(90deg); }
+html.vcx #Main .vcx-quote > .vcx-quote-body {
+  margin: 0;
+  padding: 10px 14px;
+  border: 0;
+  border-top: 1px solid var(--vcx-soft-line);
+  background: transparent;
+  color: var(--vcx-muted);
+  font: 400 13.5px/1.7 var(--vcx-font);
+}
+html.vcx #Main .vcx-quote .vcx-quote-body > p { margin: 6px 0; }
+
+html.vcx #Main .vcx-snippet {
+  min-width: 0;
+  margin: 14px 0;
+  overflow: hidden;
+  border: 1px solid var(--vcx-soft-line);
+  border-radius: 10px;
+  background: var(--vcx-reader-inset);
+}
+html.vcx #Main .vcx-snippet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--vcx-soft-line);
+  color: var(--vcx-reader-dim);
+  font: 12px/1.4 var(--vcx-mono);
+}
+html.vcx #Main .vcx-snippet-header button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--vcx-muted);
+  padding: 2px 4px;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+html.vcx #Main .vcx-snippet-header svg { width: 13px; height: 13px; }
+html.vcx #Main .vcx-snippet-header button:hover { background: var(--vcx-hover); }
+html.vcx #Main .vcx-snippet pre {
+  margin: 0;
+  padding: 12px 14px;
+  overflow: auto;
+  border: 0;
+  background: transparent;
+  color: var(--vcx-fg);
+  font: 12.5px/1.65 var(--vcx-mono);
+  white-space: pre;
+  overflow-wrap: normal;
+}
+html.vcx #Main .vcx-snippet pre code { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }
+
+html.vcx #Main #topic-replies .vcx-turn { background: transparent; border: 0; scroll-margin-top: 12px; }
+html.vcx #Main #topic-replies :not(.reply-threads-d) > .vcx-turn { padding-block: 0 12px; }
+html.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn { padding-inline: 0; }
+html.vcx #Main #topic-replies .vcx-turn > table { table-layout: fixed; width: 100%; }
+html.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn > table > tbody > tr > td:not(:has(.reply_content)) { display: none; }
+html.vcx #Main #topic-replies .vcx-turn > table > tbody > tr > td:has(.reply_content) { padding: 0; }
+html.vcx #Main #topic-replies .vcx-turn .reply_content { margin: 0; }
+html.vcx #Main #topic-replies .vcx-reply-summary { min-height: 0; padding: 5px 0; border: 0; }
+html.vcx #Main #topic-replies .vcx-reply-summary:not(:has(a, button, .reply-lines)) { display: none; }
+html.vcx #Main #topic-replies .vcx-reply-summary > .gray { display: none; }
+
+@media (max-width: 900px) {
+  html.vcx #Main .vcx-post-bubble { max-width: 92%; }
+}
+@media (max-width: 480px) {
+  html.vcx #Main .vcx-turn-byline { opacity: 1; color: var(--vcx-quiet); }
+}

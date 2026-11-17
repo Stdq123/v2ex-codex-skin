@@ -1,0 +1,2082 @@
+// ==UserScript==
+// @name         V2EX · Codex 桌面皮肤
+// @namespace    https://v2ex.com/
+// @version      0.2.0
+// @description  将 V2EX 的话题列表、节点与帖子页面换成 Codex 工作区风格
+// @match        https://v2ex.com/*
+// @match        https://*.v2ex.com/*
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+(() => {
+  // src/skin.css
+  var skin_default = 'html:is(.vcx, .vcx-starting) {\n  color-scheme: light;\n  --vcx-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "V2EX Codex UI", sans-serif;\n  --vcx-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;\n  --vcx-main: #f7f7f8;\n  --vcx-rail: #eff0f1;\n  --vcx-strip-bg: #e2e3e5;\n  --vcx-raised: #fff;\n  --vcx-hover: #e4e5e7;\n  --vcx-selected: #dadbdd;\n  --vcx-editor: #fff;\n  --vcx-composer: #fff;\n  --vcx-tab: #ebebeb;\n  --vcx-bubble: #ededed;\n  --vcx-fg: #1b1c1e;\n  --vcx-rail-fg: #2c2e30;\n  --vcx-muted: #55565a;\n  --vcx-quiet: #6d6f72;\n  --vcx-line: #dedee0;\n  --vcx-soft-line: #e7e7e8;\n  --vcx-blue: #1b68b1;\n  --vcx-blue-bg: #e4edf7;\n  --vcx-green: #24682a;\n  --vcx-add: #e5f5e8;\n  --vcx-remove: #fae9e8;\n  --vcx-red: #922f2b;\n  --vcx-keyword: #aa3d00;\n  --vcx-type: #7740b6;\n  --vcx-comment: #677060;\n  --vcx-backdrop: #10121758;\n  --vcx-strip-w: 52px;\n  --vcx-nav-w: 306px;\n  --vcx-code-w: calc((100vw - var(--vcx-left)) / 2);\n  --vcx-header-h: 46px;\n  --vcx-left: 0px;\n  --vcx-right: 0px;\n  min-width: 0;\n  overflow: hidden;\n  background: var(--vcx-main);\n}\n\nhtml:is(.vcx, .vcx-starting).vcx-dark {\n  color-scheme: dark;\n  --vcx-main: #1e1f20;\n  --vcx-rail: #242526;\n  --vcx-strip-bg: #1a1b1c;\n  --vcx-raised: #262728;\n  --vcx-hover: #2e2f31;\n  --vcx-selected: #38393b;\n  --vcx-editor: #1e1f20;\n  --vcx-composer: #2d2e2f;\n  --vcx-tab: #171819;\n  --vcx-bubble: #313234;\n  --vcx-fg: #ececec;\n  --vcx-rail-fg: #dedede;\n  --vcx-muted: #b9b9b9;\n  --vcx-quiet: #a1a3a5;\n  --vcx-line: #393a3b;\n  --vcx-soft-line: #303133;\n  --vcx-blue: #83c3fe;\n  --vcx-blue-bg: #213a4d;\n  --vcx-green: #9bd492;\n  --vcx-add: #23392c;\n  --vcx-remove: #40292a;\n  --vcx-red: #f2a09c;\n  --vcx-keyword: #f0954e;\n  --vcx-type: #c3a0fb;\n  --vcx-comment: #929d90;\n  --vcx-backdrop: #08090ab0;\n}\n\nhtml.vcx-starting { background: var(--vcx-main) !important; }\nhtml.vcx-starting body { opacity: 0 !important; pointer-events: none !important; }\n\n.vcx-topic-frame {\n  position: fixed;\n  inset: 0;\n  z-index: 3000;\n  width: 100%;\n  height: 100%;\n  border: 0;\n  background: var(--vcx-main);\n  opacity: 0;\n  pointer-events: none;\n}\n.vcx-topic-frame-visible { opacity: 1; pointer-events: auto; }\n\nhtml.vcx.vcx-sidebar-open { --vcx-left: calc(var(--vcx-strip-w) + var(--vcx-nav-w)); }\nhtml.vcx.vcx-panel-open { --vcx-right: var(--vcx-code-w); }\nhtml.vcx :is(.vcx-chrome, #Wrapper) [hidden] { display: none !important; }\n.vcx-chrome { display: contents; }\n.vcx-chrome *, .vcx-chrome *::before, .vcx-chrome *::after,\n.vcx-composer-wrap *, .vcx-composer-wrap *::before, .vcx-composer-wrap *::after { box-sizing: border-box; }\n:is(.vcx-chrome, .vcx-composer-wrap) :is(button, input, select, textarea) { color: inherit; font: inherit; }\n:is(.vcx-chrome, .vcx-composer-wrap) button:not(:disabled) { cursor: pointer; }\n:is(.vcx-chrome, .vcx-composer-wrap) :is(a, a:visited) { color: inherit; text-decoration: none; }\n:is(.vcx-chrome, .vcx #Wrapper) :is(a, button, input, pre, select, textarea):focus-visible {\n  outline: 2px solid var(--vcx-blue);\n  outline-offset: -2px;\n}\n.vcx-chrome :is(h2, p, pre) { margin: 0; }\n.vcx-visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px !important; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }\n.vcx-icon { display: inline-grid; flex: none; place-items: center; width: 1.15em; font: normal 400 1em/1 "V2EX Codex Icons"; }\n.vcx-flex { flex: 1; min-width: 0; }\n.vcx-button, .vcx-icon-button, .vcx-action { border: 0; border-radius: 8px; }\n.vcx-icon-button {\n  display: inline-grid;\n  flex: none;\n  place-items: center;\n  width: 30px;\n  height: 30px;\n  padding: 0;\n  background: transparent;\n  font-size: 14px !important;\n  color: var(--vcx-quiet) !important;\n}\n.vcx-icon-button:is(:hover, :focus-visible):not(:disabled) { background: var(--vcx-hover); color: var(--vcx-fg) !important; }\n.vcx-icon-button:disabled { opacity: .6; }\n.vcx-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  min-height: 30px;\n  padding: 5px 12px;\n  border: 1px solid var(--vcx-line);\n  background: var(--vcx-raised);\n  color: var(--vcx-fg);\n  font: 500 12.5px/1.4 var(--vcx-font);\n}\n.vcx-button:hover { background: var(--vcx-hover); }\n\n.vcx-strip, .vcx-sidebar, .vcx-topbar, .vcx-code, .vcx-dialog, .vcx-toast, .vcx-composer-wrap {\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n}\n.vcx-strip, .vcx-sidebar, .vcx-code {\n  position: fixed;\n  inset-block: 0;\n  display: flex;\n  flex-direction: column;\n  z-index: 101;\n}\n.vcx-strip {\n  left: 0;\n  width: var(--vcx-strip-w);\n  align-items: center;\n  padding: 46px 0 10px;\n  gap: 4px;\n  border-right: 1px solid var(--vcx-line);\n  background: var(--vcx-strip-bg);\n}\n.vcx-strip .vcx-icon-button { width: 34px; height: 34px; font-size: 18px !important; border-radius: 9px; }\n.vcx-strip .vcx-icon-button[data-active] { background: var(--vcx-selected); color: var(--vcx-rail-fg) !important; }\n.vcx-sidebar { left: var(--vcx-strip-w); width: var(--vcx-nav-w); background: var(--vcx-rail); color: var(--vcx-rail-fg); }\n.vcx-window-actions { display: flex; align-items: center; flex: none; height: var(--vcx-header-h); gap: 2px; padding: 0 14px; }\n.vcx-window-actions .vcx-icon-button { width: 20px; height: 22px; font-size: 13px !important; }\n.vcx-window-actions [data-action="forward"] { opacity: .7; }\n.vcx-side-header { display: flex; align-items: center; justify-content: space-between; flex: none; gap: 6px; height: 35px; padding: 2px 14px 10px; }\n.vcx-brand { display: inline-flex; align-items: center; gap: 6px; border-radius: 5px; font-size: 17px; font-weight: 600; letter-spacing: .2px; }\n.vcx-brand .vcx-icon { color: var(--vcx-quiet); font-size: 11px; }\n.vcx-brand-actions { display: flex; align-items: center; gap: 1px; }\n.vcx-brand-actions .vcx-icon-button { width: 20px; height: 22px; font-size: 13px !important; }\n.vcx-sidebar-body { min-height: 0; flex: 1; overflow: auto; padding: 2px 8px 8px; scrollbar-width: thin; scrollbar-color: var(--vcx-line) transparent; }\n.vcx-nav { display: grid; gap: 1px; }\n.vcx-nav-section h2 { padding: 18px 10px 4px; font-size: 12px; color: var(--vcx-quiet); font-weight: 400; }\n.vcx-action {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  width: 100%;\n  min-width: 0;\n  min-height: 29px;\n  padding: 5px 10px;\n  border-radius: 10px;\n  background: transparent;\n  text-align: left;\n  white-space: nowrap;\n  font-size: 13.5px !important;\n  line-height: 19px !important;\n}\n.vcx-action:is(:hover, :focus-visible) { background: var(--vcx-hover); }\n.vcx-action[aria-current="page"] { background: var(--vcx-selected); }\n.vcx-action .vcx-icon { font-size: 15px; color: var(--vcx-quiet); vertical-align: middle; }\n.vcx-action > span:not(.vcx-icon) { overflow: hidden; text-overflow: ellipsis; }\n.vcx-project[aria-current="page"] { background: transparent; }\n.vcx-project[aria-current="page"]:is(:hover, :focus-visible) { background: var(--vcx-hover); }\n.vcx-project [data-folder] { flex: none; }\n.vcx-project code { margin-left: auto; color: var(--vcx-quiet); font: 10.5px/1.4 var(--vcx-mono); }\n.vcx-project-threads .vcx-action, .vcx-tree-toggle { min-height: 26px; padding: 3px 10px 3px 40px; }\n.vcx-chrome :is(.vcx-project-threads .vcx-action, .vcx-tree-toggle, .vcx-projects-toggle, .vcx-muted-action) { color: var(--vcx-quiet); }\n\n.vcx-topbar {\n  position: fixed;\n  top: 0;\n  inset-inline: var(--vcx-left) var(--vcx-right);\n  z-index: 100;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  height: var(--vcx-header-h);\n  padding: 0 12px;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  background: var(--vcx-main);\n}\n.vcx-topbar .vcx-icon-button { font-size: 13px !important; }\n.vcx-top-actions, .vcx-crumb { display: flex; align-items: center; gap: 4px; }\n.vcx-crumb { gap: 8px; min-width: 0; min-height: 30px; font-size: 13px; }\n.vcx-crumb-sep, .vcx-context { color: var(--vcx-quiet); }\n.vcx-crumb a { flex: none; max-width: 36%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.vcx-context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.vcx-topbar .vcx-floor { flex: none; border: 0; border-radius: 6px; padding: 4px 7px; background: transparent; color: var(--vcx-quiet); font-size: 12px; white-space: nowrap; }\n.vcx-floor:hover { background: var(--vcx-hover); }\n.vcx-floor-list { max-height: 54vh; overflow: auto; }\n.vcx-scrim { display: none; }\n\n.vcx-code { right: 0; width: var(--vcx-code-w); min-width: 0; border-left: 1px solid var(--vcx-line); background: var(--vcx-editor); }\n.vcx-editor-tabs { display: flex; align-items: flex-start; gap: 3px; flex: none; height: 42px; padding: 0 9px; background: var(--vcx-tab); }\n.vcx-editor-tab { display: flex; align-items: center; align-self: flex-end; gap: 6px; min-width: 102px; height: 34px; padding: 0 5px 0 12px; border-radius: 9px 9px 0 0; background: var(--vcx-editor); font: 12px/1.3 var(--vcx-mono); white-space: nowrap; }\n.vcx-rust-icon { display: grid; flex: none; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: #45494f; color: #fff; font: 650 8px/1 var(--vcx-mono); }\n.vcx-editor-tab .vcx-icon-button { width: 20px; height: 21px; margin-left: auto; font-size: 10px !important; }\n.vcx-editor-tabs > .vcx-icon-button, .vcx-editor-buttons .vcx-icon-button { width: 27px; height: 28px; margin-top: 3px; font-size: 13px !important; }\n.vcx-editor-buttons { display: flex; align-items: flex-start; gap: 2px; margin-left: auto; }\n.vcx-editor-path { display: flex; align-items: center; gap: 6px; min-height: 43px; flex: none; padding: 8px 14px; color: var(--vcx-quiet); border-bottom: 1px solid var(--vcx-soft-line); font-size: 12px; }\n.vcx-editor-breadcrumbs { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; }\n.vcx-editor-breadcrumbs strong { color: var(--vcx-muted); font-weight: 500; }\n.vcx-editor-switch { display: flex; flex: none; gap: 1px; margin-left: auto; padding: 2px; border-radius: 999px; background: var(--vcx-bubble); }\n.vcx-editor-switch button { padding: 3px 10px; border: 0; border-radius: 999px; background: transparent; color: var(--vcx-quiet); font: 11px/1.35 var(--vcx-font); white-space: nowrap; }\n.vcx-editor-switch button[aria-pressed="true"] { background: var(--vcx-raised); color: var(--vcx-fg); }\n.vcx-editor-language { flex: none; padding: 4px 11px; border-radius: 8px; border: 1px solid var(--vcx-line); background: var(--vcx-bubble); color: var(--vcx-fg); font-size: 12px; }\n.vcx-code pre { flex: 1; min-height: 0; overflow: auto; padding: 8px 0 24px; background: transparent; border: none; scrollbar-width: thin; scrollbar-color: var(--vcx-line) transparent; }\n.vcx-code code, .vcx-code pre { font: 12px/21px var(--vcx-mono); word-wrap: normal; word-break: normal; white-space: pre; }\n.vcx-line { display: inline-block; min-height: 1em; }\n.vcx-line-number { display: inline-block; width: 38px; margin-right: 14px; color: var(--vcx-quiet); text-align: right; user-select: none; }\n.vcx-syntax-keyword { color: var(--vcx-keyword); }\n.vcx-syntax-type { color: var(--vcx-type); }\n.vcx-syntax-string { color: var(--vcx-green); }\n.vcx-syntax-comment { color: var(--vcx-comment); }\n.vcx-code [data-editor-view="diff"] code { display: inline-grid; min-width: 100%; }\n.vcx-code [data-editor-view="diff"] code > span { min-height: 21px; padding-inline: 12px; }\n.vcx-diff-hunk { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\n.vcx-diff-added { background: var(--vcx-add); color: var(--vcx-green); }\n.vcx-diff-removed { background: var(--vcx-remove); color: var(--vcx-red); }\n.vcx-code [data-work-only] { display: none !important; }\n.vcx-boss .vcx-code [data-normal] { display: none !important; }\n.vcx-boss .vcx-code [data-work-only] { display: inline-grid !important; }\n.vcx-boss .vcx-code { width: 100%; border: 0; }\n.vcx-boss .vcx-code pre { padding-left: 18px; font-size: 13px; }\n.vcx-boss .vcx-code code { font-size: inherit; }\n.vcx-boss .vcx-editor-language { margin-left: auto; }\n.vcx-boss :is(.vcx-strip, .vcx-topbar, #Wrapper) { display: none !important; }\n\n.vcx-composer-wrap { position: relative; z-index: 2; flex: none; padding: 6px 16px 10px; }\n\nhtml.vcx #Wrapper .vcx-reply-shell {\n  display: block !important;\n  position: static !important;\n  float: none !important;\n  width: auto !important;\n  min-width: 0 !important;\n  height: auto !important;\n  min-height: 0 !important;\n  max-height: none !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  border: 0 !important;\n  background: transparent !important;\n  font-size: 0;\n  box-shadow: none !important;\n}\nhtml.vcx #Wrapper .vcx-reply-shell > :not(.vcx-reply-shell, .vcx-reply-card) { display: none !important; }\n.vcx-reply-card {\n  --vcx-reply-min-height: 24px;\n  container-type: inline-size;\n  width: 100%;\n  max-width: 760px;\n  margin-inline: auto;\n  padding: 8px 8px 6px 12px;\n  border: 1px solid var(--vcx-soft-line);\n  border-radius: 22px;\n  background: var(--vcx-composer);\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n  text-align: start;\n  box-shadow: 0 2px 8px rgb(0 0 0 / .05);\n}\n.vcx-reply-card:focus-within { border-color: var(--vcx-line); }\nhtml.vcx #Wrapper :is(.vcx-reply-input, .vcx-compose-preview) {\n  display: block;\n  width: 100%;\n  height: auto !important;\n  min-height: var(--vcx-reply-min-height) !important;\n  max-height: min(160px, 25dvh) !important;\n  margin: 0;\n  padding: 0 3px 0 0;\n  overflow: auto;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: 400 14px/1.55 var(--vcx-font);\n}\nhtml.vcx #Wrapper .vcx-reply-input { field-sizing: content; resize: none; box-shadow: none; outline: none; }\nhtml.vcx #Wrapper .vcx-reply-input[data-vcx-empty] { max-height: var(--vcx-reply-min-height) !important; }\n.vcx-compose-preview { white-space: pre-wrap; overflow-wrap: anywhere; }\n.vcx-reply-card #reply-parent {\n  gap: 5px;\n  margin: 0 2px 6px 0;\n  padding: 5px 8px;\n  border-radius: 8px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-muted);\n  font-size: 12px;\n}\n.vcx-reply-card #reply-parent .reply-parent-name { color: var(--vcx-fg); }\n.vcx-reply-card #reply-parent .reply-parent-cancel { margin-inline-start: auto; }\n.vcx-reply-bar { display: flex; align-items: center; gap: 4px; min-height: 30px; margin-top: 2px; }\n.vcx-reply-card :is(.vcx-reply-icon, .vcx-reply-mention, .vcx-reply-signin, .vcx-reply-send) {\n  display: inline-flex;\n  flex: none;\n  align-items: center;\n  justify-content: center;\n  gap: 4px;\n  min-width: 28px;\n  height: 30px;\n  padding: 0 5px;\n  border: 0;\n  border-radius: 8px;\n  background: transparent;\n  white-space: nowrap;\n}\n.vcx-reply-card :is(.vcx-reply-mention, .vcx-reply-signin) { font-size: 12px; color: var(--vcx-muted); }\n.vcx-reply-model {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  min-width: 0;\n  padding-inline: 4px;\n  white-space: nowrap;\n}\n.vcx-reply-model-name { overflow: hidden; text-overflow: ellipsis; }\n.vcx-reply-model :is(.vcx-reply-model-effort, .vcx-icon) { color: var(--vcx-quiet); }\n.vcx-reply-model .vcx-icon { font-size: 10px; }\n@container (max-width: 370px) {\n  .vcx-reply-bar { gap: 2px; }\n  .vcx-reply-card :is(.vcx-reply-mention, .vcx-reply-signin) > span:not(.vcx-icon) { display: none; }\n  .vcx-reply-model { padding-inline: 2px; font-size: 13px; }\n}\n.vcx-reply-card .vcx-reply-icon { font-size: 15px; }\n.vcx-reply-card :is(.vcx-reply-icon, .vcx-reply-mention, .vcx-reply-signin):hover:not(:disabled),\n.vcx-reply-card .vcx-reply-tools[open] > summary { background: var(--vcx-hover); }\n.vcx-reply-card .vcx-reply-icon:disabled { opacity: .4; }\n.vcx-reply-card .vcx-reply-send {\n  width: 30px;\n  padding: 0;\n  border-radius: 50%;\n  background: #2864c8;\n  color: #fff;\n  font-size: 16px;\n}\n.vcx-reply-card .vcx-reply-send:hover:not(:disabled) { background: #1f53ae; }\n.vcx-reply-card .vcx-reply-send:disabled { background: var(--vcx-selected); color: var(--vcx-muted); }\n.vcx-reply-tools { position: relative; }\n.vcx-reply-tools summary { list-style: none; cursor: pointer; }\n.vcx-reply-tools summary::-webkit-details-marker { display: none; }\n.vcx-reply-tools summary:focus-visible { outline: 2px solid var(--vcx-blue); outline-offset: -2px; }\n.vcx-reply-menu {\n  position: absolute;\n  inset-inline-start: 0;\n  bottom: calc(100% + 6px);\n  z-index: 1;\n  min-width: 130px;\n  max-height: min(340px, 48dvh);\n  overflow-y: auto;\n  padding: 4px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 10px;\n  background: var(--vcx-raised);\n  box-shadow: 0 4px 18px rgb(0 0 0 / .12);\n}\n.vcx-reply-card .vcx-reply-menu button {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  gap: 7px;\n  padding: 7px 9px;\n  border: 0;\n  border-radius: 6px;\n  background: transparent;\n  font-size: 12px;\n  white-space: nowrap;\n}\n.vcx-reply-card .vcx-reply-menu button:hover { background: var(--vcx-hover); }\n.vcx-reply-card .vcx-reply-menu button:disabled { opacity: .4; }\n.vcx-reply-card .vcx-reply-menu button[aria-pressed="true"] { color: var(--vcx-blue); }\n\n.vcx-dialog {\n  width: min(526px, calc(100% - 28px));\n  max-height: min(630px, calc(100% - 36px));\n  margin: auto;\n  padding: 0;\n  overflow: auto;\n  border: 1px solid var(--vcx-line);\n  border-radius: 12px;\n  background: var(--vcx-raised);\n  box-shadow: 0 18px 65px #0004;\n}\n.vcx-dialog:not([open]) { display: none; }\n.vcx-dialog::backdrop { background: var(--vcx-backdrop); }\n.vcx-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 53px; padding: 0 12px 0 16px; border-bottom: 1px solid var(--vcx-soft-line); }\n.vcx-dialog-header h2 { font-size: 15px; font-weight: 650; }\n.vcx-dialog-body { padding: 10px 16px 16px; }\n.vcx-keys > div, .vcx-settings > label { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 43px; border-bottom: 1px solid var(--vcx-soft-line); }\n.vcx-keys > div:last-child { border: 0; }\n.vcx-keys kbd { padding: 3px 6px; border: 1px solid var(--vcx-line); border-radius: 4px; background: var(--vcx-main); color: var(--vcx-muted); font: 11px/1.3 var(--vcx-mono); white-space: nowrap; }\n.vcx-settings select { padding: 4px 9px; border: 1px solid var(--vcx-line); border-radius: 6px; background: var(--vcx-main); }\n.vcx-settings small { display: block; margin-bottom: 6px; color: var(--vcx-quiet); }\n.vcx-settings input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--vcx-blue); }\n.vcx-settings > button { margin-top: 12px; }\n.vcx-search-form { padding: 10px; }\n.vcx-search-field { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 10px; border: 1px solid var(--vcx-line); border-radius: 7px; background: var(--vcx-main); }\n.vcx-search-field input { flex: 1; width: 0; padding: 0; border: 0; background: transparent; }\n.vcx-search-field input:focus { outline: none; }\n.vcx-search-field:focus-within { border-color: var(--vcx-blue); }\n.vcx-search-results { max-height: min(430px, 55vh); overflow: auto; padding-top: 5px; }\n.vcx-search-label { padding: 9px 9px 3px; color: var(--vcx-quiet); font-size: 11px; }\n.vcx-empty { padding: 13px 9px; color: var(--vcx-muted); }\n.vcx-toast { position: fixed; top: 58px; right: calc(var(--vcx-right) + 12px); z-index: 160; max-width: calc(100% - 24px); padding: 8px 11px; border: 1px solid var(--vcx-line); border-radius: 7px; background: var(--vcx-raised); box-shadow: 0 4px 18px #0002; }\n.vcx-boss .vcx-toast { right: 12px; }\n.vcx-copy-field { position: fixed; width: 1px; height: 1px; opacity: 0; clip-path: inset(50%); }\n\n@media (max-width: 1179px) {\n  html.vcx.vcx-panel-open { --vcx-right: 0px; }\n  .vcx-code { width: min(500px, calc(100vw - 32px)); z-index: 123; box-shadow: -8px 0 26px #0003; }\n  .vcx-overlay .vcx-scrim { position: fixed; inset: 0; display: block; z-index: 120; width: 100%; padding: 0; border: 0; background: var(--vcx-backdrop); }\n}\n\n@media (max-width: 900px) {\n  html.vcx, html.vcx.vcx-sidebar-open { --vcx-left: 0px; --vcx-strip-w: 0px; --vcx-nav-w: min(306px, 86vw); }\n  .vcx-strip { display: none; }\n  .vcx-topbar { padding: 0 6px; gap: 3px; }\n  .vcx-sidebar { z-index: 123; box-shadow: 8px 0 26px #0003; }\n  .vcx-top-actions { gap: 0; }\n  .vcx-topbar .vcx-icon-button { width: 29px; }\n  .vcx-composer-wrap { padding-inline: 12px; }\n}\n\n@media (max-width: 480px) {\n  .vcx-crumb { gap: 5px; }\n  .vcx-crumb a { max-width: 100%; }\n  .vcx-crumb :is(.vcx-context, .vcx-crumb-sep) { display: none; }\n  .vcx-editor-breadcrumbs > span { display: none; }\n}\n\r\n';
+
+  // src/native.css
+  var native_default = 'html.vcx body {\n  min-width: 0 !important;\n  margin: 0 !important;\n  overflow: hidden !important;\n  background: var(--vcx-main) !important;\n  color: var(--vcx-fg);\n  font-family: var(--vcx-font);\n}\nhtml.vcx :is(#Top, #Bottom, #Leftbar, #Rightbar, .scroll-top) { display: none !important; }\nhtml.vcx #Wrapper {\n  position: fixed;\n  inset: var(--vcx-header-h) var(--vcx-right) 0 var(--vcx-left);\n  display: flex;\n  flex-direction: column;\n  min-width: 0 !important;\n  min-height: 0 !important;\n  height: auto !important;\n  margin: 0 !important;\n  background: var(--vcx-main) !important;\n  overflow: hidden;\n  text-align: start;\n}\nhtml.vcx #Wrapper > .content {\n  flex: 1;\n  width: auto !important;\n  min-width: 0 !important;\n  min-height: 0;\n  max-width: none !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  overflow: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--vcx-line) transparent;\n}\nhtml.vcx #Main {\n  box-sizing: border-box;\n  width: min(100%, 840px) !important;\n  min-width: 0 !important;\n  float: none !important;\n  margin: 0 auto !important;\n  padding: 34px 40px 40px;\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main > .sep20:first-child { display: none; }\nhtml.vcx #Main .box { box-shadow: none !important; border: 1px solid var(--vcx-soft-line); border-radius: 9px; background: var(--vcx-raised); color: var(--vcx-fg); }\nhtml.vcx #Main :is(.header, .cell) { border-bottom-color: var(--vcx-soft-line); }\nhtml.vcx #Main :is(.gray, .fade, .ago, small) { color: var(--vcx-quiet) !important; }\nhtml.vcx #Main a:is(:link, :visited) { color: var(--vcx-fg); }\nhtml.vcx #Main a:hover { color: var(--vcx-blue); }\nhtml.vcx #Main :is(h1, h2, h3) { color: var(--vcx-fg); }\nhtml.vcx #Main :is(input[type="text"], input[type="search"], textarea, select) { border-color: var(--vcx-line); background: var(--vcx-editor); color: var(--vcx-fg); }\nhtml.vcx #Main :is(.super, .btn, .page_normal, .page_current) { border-color: var(--vcx-line); color: var(--vcx-fg); background: var(--vcx-raised); }\nhtml.vcx #Main .page_current { background: var(--vcx-selected); }\nhtml.vcx #Main .page_normal:hover { background: var(--vcx-hover); }\nhtml.vcx #Main :is(.tab-alt, .tab_alt, a.node) { background: var(--vcx-hover); color: var(--vcx-muted); }\nhtml.vcx #Main :is(.loading, .sticky, .subtle) { background-color: var(--vcx-bubble); color: var(--vcx-fg); }\n\nhtml.vcx #Main .vcx-list-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 2px; }\nhtml.vcx #Main .vcx-list-title { display: flex; align-items: center; gap: 4px; min-width: 0; }\nhtml.vcx #Main .vcx-list-title .vcx-icon-button { width: 26px; height: 26px; cursor: pointer; }\nhtml.vcx #Main .vcx-list-head h1 { margin: 0; font: 600 20px/1.35 var(--vcx-font); letter-spacing: .2px; overflow-wrap: anywhere; }\nhtml.vcx #Main .vcx-list-head .vcx-button { box-sizing: border-box; flex: none; border-radius: 999px; color: var(--vcx-fg); background: var(--vcx-bubble); text-decoration: none; white-space: nowrap; }\nhtml.vcx #Main .vcx-list-head .vcx-button:hover { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-list-description { margin-bottom: 16px; color: var(--vcx-quiet); font-size: 12.5px; line-height: 16px; }\nhtml.vcx #Main .vcx-native-list { background: transparent; border: 0; }\nhtml.vcx #Main :is(#Tabs, #SecondaryTabs) { display: none; }\nhtml.vcx #Main #vcx-list-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 0 10px; }\nhtml.vcx #Main #vcx-list-filters a { padding: 3px 11px; border-radius: 999px; background: var(--vcx-bubble); color: var(--vcx-muted); font-size: 12px; text-decoration: none; }\nhtml.vcx #Main #vcx-list-filters a:is(:hover, [aria-current="page"]) { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\nhtml.vcx #Main .vcx-native-list > .header { padding: 1px 0 8px; color: var(--vcx-muted); font-size: 12px; }\nhtml.vcx #Main .vcx-native-list > .header > :is(a[href="/"], .chevron) { display: none; }\nhtml.vcx #Main .vcx-native-row {\n  min-width: 0;\n  margin: 0;\n  padding: 2px 0;\n  border: 0;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  background: transparent !important;\n}\nhtml.vcx #Main .vcx-native-row:first-of-type { padding-top: 0; }\nhtml.vcx #Main .vcx-row-layout {\n  box-sizing: border-box;\n  display: grid;\n  grid-template-columns: 7px minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 10px;\n  min-height: 55px;\n  margin: 0 -10px;\n  padding: 9px 10px;\n  border-radius: 10px;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-row-layout:hover { background: var(--vcx-raised); }\nhtml.vcx #Main .vcx-selected .vcx-row-layout { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-row-dot { box-sizing: border-box; width: 7px; height: 7px; border: 1px solid var(--vcx-quiet); border-radius: 50%; }\nhtml.vcx #Main .vcx-selected .vcx-row-dot { border-color: var(--vcx-blue); background: var(--vcx-blue); }\nhtml.vcx #Main .vcx-row-pin { color: var(--vcx-quiet); font-size: 11px; }\nhtml.vcx #Main .vcx-row-texts { display: flex; flex-direction: column; gap: 2px; min-width: 0; }\nhtml.vcx #Main .vcx-native-row .item_title { display: block; min-width: 0; }\nhtml.vcx #Main .vcx-native-row .item_title a { display: block; overflow: hidden; color: var(--vcx-muted); font: 400 13.5px/19px var(--vcx-font); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }\nhtml.vcx #Main .vcx-native-row a:hover { color: var(--vcx-fg); text-decoration: underline; text-underline-offset: 2px; }\nhtml.vcx #Main .vcx-row-sub { overflow: hidden; color: var(--vcx-quiet); font: 400 12px/16px var(--vcx-font); text-overflow: ellipsis; white-space: nowrap; }\nhtml.vcx #Main .vcx-row-sub a { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: none; }\nhtml.vcx #Main .vcx-row-meta { display: flex; align-items: center; gap: 8px; color: var(--vcx-quiet); font: 400 12px/16px var(--vcx-font); white-space: nowrap; }\nhtml.vcx #Main .vcx-row-replies :is(.count_livid, .count_orange) { margin: 0; padding: 1px 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: none; }\nhtml.vcx #Main .ps_container { border-radius: 6px; background: var(--vcx-main); }\nhtml.vcx #Main .vcx-native-node-head { margin-bottom: 12px; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header { padding: 10px 12px; border-bottom: 0; border-radius: inherit; background: var(--vcx-raised); color: var(--vcx-fg); }\nhtml.vcx #Main .vcx-native-node-head :is(.node-title, h1, .node-name) { font-size: 14px; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header .title { flex-wrap: wrap; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header .intro { color: var(--vcx-muted); }\nhtml.vcx #Main .vcx-native-node-head .page-content-header img { max-width: 44px; height: auto; }\n\nhtml.vcx .vcx-image-note { display: none; }\nhtml.vcx[data-vcx-images="off"] #Main [data-vcx-image] { display: none !important; }\nhtml.vcx[data-vcx-images="off"] #Main .vcx-image-note { display: inline-block; padding: 1px 6px; border: 1px solid var(--vcx-soft-line); border-radius: 4px; background: var(--vcx-rail); color: var(--vcx-muted); font: 11px/1.6 var(--vcx-mono); }\nhtml.vcx #Main :is(.reply-ad, .cell:has(ins.adsbygoogle):not(:has(.item_title, .topic_content, .reply_content))) { display: none !important; }\n\n@media (max-width: 900px) {\n  html.vcx #Main { padding: 20px 16px 28px; }\n  html.vcx #Main .ps_container { overflow-x: auto; }\n}\n@media (max-width: 480px) {\n  html.vcx #Main .vcx-row-meta { flex-direction: column; align-items: flex-end; gap: 2px; }\n}\n\n';
+
+  // src/reader.css
+  var reader_default = 'html.vcx[data-vcx-page="topic"] #Main {\n  --vcx-reader-dim: #737477;\n  --vcx-reader-faint: #a2a3a5;\n  --vcx-reader-inset: #fafafa;\n  --vcx-reader-accent: #2a98ff;\n  padding: 20px clamp(16px, 5%, 40px) 28px;\n}\nhtml.vcx.vcx-dark[data-vcx-page="topic"] #Main {\n  --vcx-reader-dim: #909090;\n  --vcx-reader-faint: #646464;\n  --vcx-reader-inset: #212223;\n  --vcx-reader-accent: var(--vcx-blue);\n}\n\nhtml.vcx #Main .vcx-native-topic, html.vcx #Main #topic-replies .reply-threads { border: 0; background: transparent; }\nhtml.vcx #Main .vcx-native-topic + .sep20 { height: 14px; }\nhtml.vcx #Main .vcx-post-bubble {\n  box-sizing: border-box;\n  width: fit-content;\n  max-width: 85%;\n  min-width: 0;\n  margin: 0 0 6px auto;\n  padding: 10px 16px;\n  border: 0;\n  border-radius: 16px;\n  background: var(--vcx-bubble);\n  font: 400 13.5px/1.6 var(--vcx-font);\n  overflow-wrap: anywhere;\n  scroll-margin-top: 12px;\n}\nhtml.vcx #Main .vcx-original-post > h1 { margin: 0; font: inherit; }\nhtml.vcx #Main .vcx-topic-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px 10px;\n  margin-top: 8px;\n  font: 400 12px/1.5 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-original-post .vcx-topic-tags a:any-link {\n  color: var(--vcx-blue);\n  text-decoration: none;\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-native-topic > .subtle.vcx-post-bubble { margin-top: 8px; }\nhtml.vcx #Main .vcx-native-topic > .outdated {\n  margin: 6px 0;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-reader-dim);\n  font-size: 12px;\n}\nhtml.vcx #Main .vcx-op-meta {\n  padding: 0;\n  border: 0;\n  overflow: visible;\n  font-size: 0;\n  line-height: 0;\n}\nhtml.vcx #Main .vcx-op-meta > :is(.fr, .flex-one-row, .sep10) { display: none; }\nhtml.vcx #Main .vcx-turn-footer {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px 8px;\n  font: 400 12.5px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-op-meta .vcx-turn-footer { padding: 3px 2px; }\nhtml.vcx #Main .vcx-reply-meta { margin-top: 6px; }\nhtml.vcx #Main .vcx-turn-byline {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 2px 6px;\n  min-width: 0;\n  color: var(--vcx-reader-faint);\n  opacity: .55;\n  transition: opacity .15s;\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-byline {\n  color: var(--vcx-reader-dim);\n  opacity: .9;\n}\nhtml.vcx #Main .vcx-turn-byline :is(small, strong, .ago, .small, .topic_stats) {\n  color: inherit !important;\n  font: inherit;\n  text-shadow: none;\n}\nhtml.vcx #Main .vcx-turn-byline a { color: inherit; text-decoration: none; }\nhtml.vcx #Main .vcx-turn-byline a:hover { color: var(--vcx-fg); text-decoration: underline; }\nhtml.vcx #Main .vcx-turn-byline svg { width: 14px; height: 14px; flex: none; }\nhtml.vcx #Main .vcx-turn-byline .vcx-reply-thanks { display: inline-flex; align-items: center; gap: 3px; }\nhtml.vcx #Main .vcx-reply-thanks img { display: none; }\nhtml.vcx #Main .vcx-post-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--vcx-reader-dim); }\nhtml.vcx #Main .vcx-turn-actions {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 4px;\n  margin-inline-start: auto;\n}\nhtml.vcx #Main .vcx-turn-actions :is(.topic_buttons, .votes) {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px;\n  margin: 0;\n  padding: 0;\n  background: transparent;\n  font-size: 0;\n}\nhtml.vcx #Main .vcx-turn-actions .topic_buttons .fr:not(:has(a, button)) { display: none; }\nhtml.vcx #Main .vcx-turn-actions :is(.vcx-native-reply-actions, .vcx-native-reply-actions .flex-one-row) { display: contents; }\nhtml.vcx #Main .vcx-turn-actions .badges { display: none; }\nhtml.vcx #Main .vcx-turn-actions .vcx-reply-action :is(img, .fa) { display: none; }\nhtml.vcx #Main .vcx-turn-actions :is(a, button, .thanked, .topic_thanked, .vcx-reply-action) {\n  box-sizing: border-box;\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  min-height: 22px;\n  padding: 3px 10px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 999px;\n  background: transparent;\n  color: var(--vcx-reader-dim);\n  font: 400 12px/1.2 var(--vcx-font);\n  text-decoration: none;\n  text-shadow: none;\n  white-space: nowrap;\n}\nhtml.vcx #Main .vcx-turn-actions .vote { min-width: 0; padding-inline: 7px; }\nhtml.vcx #Main .vcx-turn-actions :is(a, button):hover { background: var(--vcx-raised); color: var(--vcx-fg); cursor: pointer; }\nhtml.vcx #Main .vcx-turn-actions :is(.thanked, .topic_thanked) { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\nhtml.vcx #Main .vcx-turn-actions svg { width: 13px; height: 13px; flex: none; }\n@media (hover: hover) and (min-width: 700px) {\n  html.vcx #Main .vcx-turn-actions { opacity: 0; pointer-events: none; transition: opacity .15s; }\n  html.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-actions,\n  html.vcx #Main .vcx-turn-actions:has(.thanked, .topic_thanked) { opacity: 1; pointer-events: auto; }\n}\n\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) {\n  color: var(--vcx-fg);\n  font: 400 13.5px/1.6 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main :is(.reply_content, .reply_content .markdown_body) { line-height: 1.75; }\nhtml.vcx #Main .topic_content p { margin: 6px 0; }\nhtml.vcx #Main .reply_content p { margin: 9px 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :first-child { margin-top: 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :last-child { margin-bottom: 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(h1, h2, h3, h4, h5, h6) { margin: 14px 0 7px; font-weight: 600; line-height: 1.4; }\nhtml.vcx #Main :is(.topic_content, .reply_content) h2 { font-size: 17px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) h3 { font-size: 15px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(ol, ul) { margin: 8px 0; padding-inline-start: 20px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) li { margin: 4px 0; line-height: 1.8; }\nhtml.vcx #Main :is(.topic_content, .reply_content) a { color: var(--vcx-blue); text-decoration: none; text-underline-offset: 2px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) a:hover { text-decoration: underline; }\nhtml.vcx #Main :is(.topic_content, .reply_content) img { max-width: 100%; height: auto; border-radius: 6px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) code:not(pre code) {\n  padding: 2.5px 6px;\n  border: 0;\n  border-radius: 6px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-fg);\n  font: 12px var(--vcx-mono);\n}\nhtml.vcx #Main .vcx-post-bubble code:not(pre code) { background: var(--vcx-reader-inset); }\nhtml.vcx #Main :is(.topic_content, .reply_content) hr { margin: 16px 0; border: 0; border-top: 1px solid var(--vcx-soft-line); }\nhtml.vcx #Main :is(.topic_content, .reply_content) table { display: block; max-width: 100%; margin: 12px 0; overflow: auto; border-collapse: collapse; font-size: 13px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(th, td) { padding: 6px 10px; border: 1px solid var(--vcx-line); }\nhtml.vcx #Main :is(.topic_content, .reply_content) th { background: var(--vcx-raised); font-weight: 600; }\n\nhtml.vcx #Main .vcx-think {\n  margin: 10px 0;\n  color: var(--vcx-reader-dim);\n  font: 400 12.5px/1.4 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-think-head {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  list-style: none;\n  cursor: pointer;\n  user-select: none;\n}\nhtml.vcx #Main :is(.vcx-think-head, .vcx-quote > summary)::-webkit-details-marker { display: none; }\nhtml.vcx #Main :is(.vcx-think-head, .vcx-quote > summary):focus-visible { outline: 2px solid var(--vcx-blue); outline-offset: 2px; }\nhtml.vcx #Main .vcx-think-head:hover { color: var(--vcx-muted); }\nhtml.vcx #Main .vcx-think-star { color: var(--vcx-reader-accent); }\nhtml.vcx #Main .vcx-think-chev { font-size: 10px; }\nhtml.vcx #Main .vcx-think[open] .vcx-think-chev::after { content: "▾"; }\nhtml.vcx #Main .vcx-think:not([open]) .vcx-think-chev::after { content: "▸"; }\nhtml.vcx #Main .vcx-think-body {\n  margin: 7px 0 2px;\n  padding-inline-start: 10px;\n  border-inline-start: 1px solid var(--vcx-soft-line);\n  color: var(--vcx-muted);\n  line-height: 1.7;\n  white-space: pre-wrap;\n}\nhtml.vcx #Main .vcx-runline {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px 8px;\n  margin: 12px 0;\n  color: var(--vcx-reader-dim);\n  font: 400 12.5px/1.4 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-runline svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-faint); }\nhtml.vcx #Main .vcx-runline code {\n  min-width: 0;\n  padding: 1.5px 7px;\n  border: 0;\n  border-radius: 6px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-fg);\n  font: 11.5px var(--vcx-mono);\n}\n\nhtml.vcx #Main .vcx-quote {\n  margin: 14px 0;\n  border: 1px solid var(--vcx-line);\n  border-radius: 10px;\n  background: var(--vcx-raised);\n}\nhtml.vcx #Main .vcx-quote > summary {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 8px 12px;\n  color: var(--vcx-muted);\n  font: 400 12.5px/1.4 var(--vcx-mono);\n  list-style: none;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-quote > summary svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-dim); }\nhtml.vcx #Main .vcx-quote > summary .chev { margin-inline-start: auto; }\nhtml.vcx #Main .vcx-quote[open] > summary .chev { transform: rotate(90deg); }\nhtml.vcx #Main .vcx-quote > .vcx-quote-body {\n  margin: 0;\n  padding: 10px 14px;\n  border: 0;\n  border-top: 1px solid var(--vcx-soft-line);\n  background: transparent;\n  color: var(--vcx-muted);\n  font: 400 13.5px/1.7 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-quote .vcx-quote-body > p { margin: 6px 0; }\n\nhtml.vcx #Main .vcx-snippet {\n  min-width: 0;\n  margin: 14px 0;\n  overflow: hidden;\n  border: 1px solid var(--vcx-soft-line);\n  border-radius: 10px;\n  background: var(--vcx-reader-inset);\n}\nhtml.vcx #Main .vcx-snippet-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  padding: 7px 12px;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  color: var(--vcx-reader-dim);\n  font: 12px/1.4 var(--vcx-mono);\n}\nhtml.vcx #Main .vcx-snippet-header button {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  border: 0;\n  border-radius: 5px;\n  background: transparent;\n  color: var(--vcx-muted);\n  padding: 2px 4px;\n  font: inherit;\n  white-space: nowrap;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-snippet-header svg { width: 13px; height: 13px; }\nhtml.vcx #Main .vcx-snippet-header button:hover { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-snippet pre {\n  margin: 0;\n  padding: 12px 14px;\n  overflow: auto;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: 12.5px/1.65 var(--vcx-mono);\n  white-space: pre;\n  overflow-wrap: normal;\n}\nhtml.vcx #Main .vcx-snippet pre code { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }\n\nhtml.vcx #Main #topic-replies .vcx-turn { background: transparent; border: 0; scroll-margin-top: 12px; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d) > .vcx-turn { padding-block: 0 12px; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn { padding-inline: 0; }\nhtml.vcx #Main #topic-replies .vcx-turn > table { table-layout: fixed; width: 100%; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn > table > tbody > tr > td:not(:has(.reply_content)) { display: none; }\nhtml.vcx #Main #topic-replies .vcx-turn > table > tbody > tr > td:has(.reply_content) { padding: 0; }\nhtml.vcx #Main #topic-replies .vcx-turn .reply_content { margin: 0; }\nhtml.vcx #Main #topic-replies .vcx-reply-summary { min-height: 0; padding: 5px 0; border: 0; }\nhtml.vcx #Main #topic-replies .vcx-reply-summary:not(:has(a, button, .reply-lines)) { display: none; }\nhtml.vcx #Main #topic-replies .vcx-reply-summary > .gray { display: none; }\n\n@media (max-width: 900px) {\n  html.vcx #Main .vcx-post-bubble { max-width: 92%; }\n}\n@media (max-width: 480px) {\n  html.vcx #Main .vcx-turn-byline { opacity: 1; color: var(--vcx-quiet); }\n}\n';
+
+  // src/assets/icons.woff2
+  var icons_default = "data:font/woff2;base64,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";
+
+  // src/assets/inter-latin.woff2
+  var inter_latin_default = "data:font/woff2;base64,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";
+
+  // src/ui.js
+  var glyphs = {
+    sidebar: 62559,
+    panel: 62558,
+    search: 62762,
+    gear: 62437,
+    folder: 62423,
+    down: 62082,
+    left: 62084,
+    right: 62085,
+    external: 61893,
+    code: 62150,
+    terminal: 62915,
+    sun: 62882,
+    moon: 62615,
+    grid: 62460,
+    layers: 62555,
+    clock: 62098,
+    hot: 63478,
+    new: 62666,
+    plus: 63053,
+    list: 62585,
+    copy: 63321,
+    close: 63065,
+    expand: 61770,
+    branch: 63133,
+    person: 62679,
+    command: 62159,
+    home: 62501,
+    at: 61778,
+    bell: 61834,
+    bookmark: 61858,
+    inbox: 62509,
+    dots: 62932,
+    more: 62931,
+    filter: 62433,
+    pin: 62701,
+    send: 61768,
+    pencil: 62667,
+    bold: 62960,
+    italic: 62964,
+    strike: 62965,
+    heading: 62962,
+    link: 62576,
+    quote: 63152,
+    bullets: 62584,
+    numbers: 62581,
+    eye: 62273,
+    plusCircle: 62713,
+    chat: 62052,
+    folderOpen: 62424,
+    lock: 62587
+  };
+  function icon(name) {
+    return `<span class="vcx-icon" aria-hidden="true">&#${glyphs[name]};</span>`;
+  }
+  var escapes = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  function escape(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => escapes[char]);
+  }
+  function link(href, label2, glyph = "", extra = "") {
+    return `<a class="vcx-action" href="${escape(href)}" ${extra}>${glyph ? icon(glyph) : ""}<span>${escape(label2)}</span></a>`;
+  }
+  function iconButton(action, glyph, label2, extra = "") {
+    return `<button type="button" class="vcx-icon-button" data-action="${action}" title="${escape(label2)}" aria-label="${escape(label2)}" ${extra}>${icon(glyph)}</button>`;
+  }
+
+  // src/code-panel.js
+  var example = `// 给话题索引加一层带过期时间的本地缓存
+// 只在读取时淘汰过期记录，刷新由调用方控制
+
+use std::collections::HashMap;
+use std::hash::Hash;
+use std::time::{Duration, Instant};
+
+struct Entry<V> {
+    value: V,
+    expires_at: Instant,
+}
+
+pub struct Cache<K, V> {
+    entries: HashMap<K, Entry<V>>,
+    ttl: Duration,
+}
+
+impl<K: Eq + Hash, V> Cache<K, V> {
+    pub fn new(ttl: Duration) -> Self {
+        Self {
+            entries: HashMap::new(),
+            ttl,
+        }
+    }
+
+    pub fn insert(&mut self, key: K, value: V) {
+        let expires_at = Instant::now() + self.ttl;
+        self.entries
+            .insert(key, Entry { value, expires_at });
+    }
+
+    pub fn get(&self, key: &K) -> Option<&V> {
+        let entry = self.entries.get(key)?;
+        let is_fresh = entry.expires_at > Instant::now();
+        is_fresh.then_some(&entry.value)
+    }
+
+    pub fn prune(&mut self) -> usize {
+        let now = Instant::now();
+        let before = self.entries.len();
+        self.entries
+            .retain(|_, entry| entry.expires_at > now);
+        before - self.entries.len()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn retrieves_cached_value() {
+        let mut cache = Cache::new(Duration::from_secs(30));
+        cache.insert("workspace", 42);
+        assert_eq!(cache.get(&"workspace"), Some(&42));
+    }
+}`;
+  function syntax(line) {
+    if (line.trimStart().startsWith("//")) return `<span class="vcx-syntax-comment">${escape(line)}</span>`;
+    const tokens = /"[^"\n]*"|\b(?:use|struct|pub|impl|fn|let|mut|self|mod|super)\b|\b(?:Duration|Instant|Entry|Cache|HashMap|Hash|Self|Eq|Option|Some|usize|K|V)\b|\b\d+\b/g;
+    let html = "";
+    let end = 0;
+    for (const token of line.matchAll(tokens)) {
+      const value = token[0];
+      const kind = value.startsWith('"') ? "string" : /^(?:[A-Z]|usize|\d)/.test(value) ? "type" : "keyword";
+      html += `${escape(line.slice(end, token.index))}<span class="vcx-syntax-${kind}">${escape(value)}</span>`;
+      end = token.index + value.length;
+    }
+    return html + escape(line.slice(end));
+  }
+  var lines = example.split("\n");
+  var listing = lines.map((line, index) => `<span class="vcx-line"><span class="vcx-line-number" aria-hidden="true">${index + 1}</span>${syntax(line)}</span>`).join("\n");
+  var change = lines.findIndex((line) => line.includes("let is_fresh"));
+  var diff = [
+    ["hunk", `@@ -${change - 1},6 +${change - 1},7 @@ impl<K: Eq + Hash, V> Cache<K, V> {`],
+    ["context", ` ${lines[change - 2]}`],
+    ["context", ` ${lines[change - 1]}`],
+    ["removed", "-        Some(&entry.value)"],
+    ["added", `+${lines[change]}`],
+    ["added", `+${lines[change + 1]}`],
+    ...lines.slice(change + 2, change + 5).map((line) => ["context", ` ${line}`])
+  ].map(([kind, line]) => `<span class="vcx-diff-${kind}">${escape(line)}</span>`).join("\n");
+  function codePanel(context) {
+    return `<aside class="vcx-code" id="vcx-code" aria-label="代码面板" hidden>
+    <div class="vcx-editor-tabs">
+      <div class="vcx-editor-tab"><span class="vcx-rust-icon" aria-hidden="true">RS</span><span>lib.rs</span>${iconButton("panel", "close", "关闭代码面板", "data-normal")}</div>
+      ${iconButton("boss", "plus", "打开代码工作区（B）", "data-normal")}
+      <div class="vcx-editor-buttons">
+        ${iconButton("boss", "expand", "最大化代码工作区（B）", "data-normal")}
+        ${iconButton("copy-code", "copy", "复制代码")}
+        ${iconButton("panel", "sidebar", "收起代码面板", "data-normal")}
+        ${iconButton("boss", "left", "返回 V2EX 阅读区", 'data-work-only aria-keyshortcuts="B"')}
+      </div>
+    </div>
+    <div class="vcx-editor-path">
+      <div class="vcx-editor-breadcrumbs" data-normal><span>v2ex</span><span aria-hidden="true">›</span><span>${escape(context)}</span><span aria-hidden="true">›</span><span>engine</span><span aria-hidden="true">›</span><strong>lib.rs</strong></div>
+      <span data-work-only>workspace › src › lib.rs</span>
+      <div class="vcx-editor-switch" role="group" aria-label="代码面板显示方式" data-normal>
+        <button type="button" data-action="editor-view" data-view="code" aria-pressed="true">代码</button>
+        <button type="button" data-action="editor-view" data-view="diff" aria-pressed="false">diff</button>
+      </div>
+      <span class="vcx-editor-language">Rust</span>
+    </div>
+    <pre tabindex="0" data-editor-view="code" aria-label="lib.rs"><code>${listing}</code></pre>
+    <pre tabindex="0" data-editor-view="diff" aria-label="lib.rs 的 diff" hidden><code>${diff}</code></pre>
+  </aside>`;
+  }
+
+  // settings.json
+  var settings_default = {
+    theme: "light",
+    images: false,
+    codePanel: "off"
+  };
+
+  // src/settings.js
+  var prefix = "v2ex-codex:";
+  function readLocal(key) {
+    try {
+      return JSON.parse(localStorage.getItem(prefix + key));
+    } catch {
+      return null;
+    }
+  }
+  function writeLocal(key, value) {
+    try {
+      localStorage.setItem(prefix + key, JSON.stringify(value));
+    } catch {
+    }
+  }
+  function readSession(key) {
+    try {
+      return JSON.parse(sessionStorage.getItem(prefix + key));
+    } catch {
+      return null;
+    }
+  }
+  function writeSession(key, value) {
+    try {
+      sessionStorage.setItem(prefix + key, JSON.stringify(value));
+    } catch {
+    }
+  }
+  function loadSettings() {
+    const saved = readLocal("settings") || {};
+    const theme = saved.theme ?? settings_default.theme;
+    const codePanel2 = saved.codePanel ?? settings_default.codePanel;
+    return {
+      theme: ["system", "light", "dark"].includes(theme) ? theme : settings_default.theme,
+      images: (saved.images ?? settings_default.images) === true,
+      codePanel: ["auto", "on", "off"].includes(codePanel2) ? codePanel2 : settings_default.codePanel
+    };
+  }
+
+  // src/v2ex.js
+  var projects = [
+    ["all", "全部"],
+    ["tech", "技术"],
+    ["creative", "创意"],
+    ["play", "好玩"],
+    ["apple", "Apple"],
+    ["jobs", "酷工作"],
+    ["deals", "交易"],
+    ["city", "城市"],
+    ["qna", "问与答"],
+    ["hot", "最热"],
+    ["r2", "R2"]
+  ].map(([slug, name]) => ({ slug, name, file: `${slug}.ts`, path: `/?tab=${slug}` }));
+  var defaultProject = projects.find((project) => project.slug === "all");
+  function withDefaultTab(url) {
+    if (url.pathname !== "/" || url.searchParams.get("tab")) return url;
+    const target = new URL(url);
+    target.searchParams.set("tab", defaultProject.slug);
+    return target;
+  }
+  function routeFor(url) {
+    const { pathname, searchParams } = url;
+    if (pathname === "/") {
+      const tab = searchParams.get("tab") || defaultProject.slug;
+      const project = projects.find((project2) => project2.slug === tab);
+      return project && { kind: "list", name: project.name, file: project.file, tab };
+    }
+    if (pathname === "/recent") return { kind: "list", name: "最新", file: "recent.ts" };
+    if (pathname === "/planes") return { kind: "directory", name: "节点目录", file: "nodes.ts" };
+    const node = pathname.match(/^\/go\/([\w-]+)\/?$/i);
+    if (node) return { kind: "list", name: node[1], file: `${node[1]}.ts`, node: node[1] };
+    const topic = pathname.match(/^\/t\/(\d+)\/?$/);
+    if (topic) return { kind: "topic", id: topic[1], file: `#${topic[1]}` };
+    return null;
+  }
+  function topicId(path) {
+    return path?.match(/^\/t\/(\d+)(?:[?#]|$)/)?.[1] ?? null;
+  }
+  function label(element) {
+    return element?.textContent.trim().replace(/\s+/g, " ") || "";
+  }
+  function relativeTime(element) {
+    if (!element) return "";
+    const timestamp = element.dateTime || element.title;
+    const date = new Date(timestamp);
+    if (!Number.isFinite(date.valueOf())) return label(element);
+    const minutes = Math.max(0, Math.floor((Date.now() - date.valueOf()) / 6e4));
+    if (minutes === 0) return "刚刚";
+    if (minutes < 60) return `${minutes} 分钟前`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} 小时前`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} 天前`;
+    if (date.getFullYear() === (/* @__PURE__ */ new Date()).getFullYear()) return `${date.getMonth() + 1}-${date.getDate()}`;
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  }
+  function newTopicPath(page) {
+    return page.node ? `/new/${encodeURIComponent(page.node)}` : "/new";
+  }
+  function describePage(main, route, url) {
+    const page = { ...route, path: url.pathname + url.search, url, main };
+    if (page.kind === "topic") {
+      const title = main.querySelector(".header h1, h1");
+      if (!title) return null;
+      page.name = label(title);
+      const node = title.closest(".header")?.querySelector('a[href^="/go/"]');
+      page.node = node?.getAttribute("href")?.match(/^\/go\/([\w-]+)\/?$/)?.[1];
+      page.nodeName = label(node);
+      page.back = listingFor(page.id)?.path || defaultProject.path;
+      return page;
+    }
+    if (page.node) {
+      const header = main.querySelector(".node-header, .box-title");
+      if (!header) return null;
+      const title = header.querySelector(".node-title, .page-content-header h1, .node-name");
+      const browserTitle = main.ownerDocument.title.match(/^V2EX\s*[›»]\s*(.+)$/);
+      page.name = label(title) || browserTitle?.[1] || page.name;
+    } else if (page.tab && !main.querySelector("#Tabs, .item_title")) {
+      return null;
+    } else if (!main.querySelector(".box")) {
+      return null;
+    }
+    return page;
+  }
+  function rowLayout(row, anchor, url) {
+    const info = row.querySelector(".topic_info");
+    const nodeLink = info?.querySelector('a[href^="/go/"]');
+    const userLinks = info?.querySelectorAll('a[href^="/member/"]');
+    const authorLink = userLinks?.[0];
+    const latestAuthor = userLinks?.[userLinks.length - 1];
+    const time = info?.querySelector("time, .ago, span[title]");
+    const timestamp = relativeTime(time);
+    const count = row.querySelector(".count_livid, .count_orange");
+    const pinned = row.matches(".item-pinned, .sticky") || Boolean(row.querySelector(".fa-thumb-tack, .fa-thumbtack"));
+    const node = label(nodeLink);
+    const author = label(authorLink);
+    const title = label(anchor);
+    const table = anchor.closest("table");
+    const dot = document.createElement("span");
+    dot.className = pinned ? "vcx-row-pin" : "vcx-row-dot";
+    dot.setAttribute("aria-hidden", "true");
+    if (pinned) dot.innerHTML = icon("pin");
+    const texts = document.createElement("div");
+    texts.className = "vcx-row-texts";
+    const titleWrap = anchor.closest(".item_title");
+    if (!anchor.title) anchor.title = title;
+    texts.append(titleWrap);
+    const sub = document.createElement("div");
+    sub.className = "vcx-row-sub";
+    if (nodeLink) sub.append(nodeLink);
+    if (latestAuthor) {
+      if (sub.childElementCount) sub.append(" · ");
+      latestAuthor.textContent = "@" + label(latestAuthor);
+      sub.append(latestAuthor);
+    }
+    if (sub.childElementCount) texts.append(sub);
+    const meta = document.createElement("div");
+    meta.className = "vcx-row-meta";
+    const replies = document.createElement("span");
+    replies.className = "vcx-row-replies";
+    const replyCount = /^\d+$/.test(label(count)) ? label(count) : "0";
+    if (count) {
+      count.textContent = `${replyCount} 回复`;
+      count.setAttribute("aria-label", `${replyCount} 条回复`);
+      replies.append(count);
+    } else replies.textContent = "0 回复";
+    meta.append(replies);
+    if (pinned || timestamp) {
+      const date = document.createElement("span");
+      date.className = "vcx-row-time";
+      date.textContent = pinned ? "置顶" : timestamp;
+      if (!pinned && time?.title) date.title = time.title;
+      meta.append(date);
+    }
+    const layout = document.createElement("div");
+    layout.className = "vcx-row-layout";
+    layout.append(dot, texts, meta);
+    if (table && row.contains(table)) table.replaceWith(layout);
+    else row.replaceChildren(layout);
+    row.classList.add("vcx-native-row");
+    const id = topicId(new URL(anchor.getAttribute("href"), url).pathname);
+    row.dataset.vcxTopic = id;
+    return { id, row, anchor, title, node, author, pinned };
+  }
+  function readTopics(main, url) {
+    const seen = /* @__PURE__ */ new Set();
+    const topics = [];
+    for (const anchor of main.querySelectorAll(".item_title a[href]")) {
+      const href = new URL(anchor.getAttribute("href"), url);
+      const id = href.origin === url.origin && topicId(href.pathname);
+      const row = anchor.closest(".item, #TopicsNode .cell");
+      if (!id || seen.has(id) || !row || !anchor.closest(".item_title")) continue;
+      seen.add(id);
+      topics.push(rowLayout(row, anchor, url));
+    }
+    return topics;
+  }
+  function storedListing() {
+    const listing2 = readSession("listing");
+    return typeof listing2?.path === "string" && /^\/(?![/\\])/.test(listing2.path) && Array.isArray(listing2.ids) ? listing2 : null;
+  }
+  function listingFor(id) {
+    const listing2 = storedListing();
+    return listing2?.ids.includes(id) ? listing2 : null;
+  }
+  function rememberListing(path, topics, selected) {
+    if (topics.length) writeSession("listing", { path, ids: topics.map((topic) => topic.id), selected });
+  }
+  function previousSelection(path) {
+    const listing2 = storedListing();
+    return listing2?.path === path ? listing2.selected : null;
+  }
+  function recentTopics(page) {
+    const saved = readSession("recent");
+    const recent = Array.isArray(saved) ? saved.filter((item) => /^\d+$/.test(item?.id) && typeof item.title === "string") : [];
+    if (page.kind !== "topic") return recent.slice(0, 6);
+    const updated = [{ id: page.id, title: page.name }, ...recent.filter((item) => item.id !== page.id)].slice(0, 6);
+    writeSession("recent", updated);
+    return updated;
+  }
+  function projectThreads(page, topics) {
+    const stored = readSession("projects");
+    const groups = stored && typeof stored === "object" ? stored : {};
+    if (page.tab && topics.length) {
+      groups[page.tab] = topics.slice(0, 4).map(({ id, title }) => ({ id, title }));
+      writeSession("projects", groups);
+    }
+    return groups;
+  }
+  function accountLink(document2) {
+    const account = document2.querySelector('#Top a[href^="/member/"]');
+    if (account) return { path: account.getAttribute("href"), name: label(account) || "个人主页", signedIn: true };
+    const signIn = [...document2.querySelectorAll("#Top a[href]")].find((anchor) => {
+      const url = new URL(anchor.href);
+      return url.protocol === "https:" && /(^|\.)v2ex\.com$/i.test(url.hostname) && url.pathname === "/signin";
+    });
+    return { path: signIn?.href || "/signin", name: "登录 V2EX", signedIn: false };
+  }
+  function decorateNative(page, href, topics) {
+    const { main, kind } = page;
+    if (kind === "list") {
+      const list = main.querySelector(".item_title")?.closest(".box") || main.querySelector(".box:last-of-type");
+      if (!list) return;
+      list.classList.add("vcx-native-list");
+      const head = document.createElement("div");
+      head.className = "vcx-list-head";
+      const title = document.createElement("div");
+      title.className = "vcx-list-title";
+      title.innerHTML = iconButton("filters", "filter", "筛选话题", 'aria-expanded="false" aria-controls="vcx-list-filters"');
+      const heading = document.createElement("h1");
+      heading.textContent = page.name;
+      title.append(heading);
+      const newTopic = document.createElement("a");
+      newTopic.href = href(newTopicPath(page));
+      newTopic.className = "vcx-button";
+      newTopic.innerHTML = `${icon("plus")}<span>新话题</span>`;
+      head.append(title, newTopic);
+      const filters = document.createElement("nav");
+      filters.id = "vcx-list-filters";
+      filters.setAttribute("aria-label", "筛选话题");
+      filters.hidden = true;
+      const shortcuts = [["/recent", "最新"], ["/?tab=hot", "最热"], [defaultProject.path, defaultProject.name], ["/planes", "节点目录"]];
+      for (const [path, label2] of shortcuts) {
+        const anchor = document.createElement("a");
+        anchor.href = href(path);
+        anchor.textContent = label2;
+        if (page.path === path) anchor.setAttribute("aria-current", "page");
+        filters.append(anchor);
+      }
+      for (const anchor of list.querySelectorAll("#SecondaryTabs a")) {
+        anchor.href = href(anchor.getAttribute("href"));
+        filters.append(anchor);
+      }
+      title.querySelector("button").addEventListener("click", (event) => {
+        filters.hidden = !filters.hidden;
+        event.currentTarget.setAttribute("aria-expanded", String(!filters.hidden));
+      });
+      const description = document.createElement("div");
+      description.className = "vcx-list-description";
+      description.textContent = `共 ${topics.length} 个已加载话题`;
+      const nodeHeader = main.querySelector(".node-header, .box-title");
+      nodeHeader?.classList.add("vcx-native-node-head");
+      (nodeHeader && nodeHeader.parentElement === list.parentElement ? nodeHeader : list).before(head, filters, description);
+    }
+  }
+
+  // src/composer.js
+  var formats = {
+    bold: ["加粗", "**", "**", "粗体"],
+    italic: ["斜体", "*", "*", "斜体"],
+    heading: ["标题", "\n## ", "\n", "标题"],
+    strike: ["删除线", "~~", "~~", "文本"],
+    link: ["插入链接", "[", "](https://)", "链接文字"],
+    quote: ["引用", "\n> ", "\n", "引用"],
+    code: ["代码块", "\n```\n", "\n```\n", "代码"],
+    bullets: ["无序列表", "\n- ", "", "列表项"],
+    numbers: ["有序列表", "\n1. ", "", "列表项"]
+  };
+  var plainFormats = {
+    at: ["提及用户", "@", " ", "用户名"],
+    link: ["插入网址", "", " ", "https://"],
+    quote: ["引用文本", "\n> ", "\n", "引用"]
+  };
+  function formatMenu(commands) {
+    return Object.entries(commands).filter(([name]) => name !== "at").map(([name, [label2]]) => `<button type="button" data-compose-format="${name}">${icon(name)}${label2}</button>`).join("");
+  }
+  function bindFormatting(container, field, commands) {
+    container.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-compose-format]");
+      const command = commands[button?.dataset.composeFormat];
+      if (!command) return;
+      const [, before, after, sample] = command;
+      const { selectionStart: start2, selectionEnd: end, value } = field;
+      const inserted = value.slice(start2, end) || sample;
+      field.setRangeText(before + inserted + after, start2, end, "end");
+      field.focus({ preventScroll: true });
+      if (start2 === end) field.setSelectionRange(start2 + before.length, start2 + before.length + inserted.length);
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+  }
+  function mountReplyForm(wrap, card, field) {
+    const form = field?.form;
+    if (!form) return null;
+    const box = field.closest("#reply-box") || form;
+    const outer = form.contains(box) ? form : box;
+    const inner = outer === form ? box : form;
+    if (!outer.contains(inner)) return null;
+    const submit = [...form.elements].find((control) => control.type === "submit" || control.type === "image");
+    const target = outer.querySelector("#reply-parent");
+    const problem = outer.querySelector(".problem");
+    const spacer = outer.previousElementSibling;
+    if (outer.parentElement?.id === "Main" && spacer?.matches(".sep20")) spacer.hidden = true;
+    outer.classList.add("vcx-reply-shell");
+    inner.classList.add("vcx-reply-shell");
+    if (outer !== inner) outer.append(inner);
+    for (const property of ["height", "min-height", "max-height"]) field.style.removeProperty(property);
+    card.querySelector("textarea").replaceWith(field);
+    if (target) card.prepend(target);
+    if (problem) card.prepend(problem);
+    inner.append(card);
+    wrap.append(outer);
+    return { form, submit };
+  }
+  function mountComposer(page, { href, account, demo, copy }) {
+    if (page.kind === "directory") return null;
+    const { main, url, path, id } = page;
+    const reply = page.kind === "topic";
+    const key = reply ? `draft:${id}` : "draft:new";
+    const commands = reply ? plainFormats : formats;
+    const newTopic = reply ? null : newTopicPath(page);
+    const toolLabel = reply ? "回复工具" : "发帖工具";
+    const wrap = document.createElement("div");
+    wrap.className = "vcx-composer-wrap";
+    wrap.setAttribute("role", "region");
+    wrap.setAttribute("aria-label", reply ? "回复编辑器" : "新话题编辑器");
+    document.getElementById("Wrapper").append(wrap);
+    const card = document.createElement("div");
+    card.className = "vcx-reply-card";
+    card.innerHTML = `<textarea></textarea>
+    ${reply ? "" : '<pre class="vcx-compose-preview" aria-label="草稿预览" tabindex="0" hidden></pre>'}
+    <div class="vcx-reply-bar">
+      <details class="vcx-reply-tools">
+        <summary class="vcx-reply-icon" aria-label="${toolLabel}" title="${toolLabel}">${icon("plus")}</summary>
+        <div class="vcx-reply-menu" role="group" aria-label="${toolLabel}">
+          ${formatMenu(commands)}
+          ${reply ? "" : `<button type="button" data-compose-preview aria-pressed="false">${icon("eye")}预览草稿</button>`}
+        </div>
+      </details>
+      ${reply ? `<button class="vcx-reply-mention" type="button" data-compose-format="at" aria-label="提及用户" title="提及用户">${icon("at")}<span>提及</span></button>` : `<a class="vcx-reply-icon" href="${escape(href(newTopic))}" title="新话题" aria-label="新话题">${icon("pencil")}</a>`}
+      <span class="vcx-flex"></span>
+      <a class="vcx-reply-signin" aria-label="登录后回复" title="登录后回复" hidden>${icon("lock")}<span>登录后回复</span></a>
+      <span class="vcx-reply-model" title="GPT-6.1 Sol Max">
+        <span class="vcx-reply-model-name">GPT-6.1 Sol <span class="vcx-reply-model-effort">Max</span></span>${icon("down")}
+      </span>
+      <button class="vcx-reply-icon" type="button" data-reply-copy aria-label="复制草稿" title="复制草稿">${icon("copy")}</button>
+      <button class="vcx-reply-send" type="button" data-reply-send>${icon("send")}</button>
+    </div>`;
+    const original = reply ? main.querySelector("textarea#reply_content") : null;
+    const native = mountReplyForm(wrap, card, original);
+    if (!native) {
+      if (original) (original.closest("#reply-box") || original).hidden = true;
+      wrap.append(card);
+    }
+    const field = card.querySelector("textarea");
+    field.classList.add("vcx-reply-input");
+    field.rows = 1;
+    field.removeAttribute("placeholder");
+    field.setAttribute("aria-label", reply ? "回复内容" : "新话题草稿");
+    const tools = card.querySelector(".vcx-reply-tools");
+    const send = card.querySelector("[data-reply-send]");
+    const copyDraft = card.querySelector("[data-reply-copy]");
+    const signIn = card.querySelector(".vcx-reply-signin");
+    const preview = card.querySelector(".vcx-compose-preview");
+    const previewButton = card.querySelector("[data-compose-preview]");
+    const needsSignIn = reply && !native && !demo && !account.signedIn;
+    if (needsSignIn) {
+      const destination = new URL("/signin", url);
+      destination.searchParams.set("next", path);
+      signIn.href = destination.href;
+      signIn.hidden = false;
+    }
+    const label2 = native ? "发送回复" : needsSignIn ? "登录后回复" : newTopic && !demo ? "前往原站发布" : "复制草稿";
+    send.setAttribute("aria-label", label2);
+    send.title = `${label2}（Ctrl / ⌘ + Enter）`;
+    copyDraft.hidden = reply && !native && !needsSignIn;
+    function sync() {
+      const empty = !field.value.trim();
+      field.toggleAttribute("data-vcx-empty", empty);
+      copyDraft.disabled = empty;
+      send.disabled = empty || field.matches(":disabled") || Boolean(native?.submit?.matches(":disabled"));
+      if (previewButton) previewButton.disabled = empty && preview.hidden;
+    }
+    bindFormatting(card, field, commands);
+    field.addEventListener("input", () => {
+      if (!native) writeSession(key, field.value || null);
+      if (preview && !preview.hidden) preview.textContent = field.value;
+      sync();
+    });
+    field.addEventListener("focus", () => queueMicrotask(sync));
+    if (native) {
+      main.addEventListener("click", (event) => {
+        if (event.target.closest('[onclick*="replyOne("]')) requestAnimationFrame(sync);
+      }, { capture: true });
+      if (native.submit) new MutationObserver(sync).observe(native.submit, { attributeFilter: ["disabled"] });
+    }
+    const saved = readSession(key);
+    if (!field.value && typeof saved === "string") {
+      field.value = saved;
+      if (native) {
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+        writeSession(key, null);
+      }
+    }
+    document.addEventListener("pointerdown", (event) => {
+      if (tools.open && !tools.contains(event.target)) tools.open = false;
+    });
+    tools.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !tools.open) return;
+      tools.open = false;
+      tools.querySelector("summary").focus();
+    });
+    tools.addEventListener("click", (event) => {
+      if (event.target.closest("[data-compose-format]")) tools.open = false;
+    });
+    previewButton?.addEventListener("click", () => {
+      preview.textContent = field.value;
+      preview.hidden = !preview.hidden;
+      field.hidden = !preview.hidden;
+      previewButton.setAttribute("aria-pressed", String(!preview.hidden));
+      tools.open = false;
+      (preview.hidden ? field : preview).focus({ preventScroll: true });
+      sync();
+    });
+    copyDraft.addEventListener("click", () => copy(field.value, "草稿已复制"));
+    send.addEventListener("click", () => {
+      if (native?.submit) native.submit.click();
+      else if (native) native.form.requestSubmit();
+      else if (needsSignIn) location.assign(signIn.href);
+      else if (newTopic && !demo) {
+        writeSession("compose-transfer", { path: newTopic, text: field.value });
+        location.assign(href(newTopic));
+      } else copy(field.value, "草稿已复制");
+    });
+    field.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" || event.isComposing || event.repeat || !(event.ctrlKey || event.metaKey)) return;
+      event.preventDefault();
+      sync();
+      send.click();
+    });
+    sync();
+    return wrap;
+  }
+  function restoreTopicDraft(path) {
+    const pending = readSession("compose-transfer");
+    if (pending?.path !== path || typeof pending.text !== "string" || !pending.text.trim()) return;
+    const field = document.querySelector("textarea#topic_content");
+    if (!field || !document.getElementById("topic_title")) return;
+    function restore() {
+      field.value = pending.text;
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+      writeSession("compose-transfer", null);
+      if (readSession("draft:new") === pending.text) writeSession("draft:new", null);
+    }
+    if (!field.value) restore();
+    else {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "载入 Codex 皮肤的发帖草稿";
+      button.addEventListener("click", () => {
+        restore();
+        button.remove();
+        field.focus();
+      });
+      field.after(button);
+    }
+  }
+
+  // src/shell.js
+  function iconLink(href, glyph, name, extra = "") {
+    return `<a class="vcx-icon-button" href="${escape(href)}" title="${escape(name)}" aria-label="${escape(name)}" ${extra}>${icon(glyph)}</a>`;
+  }
+  function threadLinks(items, page, href) {
+    return items.filter((item) => /^\d+$/.test(item?.id) && typeof item.title === "string").map(
+      (item) => link(href(`/t/${item.id}`), item.title, "", `data-topic="${item.id}" title="${escape(item.title)}"${item.id === page.id ? ' aria-current="page"' : ""}`)
+    ).join("");
+  }
+  function projectTree(page, href, groups) {
+    const section = page.tab || new URL(page.back || page.path, page.url).searchParams.get("tab") || defaultProject.slug;
+    const visibleCount = 6;
+    const showAll = projects.findIndex((project) => project.slug === section) >= visibleCount;
+    return projects.map(({ slug, name, file, path }, index) => {
+      const open = section === slug;
+      const extra = index >= visibleCount;
+      const branch = `vcx-project-${slug}`;
+      const children = Array.isArray(groups[slug]) ? threadLinks(groups[slug], page, href) : "";
+      return `<div ${extra ? "data-extra-project" : ""}${extra && !showAll ? " hidden" : ""}>
+      <a class="vcx-action vcx-project" href="${escape(href(path))}" ${slug === page.tab ? 'aria-current="page"' : ""}>
+        <span data-folder="${slug}">${icon(open ? "folderOpen" : "folder")}</span><span>${escape(name)}</span><code>${file}</code>
+      </a>
+      <div class="vcx-project-threads" id="${branch}" ${open ? "" : "hidden"}>${children || link(href(path), "查看话题")}</div>
+      <button class="vcx-action vcx-tree-toggle" type="button" data-action="project" data-project="${slug}" aria-controls="${branch}" aria-expanded="${open}">${open ? "收起 ↑" : "展开显示 ↓"}</button>
+    </div>`;
+    }).join("") + `<button class="vcx-action vcx-projects-toggle" type="button" data-action="projects" aria-expanded="${showAll}">${showAll ? "收起" : "展开显示"}</button>`;
+  }
+  function shell(page, { href, original, recent, groups, account, topics }) {
+    const thread = page.kind === "topic";
+    const context = thread ? page.nodeName || "话题" : page.name;
+    const contextPath = thread && page.node ? `/go/${page.node}` : page.path;
+    const summary = thread ? `${page.name} · ${page.floors || "–"} 楼` : page.kind === "list" ? `全部线程 · ${topics.length || "–"}` : "全部节点";
+    const newTopic = href(newTopicPath(page));
+    const messages = href(account.signedIn ? "/notifications" : account.path);
+    const favorites = href(account.signedIn ? "/my/topics" : account.path);
+    const pins = topics.filter((topic) => topic.pinned).slice(0, 5);
+    const latest = recent.length ? recent.slice(0, 4) : topics.slice(0, 4);
+    return `
+    <nav class="vcx-strip" aria-label="工作区工具">
+      ${iconLink(href(defaultProject.path), "home", "首页", "data-active")}
+      ${iconLink(href("/recent"), "clock", "近期活动")}
+      ${iconLink(messages, "at", "我的消息")}
+      ${iconLink(href("/planes"), "grid", "节点目录")}
+      <span class="vcx-flex"></span>
+      ${iconButton("settings", "gear", "设置")}
+    </nav>
+    <button class="vcx-scrim" type="button" data-action="scrim" tabindex="-1" aria-hidden="true"></button>
+    <aside class="vcx-sidebar" id="vcx-sidebar" aria-label="V2EX 导航">
+      <div class="vcx-window-actions">
+        ${iconButton("sidebar", "sidebar", "切换侧栏", 'aria-controls="vcx-sidebar"')}
+        ${iconButton("back", "left", "后退")}${iconButton("forward", "right", "前进")}
+        <span class="vcx-flex"></span>
+        ${iconButton("theme", "moon", "切换明暗主题")}
+      </div>
+      <header class="vcx-side-header">
+        <a class="vcx-brand" href="${escape(href(defaultProject.path))}">Codex ${icon("down")}</a>
+        <div class="vcx-brand-actions">
+          ${iconButton("search", "search", "搜索（Ctrl / ⌘ + K）", 'aria-haspopup="dialog"')}
+          ${iconLink(messages, "bell", "通知")}
+        </div>
+      </header>
+      <div class="vcx-sidebar-body">
+        <nav class="vcx-nav vcx-primary" aria-label="话题入口">
+          ${link(newTopic, "新话题", "pencil")}
+          ${link(href(defaultProject.path), "话题", "layers", page.kind !== "directory" ? 'aria-current="page"' : "")}
+          ${link(favorites, "我的收藏", "bookmark")}
+          ${link(messages, "我的消息", "inbox")}
+          ${link(href("/?tab=hot"), "热门话题", "hot")}
+          ${link(href("/recent"), "近期活动", "clock")}
+          <button class="vcx-action vcx-muted-action" type="button" data-action="more" aria-haspopup="dialog">${icon("more")}<span>更多</span></button>
+        </nav>
+        ${pins.length ? `<section class="vcx-nav-section"><h2>置顶</h2><div class="vcx-nav">${threadLinks(pins, page, href)}</div></section>` : ""}
+        <section class="vcx-nav-section" aria-labelledby="vcx-project-label">
+          <h2 id="vcx-project-label">项目</h2>
+          <nav class="vcx-nav" aria-label="V2EX 分区">${projectTree(page, href, groups)}</nav>
+        </section>
+        ${latest.length ? `<section class="vcx-nav-section" aria-labelledby="vcx-recent-label">
+          <h2 id="vcx-recent-label">最近</h2>
+          <nav class="vcx-nav" aria-label="最近话题">${threadLinks(latest, page, href)}</nav>
+        </section>` : ""}
+      </div>
+    </aside>
+    <header class="vcx-topbar">
+      ${iconButton("sidebar", "sidebar", "切换侧栏", 'aria-controls="vcx-sidebar"')}
+      ${iconLink(href(thread ? page.back : defaultProject.path), "folder", thread ? "返回话题列表" : "返回项目首页")}
+      <div class="vcx-crumb">
+        <a href="${escape(href(contextPath))}" title="${escape(context)}">${escape(context)}</a><span class="vcx-crumb-sep" aria-hidden="true">/</span>
+        <span class="vcx-context" title="${escape(summary)}">${escape(summary)}</span>
+        ${thread && page.floors ? `<button class="vcx-floor" type="button" data-action="floors" aria-label="选择楼层" aria-haspopup="dialog">1 / ${page.floors}</button>` : ""}
+      </div>
+      <span class="vcx-flex"></span>
+      <div class="vcx-top-actions">
+        ${iconButton("panel", "panel", "切换代码面板", 'aria-controls="vcx-code" aria-pressed="false"')}
+        ${iconLink(original, "external", "在原站布局打开", 'target="_blank" rel="noopener"')}
+        ${iconButton("more", "dots", "更多操作", 'aria-haspopup="dialog"')}
+      </div>
+    </header>
+    ${codePanel(thread ? "topics" : context)}
+    <dialog class="vcx-dialog" id="vcx-dialog" lang="zh-CN" aria-labelledby="vcx-dialog-title"></dialog>
+    <div class="vcx-toast" role="status" aria-live="polite" hidden></div>`;
+  }
+  function dialogHeader(title) {
+    return `<div class="vcx-dialog-header"><h2 id="vcx-dialog-title">${escape(title)}</h2>${iconButton("close", "close", "关闭")}</div>`;
+  }
+  var hotkeys = [
+    ["K / J", "选择下一帖 / 上一帖"],
+    ["Enter", "打开选中的帖子"],
+    ["V", "完整预览"],
+    ["C", "复制原帖链接"],
+    ["B", "切换到代码工作区"],
+    ["Ctrl / ⌘ + K", "搜索本页话题和分区"],
+    ["Esc", "关闭弹窗或退出预览"]
+  ];
+  function helpDialog() {
+    return `${dialogHeader("键盘快捷键")}<div class="vcx-dialog-body vcx-keys">${hotkeys.map(([key, label2]) => `<div><span>${label2}</span><kbd>${key}</kbd></div>`).join("")}</div>`;
+  }
+  function moreDialog(href, account, canRead, focus) {
+    const options = [
+      ...canRead ? [["preview", "expand", focus ? "退出完整预览（V）" : "完整预览（V）"], ["copy", "copy", "复制原帖链接（C）"]] : [],
+      ["boss", "terminal", "切换到代码工作区（B）"],
+      ["help", "command", "键盘快捷键"],
+      ["settings", "gear", "settings.json"]
+    ];
+    return `${dialogHeader("更多操作")}<div class="vcx-dialog-body vcx-nav">${options.map(
+      ([action, glyph, text]) => `<button class="vcx-action" type="button" data-action="${action}">${icon(glyph)}<span>${text}</span></button>`
+    ).join("")}${link(href(account.path), account.name, "person")}</div>`;
+  }
+  function settingsDialog(settings, demo) {
+    return `${dialogHeader("settings.json")}
+    <div class="vcx-dialog-body vcx-settings">
+      <label>配色<select data-setting="theme">
+        ${[["system", "跟随系统"], ["light", "浅色"], ["dark", "深色"]].map(([value, label2]) => `<option value="${value}"${value === settings.theme ? " selected" : ""}>${label2}</option>`).join("")}
+      </select></label>
+      <label><span>Images<small>显示正文和回复中的图片</small></span><input type="checkbox" role="switch" data-setting="images"${settings.images ? " checked" : ""}></label>
+      <label>代码面板<select data-setting="codePanel">
+        ${[["auto", "宽屏显示"], ["on", "显示"], ["off", "隐藏"]].map(([value, label2]) => `<option value="${value}"${value === settings.codePanel ? " selected" : ""}>${label2}</option>`).join("")}
+      </select></label>
+      ${demo ? "" : '<button class="vcx-button" data-action="original" type="button">切回原站布局</button>'}
+    </div>`;
+  }
+
+  // src/dialogs.js
+  function createDialogs(dialog, topics, href) {
+    let opener;
+    function close(restore = true) {
+      if (!dialog.open) return;
+      dialog.close();
+      dialog.replaceChildren();
+      if (restore) opener?.focus({ preventScroll: true });
+      opener = null;
+    }
+    function open(markup) {
+      close();
+      opener = document.activeElement;
+      dialog.innerHTML = markup;
+      dialog.showModal();
+    }
+    dialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      close();
+    });
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) close();
+    });
+    function search() {
+      open(`${dialogHeader("搜索")}
+      <form class="vcx-search-form" role="search">
+        <label class="vcx-search-field">${icon("search")}<input type="search" aria-label="搜索本页话题和分区" placeholder="搜索本页话题和分区" autofocus></label>
+        <div class="vcx-search-results" aria-label="搜索结果"></div>
+      </form>`);
+      const field = dialog.querySelector("input");
+      const results = dialog.querySelector(".vcx-search-results");
+      function render() {
+        const query = field.value.trim().toLowerCase();
+        const matches = topics.filter((topic) => [topic.title, topic.node, topic.author].some((text) => text.toLowerCase().includes(query))).slice(0, 12);
+        const sections = projects.filter((project) => [project.name, project.file].some((text) => text.toLowerCase().includes(query)));
+        results.innerHTML = `${matches.length ? `<div class="vcx-search-label">本页话题</div>${matches.map(
+          (topic) => link(href(`/t/${topic.id}`), topic.title, "layers", `data-topic="${topic.id}" title="${escape(topic.title)}"`)
+        ).join("")}` : ""}${sections.length ? `<div class="vcx-search-label">项目</div>${sections.map(
+          (project) => link(href(project.path), `${project.name} · ${project.file}`, "folder")
+        ).join("")}` : ""}${matches.length || sections.length ? "" : '<p class="vcx-empty">当前页面未找到匹配项。</p>'}`;
+      }
+      field.addEventListener("input", render);
+      field.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowDown" && results.firstElementChild) {
+          event.preventDefault();
+          results.querySelector("a")?.focus();
+        }
+      });
+      dialog.querySelector("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        results.querySelector("a")?.click();
+      });
+      render();
+      field.focus();
+    }
+    return { open, close, search };
+  }
+
+  // src/reader-activity.js
+  var readerIcons = {
+    search: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>`,
+    branch: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="8" r="2.4"/><path d="M6 8.4v7.2"/><path d="M18 10.4c0 4-4 3.6-7 4.6"/></svg>`,
+    clock: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>`,
+    folder: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>`,
+    bookmark: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`,
+    check: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    quote: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.5 0-3-.4-4.2-1L3 20l1.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg>`,
+    copy: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>`,
+    reply: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>`,
+    like: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>`,
+    link: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>`,
+    terminal: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><polyline points="7 9 10 12 7 15"/><path d="M12.5 15H17"/></svg>`,
+    file: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/></svg>`,
+    globe: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.7 2.6 4 5.7 4 9s-1.3 6.4-4 9c-2.7-2.6-4-5.7-4-9s1.3-6.4 4-9Z"/></svg>`,
+    noentry: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>`,
+    chevronRightSm: `<svg aria-hidden="true" class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>`
+  };
+  var FLOOR_ICONS = ["check", "branch", "terminal", "file", "globe", "clock"];
+  var RUN_LINES = [
+    ["terminal", "Running command", true],
+    ["file", "Reading file", false],
+    ["search", "Searching codebase", false],
+    ["folder", "Listing directory", false],
+    ["check", "Applied changes", false],
+    ["globe", "Fetched page", false],
+    ["branch", "Pushed commits", false],
+    [null, "Reconnecting", false]
+  ];
+  var RUN_CMDS = [
+    "cargo build --release",
+    "npm run build",
+    "pytest -q tests/cache",
+    "go test ./...",
+    "git diff --stat",
+    "ls src/",
+    "make lint",
+    "npm test -- --filter=auth",
+    "cargo test --release",
+    "go vet ./...",
+    "docker compose up -d",
+    "kubectl get pods -n prod",
+    "curl -sI https://linux.do"
+  ];
+  var THINK_OPENERS = [
+    "Okay, let me think through this properly.",
+    "Alright, reading the post again — the claim hinges on one assumption.",
+    "So the question is essentially about trade-offs, not correctness.",
+    "Hmm, this is more subtle than it first looks.",
+    "The framing is plausible but incomplete — let me reason about why.",
+    "Let me unpack what's actually being claimed here before reacting.",
+    "Interesting — the symptom and the cause are probably two different things.",
+    "Before agreeing, I want to check the failure mode this implies.",
+    "First instinct: this is a config issue masquerading as a bug.",
+    "Let me separate the diagnosis from the proposed fix.",
+    "There's a decent argument on both sides here, which is worth admitting up front.",
+    "The subject line promises one thing; the body asks another.",
+    "I've seen this pattern before — it usually ends up being permissions.",
+    "Reproducing it locally would settle half of this thread instantly.",
+    "I'm going to hold off on an opinion until the key numbers are clear."
+  ];
+  var THINK_MIDS = [
+    "The most likely explanation is resource contention, not the code path itself.",
+    "If the numbers hold under a controlled benchmark, the conclusion is solid; if not, it's measurement noise.",
+    "There are two ways to verify this: profile it under load, or bisect the change.",
+    "I should distinguish between what the author measured and what they inferred.",
+    "The failure mode only shows up under load, which is exactly why it's easy to miss.",
+    "Correlation is doing a lot of work in that argument — worth pointing out gently.",
+    "The simple approach probably wins here; the clever one just moves the complexity.",
+    "Backwards compatibility matters more than elegance in this specific case.",
+    "Queueing delay would explain the tail latency better than throughput.",
+    "The connection pooling detail probably matters more than the language choice.",
+    "Caching is the obvious lever, but it only helps if the read path is actually hot.",
+    "The version pin matters here — half of these reports turn out to be a dependency bump.",
+    "This smells like an ordering problem: the cleanup runs before the flush.",
+    "In practice the config default wins; nobody reads the docs that deeply.",
+    "A single metric won't settle this — I'd want p50 and p99 side by side.",
+    "The author's fix works, but it trades one race condition for a subtler one.",
+    "If this were reproducible in CI, it would already be closed. That absence is itself a signal.",
+    "The right comparison isn't between these two tools, but with the baseline you already trust.",
+    "There's a naming collision lurking in there — prod and dev are using different feature flags.",
+    "Retry logic usually hides the real fault; the first failure is the honest one.",
+    "The throughput story looks good, but the memory graph tells a different one.",
+    "I'd rather recommend the boring solution that survives a teammate leaving.",
+    "Cache invalidation is the unstated dependency in this whole argument.",
+    "The diff is small, but the semantics around the null case changed.",
+    "Reaching for an abstraction here just relocates the special cases.",
+    "Log noise is suspicious: healthy systems fail quietly, not chatty.",
+    "The author is right about the symptom, wrong about the mechanism.",
+    "That timing is too uniform to be network jitter — looks scheduled.",
+    "Concurrent writers would explain both errors, and a transaction would fix both.",
+    "The benchmark lacks a warm-up phase, so the interpreter jit is skewing the first numbers.",
+    "Idempotency handles the retry storm better than a tighter timeout ever will.",
+    "This passes in tests because tests never exercise the actual cross-origin path.",
+    "The dependency was pinned a year ago; the latest release fixed exactly this.",
+    "Two callers assume the same global — that's the actual coupling, not the shared file.",
+    "I can't confirm the root cause without the request headers.",
+    "Better to narrow the scope than to guess at infrastructure.",
+    "The proposal optimizes clean-up but leaves the cold-start path untouched.",
+    "Feature flags are the part that usually ages the worst in these codebases."
+  ];
+  var THINK_CLOSERS = [
+    "Let me structure the reply around the one number that matters.",
+    "I'll keep it short and ask the question that actually needs answering.",
+    "I should avoid sounding dismissive — the work is genuinely good.",
+    "Okay, writing it out step by step is the right move here.",
+    "One concrete suggestion beats three abstract ones. Going with that.",
+    "I'll agree with the direction, then flag the one thing that could bite later.",
+    "Better to leave a question than a lecture — keeping the reply to two points.",
+    "Let me lead with the concrete number, then the caveat.",
+    "I'll ask for the reproduction steps before committing to a diagnosis.",
+    "Wrapping up with the fix I'd actually ship, not the one that sounds smart.",
+    "I'll point at the trade-off and let them decide — it's their system.",
+    "Closing with a single question keeps the thread productive.",
+    "I'll keep the tone neutral; the claim is fine, the evidence is thin.",
+    "That's enough analysis — the practical next step is obvious."
+  ];
+  function mulberry32(a) {
+    return function() {
+      a = a + 1831565813 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function buildThinking(random) {
+    const seconds = 2 + Math.floor(random() * 46);
+    const pick = (pool) => pool[Math.floor(random() * pool.length)];
+    const sentences = [pick(THINK_OPENERS)];
+    if (random() < 0.65) sentences.push(pick(THINK_MIDS));
+    if (random() < 0.6) sentences.push(pick(THINK_CLOSERS));
+    const details = document.createElement("details");
+    details.className = "vcx-think";
+    details.lang = "en";
+    details.open = true;
+    details.innerHTML = `<summary class="vcx-think-head" title="模拟思考"><span class="vcx-think-star" aria-hidden="true">✻</span><span>Worked for ${seconds}s</span><span class="vcx-think-chev" aria-hidden="true"></span></summary>
+    <div class="vcx-think-body">${escape(sentences.join("\n\n"))}</div>`;
+    return details;
+  }
+  function replyActivity(topicId2, replyId) {
+    const floorRandom = mulberry32(Math.imul(replyId, 2246822519) ^ Number(topicId2));
+    const floorIcon = readerIcons[FLOOR_ICONS[Math.floor(floorRandom() * FLOOR_ICONS.length)]];
+    const random = mulberry32(Math.imul(replyId + 1, 2654435761) ^ Number(topicId2));
+    const thinking = buildThinking(random);
+    const lines2 = [];
+    const count = random() < 0.22 ? 2 : 1;
+    const used = /* @__PURE__ */ new Set();
+    for (let index = 0; index < count; index++) {
+      let choice = Math.floor(random() * RUN_LINES.length);
+      if (used.has(choice)) choice = (choice + 1) % RUN_LINES.length;
+      used.add(choice);
+      const [glyph, label2, withCommand] = RUN_LINES[choice];
+      const text = glyph ? label2 : `${label2} ${1 + Math.floor(random() * 4)}/${2 + Math.floor(random() * 4)}`;
+      const command = withCommand ? RUN_CMDS[Math.floor(random() * RUN_CMDS.length)] : "";
+      const line = document.createElement("div");
+      line.className = "vcx-runline";
+      line.lang = "en";
+      line.title = "模拟活动";
+      line.innerHTML = `${readerIcons[glyph] || ""}<span>${text}</span>${command ? `<code>${escape(command)}</code>` : ""}`;
+      lines2.push(line);
+    }
+    return { floorIcon, thinking, lines: lines2 };
+  }
+
+  // src/reader.js
+  var topicReportLabel = /^(?:(?:报告|举报)这个主题|你已对本主题进行了报告|Report this topic|You have already reported this topic)[。.!！]?$/i;
+  function hideTopicReport(main) {
+    const reportLink = 'a[href*="/report/topic/"], [onclick*="/report/topic/"]';
+    for (const element of main.querySelectorAll(`:scope > .box, a, button, ${reportLink}`)) {
+      if (element.closest(".topic_content, .reply_content, #topic-replies")) continue;
+      if (!element.matches(reportLink) && !topicReportLabel.test(element.textContent.trim())) continue;
+      element.hidden = true;
+      const spacer = element.previousElementSibling;
+      if (element.parentElement === main && spacer?.matches(".sep20")) spacer.hidden = true;
+    }
+  }
+  function postActions(url, copy) {
+    const actions = document.createElement("div");
+    actions.className = "vcx-turn-actions";
+    const link2 = document.createElement("button");
+    link2.type = "button";
+    link2.innerHTML = `${readerIcons.link}<span>复制链接</span>`;
+    link2.addEventListener("click", () => copy(url, "链接已复制"));
+    actions.append(link2);
+    return actions;
+  }
+  function layoutOriginalPost(main, createActions) {
+    const heading = main.querySelector(".header h1, h1");
+    const header = heading?.closest(".header");
+    const box = header?.closest(".box");
+    if (!box) return heading;
+    box.classList.add("vcx-native-topic");
+    const content = box.querySelector(":scope > .topic_content, :scope > :is(.cell, .inner) .topic_content");
+    const original = content?.closest(".vcx-native-topic > :is(.cell, .inner)") || content || document.createElement("div");
+    if (content) heading.classList.add("vcx-visually-hidden");
+    else original.append(heading);
+    original.classList.add("vcx-original-post", "vcx-post-bubble");
+    header.before(original);
+    const footer = document.createElement("div");
+    footer.className = "vcx-turn-footer";
+    const byline = document.createElement("div");
+    byline.className = "vcx-turn-byline";
+    byline.innerHTML = '<span class="vcx-post-dot" aria-hidden="true"></span>';
+    const author = header.querySelector("small.gray");
+    const date = author?.querySelector("time, span[title]");
+    if (date) date.textContent = relativeTime(date);
+    if (author) {
+      author.prepend("楼主 · ");
+      const views = author.lastChild;
+      if (views?.nodeType === Node.TEXT_NODE) {
+        views.textContent = views.textContent.replace(/([\d,]+)\s*(?:views?|次(?:阅读|点击))\s*$/i, "阅读 $1");
+      }
+      byline.append(author);
+    } else {
+      byline.append("楼主");
+    }
+    const actions = createActions();
+    const toolbar = box.querySelector(":scope > .topic_buttons");
+    toolbar?.querySelector('a[href*="/favorite/topic/"], a[href*="/unfavorite/topic/"]')?.insertAdjacentHTML("afterbegin", readerIcons.bookmark);
+    toolbar?.querySelector('[onclick*="thankTopic("]')?.insertAdjacentHTML("afterbegin", readerIcons.like);
+    const stats = toolbar?.querySelector(".topic_stats");
+    if (stats) {
+      if (author?.textContent.includes("阅读 ")) stats.hidden = true;
+      else byline.append(stats);
+    }
+    const votes = header.querySelector(".votes");
+    if (votes) actions.prepend(votes);
+    if (toolbar) actions.prepend(toolbar);
+    footer.append(byline, actions);
+    header.classList.add("vcx-op-meta");
+    header.append(footer);
+    for (const supplement of box.querySelectorAll(":scope > .subtle:has(.topic_content)")) {
+      supplement.classList.add("vcx-post-bubble");
+    }
+    return original;
+  }
+  function layoutTopicTags(original, replies) {
+    const tags = replies?.querySelectorAll(".reply-threads > :is(.vcx-reply-summary, .cell:first-child:not([id])) a.tag[href^='/tag/']");
+    if (!original?.classList.contains("vcx-original-post") || !tags?.length) return;
+    let nav = original.querySelector(":scope > .vcx-topic-tags");
+    if (!nav) {
+      nav = document.createElement("nav");
+      nav.className = "vcx-topic-tags";
+      nav.setAttribute("aria-label", "话题标签");
+      original.append(nav);
+    }
+    for (const tag of tags) {
+      tag.classList.remove("tag");
+      const name = tag.textContent.trim();
+      tag.textContent = name.startsWith("#") ? name : `#${name}`;
+    }
+    nav.replaceChildren(...tags);
+  }
+  function layoutReply(row, index, topicId2, createActions) {
+    const content = row.querySelector(".reply_content");
+    if (!content || row.classList.contains("vcx-turn")) return;
+    const column = content.parentElement;
+    const header = column.querySelector(":scope > .flex-one-row");
+    const controls = column.querySelector(":scope > .fr");
+    const author = header?.querySelector("strong") || column.querySelector(":scope > strong");
+    const date = header?.querySelector("time, .ago") || column.querySelector(":scope > :is(time, .ago)");
+    const thanks = header?.querySelector(".small.fade:has(img)") || column.querySelector(":scope > .small.fade:has(img)");
+    const number = header?.querySelector(".no") || controls?.querySelector(".no") || column.querySelector(":scope > .no");
+    const replyNumber = Number(number?.textContent);
+    if (number) number.hidden = true;
+    row.dataset.vcxFloor = replyNumber ? replyNumber + 1 : index + 2;
+    const replyId = Number(row.id.slice(2)) || replyNumber || index + 1;
+    const { floorIcon, thinking, lines: lines2 } = replyActivity(topicId2, replyId);
+    const footer = document.createElement("div");
+    footer.className = "vcx-turn-footer vcx-reply-meta";
+    const byline = document.createElement("div");
+    byline.className = "vcx-turn-byline";
+    byline.innerHTML = floorIcon;
+    byline.append(`${row.dataset.vcxFloor} 楼`);
+    if (author) byline.append("·", author);
+    if (date) {
+      date.textContent = relativeTime(date);
+      byline.append("·", date);
+    }
+    if (thanks) {
+      thanks.classList.add("vcx-reply-thanks");
+      thanks.title = `${thanks.textContent.trim()} 次感谢`;
+      thanks.insertAdjacentHTML("afterbegin", readerIcons.like);
+      byline.append(thanks);
+    }
+    const actions = createActions(row.id);
+    for (const group of [header, controls]) {
+      if (!group) continue;
+      group.classList.add("vcx-native-reply-actions");
+      actions.prepend(group);
+    }
+    for (const [handler, label2, glyph] of [["replyOne", "回复", "reply"], ["thankReply", "感谢", "like"], ["ignoreReply", "隐藏", "noentry"]]) {
+      const control = actions.querySelector(`[onclick*="${handler}("]`);
+      if (!control) continue;
+      control.classList.add("vcx-reply-action");
+      control.insertAdjacentHTML("afterbegin", readerIcons[glyph]);
+      if (!control.textContent.trim()) control.append(label2);
+    }
+    footer.append(byline, actions);
+    content.after(...lines2, footer);
+    const spacer = content.previousElementSibling;
+    if (spacer?.matches(".sep5")) spacer.hidden = true;
+    content.before(thinking);
+    row.classList.add("vcx-turn");
+  }
+  function layoutQuotes(main) {
+    for (const quote of main.querySelectorAll(":is(.topic_content, .reply_content) blockquote:not(.vcx-quote-body)")) {
+      const details = document.createElement("details");
+      details.className = "vcx-quote";
+      const summary = document.createElement("summary");
+      summary.innerHTML = `${readerIcons.quote}<span>引用</span>${readerIcons.chevronRightSm}`;
+      quote.classList.add("vcx-quote-body");
+      quote.before(details);
+      details.append(summary, quote);
+    }
+  }
+  function layoutSnippets(main, copy) {
+    for (const pre of main.querySelectorAll(".topic_content pre, .reply_content pre")) {
+      if (pre.parentElement.classList.contains("vcx-snippet")) continue;
+      const code = pre.querySelector("code");
+      const language = code?.className.match(/\b(?:language|lang)-([\w#+-]+)/)?.[1] || "代码";
+      const frame = document.createElement("div");
+      frame.className = "vcx-snippet";
+      const header = document.createElement("div");
+      header.className = "vcx-snippet-header";
+      const label2 = document.createElement("span");
+      label2.textContent = language;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.innerHTML = `${readerIcons.copy}复制`;
+      button.addEventListener("click", () => copy((code || pre).textContent, "代码已复制"));
+      header.append(label2, button);
+      pre.tabIndex = 0;
+      pre.before(frame);
+      frame.append(header, pre);
+    }
+  }
+  function setupReader(page, { href, copy }) {
+    const { main, url } = page;
+    hideTopicReport(main);
+    const replies = main.querySelector("#topic-replies");
+    const createActions = (id = "") => {
+      const path = id ? url.pathname + url.search + "#" + id : url.pathname;
+      return postActions(href(path), copy);
+    };
+    const original = layoutOriginalPost(main, createActions);
+    const summary = replies?.querySelector(".reply-threads > .cell:first-child:not([id])");
+    if (summary) {
+      const total = summary.textContent.match(/(\d[\d,]*)\s*(?:repl(?:y|ies)|条回复)/i)?.[1]?.replaceAll(",", "");
+      if (total) page.floors = Number(total) + 1;
+      summary.classList.add("vcx-reply-summary");
+      summary.parentElement.append(summary);
+    }
+    let rows = [];
+    function sync() {
+      layoutTopicTags(original, replies);
+      const owners = /* @__PURE__ */ new Set();
+      for (const content of replies?.querySelectorAll(".reply_content") || []) {
+        const row = content.closest("[id^='r_']");
+        if (row && replies.contains(row)) owners.add(row);
+      }
+      rows = [...owners];
+      for (const [index, row] of rows.entries()) {
+        layoutReply(row, index, page.id, createActions);
+      }
+      layoutQuotes(main);
+      layoutSnippets(main, copy);
+      for (const image of main.querySelectorAll(".topic_content img, .reply_content img")) {
+        if (image.classList.contains("emoji") || image.dataset.vcxImage) continue;
+        const picture = image.closest("picture") || image;
+        if (picture.dataset.vcxImage) continue;
+        picture.dataset.vcxImage = "true";
+        const note = document.createElement("span");
+        note.className = "vcx-image-note";
+        note.textContent = "[图片已隐藏]";
+        picture.before(note);
+      }
+    }
+    function revealLinkedReply(hash) {
+      if (!hash.startsWith("#r_")) return;
+      const target = document.getElementById(hash.slice(1));
+      if (!target || !rows.includes(target)) return;
+      target.scrollIntoView({ block: "start" });
+    }
+    window.addEventListener("hashchange", () => revealLinkedReply(location.hash));
+    let scheduled = false;
+    new MutationObserver(() => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        sync();
+      });
+    }).observe(main, { childList: true, subtree: true });
+    sync();
+    if (url.hash) requestAnimationFrame(() => revealLinkedReply(url.hash));
+    if (!page.floors && original) page.floors = rows.length + 1;
+    return {
+      floors() {
+        return rows.map((row, index) => {
+          const author = row.querySelector(".vcx-reply-meta strong")?.textContent.trim() || "";
+          return { index, label: `${row.dataset.vcxFloor || index + 2} 楼${author ? ` · ${author}` : ""}` };
+        });
+      },
+      jump(index) {
+        const target = index < 0 ? original : rows[index];
+        if (!target) return;
+        target.scrollIntoView({ block: "start" });
+        target.tabIndex = -1;
+        target.focus({ preventScroll: true });
+        return index < 0 ? 1 : Number(target.dataset.vcxFloor) || index + 2;
+      }
+    };
+  }
+
+  // src/app.js
+  var darkPreference = "(prefers-color-scheme: dark)";
+  var stylesInstalled = false;
+  function installCss() {
+    if (stylesInstalled) return;
+    const css = `${skin_default}
+${native_default}
+${reader_default}`;
+    if ("adoptedStyleSheets" in document && "replaceSync" in CSSStyleSheet.prototype) {
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(css);
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+    } else {
+      const tag = document.createElement("style");
+      tag.textContent = css;
+      (document.head || document.documentElement).append(tag);
+    }
+    document.fonts.add(new FontFace("V2EX Codex Icons", `url(${icons_default})`));
+    document.fonts.add(new FontFace("V2EX Codex UI", `url(${inter_latin_default})`, { weight: "100 900" }));
+    stylesInstalled = true;
+  }
+  function setThemeClass(root, theme, systemDark) {
+    const dark = theme === "system" ? systemDark : theme === "dark";
+    root.classList.toggle("vcx-dark", dark);
+    return dark;
+  }
+  function prepareSkin(settings) {
+    const root = document.documentElement;
+    installCss();
+    setThemeClass(root, settings.theme, matchMedia(darkPreference).matches);
+    root.classList.add("vcx-starting");
+    return () => {
+      root.classList.remove("vcx-starting");
+      if (!root.classList.contains("vcx")) root.classList.remove("vcx-dark");
+    };
+  }
+  function mount(page, {
+    href,
+    original,
+    onOriginal,
+    demo = false,
+    settings = loadSettings(),
+    navigateTopic = (url) => location.assign(url),
+    historyTarget = history
+  }) {
+    const root = document.documentElement;
+    const wrapper = document.getElementById("Wrapper");
+    const scroller = wrapper.querySelector(".content") || wrapper;
+    const small = matchMedia("(max-width: 900px)");
+    const wide = matchMedia("(min-width: 1180px)");
+    const systemDark = matchMedia(darkPreference);
+    const topics = page.kind === "list" ? readTopics(page.main, page.url) : [];
+    const account = accountLink(document);
+    const reader = page.kind === "topic" ? setupReader(page, { href, copy }) : null;
+    const wrapperContents = document.createElement("div");
+    wrapperContents.className = "vcx-chrome";
+    wrapperContents.lang = "zh-CN";
+    wrapperContents.innerHTML = shell(page, {
+      href,
+      original,
+      recent: recentTopics(page),
+      groups: projectThreads(page, topics),
+      account,
+      topics
+    });
+    document.body.prepend(wrapperContents);
+    installCss();
+    decorateNative(page, href, topics);
+    const composer = mountComposer(page, { href, account, demo, copy });
+    if (page.main.tagName !== "MAIN") page.main.setAttribute("role", "main");
+    const sidebar = document.getElementById("vcx-sidebar");
+    const strip = wrapperContents.querySelector(".vcx-strip");
+    const panel = document.getElementById("vcx-code");
+    const bar = wrapperContents.querySelector(".vcx-topbar");
+    const toast = wrapperContents.querySelector(".vcx-toast");
+    const dialog = document.getElementById("vcx-dialog");
+    const dialogs = createDialogs(dialog, topics, href);
+    const themeButton = wrapperContents.querySelector('[data-action="theme"]');
+    const floorButton = bar.querySelector('[data-action="floors"]');
+    const panelButton = bar.querySelector('[data-action="panel"]');
+    const sidebarButtons = wrapperContents.querySelectorAll('[data-action="sidebar"]');
+    const restoredSelection = topics.findIndex((topic) => topic.id === previousSelection(page.path));
+    let selected = Math.max(0, restoredSelection);
+    let mobileSidebar = false;
+    let desktopSidebar = true;
+    let mobilePanel = null;
+    let editorView = "code";
+    let boss = false;
+    let focus = page.kind === "topic" && readSession("preview") === page.id;
+    let lastScroll = 0;
+    let toastTimer;
+    let titleBeforeBoss;
+    let previousFocus;
+    if (focus) writeSession("preview", null);
+    if (restoredSelection >= 0) selectTopic(selected);
+    root.dataset.vcxPage = page.kind;
+    root.classList.add("vcx");
+    sync();
+    function notify(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.hidden = false;
+      toastTimer = setTimeout(() => {
+        toast.hidden = true;
+      }, 2300);
+    }
+    function sync() {
+      const dark = setThemeClass(root, settings.theme, systemDark.matches);
+      const navVisible = !boss && (small.matches ? mobileSidebar : desktopSidebar);
+      const codeVisible = boss || !focus && (wide.matches ? settings.codePanel !== "off" : mobilePanel ?? settings.codePanel === "on");
+      const overlay = !boss && (small.matches && navVisible || !wide.matches && codeVisible);
+      root.classList.toggle("vcx-boss", boss);
+      root.classList.toggle("vcx-focused", focus && !boss);
+      root.classList.toggle("vcx-sidebar-open", navVisible);
+      root.classList.toggle("vcx-panel-open", codeVisible);
+      root.classList.toggle("vcx-overlay", overlay);
+      root.dataset.vcxImages = settings.images ? "on" : "off";
+      themeButton.innerHTML = icon(dark ? "sun" : "moon");
+      themeButton.setAttribute("aria-label", dark ? "切换到浅色主题" : "切换到深色主题");
+      sidebar.hidden = !navVisible;
+      strip.hidden = !navVisible;
+      panel.hidden = !codeVisible;
+      if (composer) composer.hidden = focus;
+      wrapper.inert = boss || overlay;
+      bar.inert = overlay;
+      for (const button of sidebarButtons) button.setAttribute("aria-expanded", navVisible);
+      panelButton.setAttribute("aria-pressed", codeVisible);
+      syncEditor();
+    }
+    function syncEditor() {
+      const view = boss ? "code" : editorView;
+      for (const button of panel.querySelectorAll('[data-action="editor-view"]')) {
+        button.setAttribute("aria-pressed", button.dataset.view === view);
+      }
+      for (const content of panel.querySelectorAll("[data-editor-view]")) content.hidden = content.dataset.editorView !== view;
+    }
+    function saveSettings() {
+      writeLocal("settings", settings);
+      sync();
+    }
+    function selectTopic(index, keyboard = false) {
+      const topic = topics[index];
+      if (!topic) return;
+      topics[selected]?.row.classList.remove("vcx-selected");
+      topics[selected]?.anchor.removeAttribute("aria-current");
+      selected = index;
+      topic.row.classList.add("vcx-selected");
+      topic.anchor.setAttribute("aria-current", "true");
+      if (keyboard) {
+        topic.anchor.focus({ preventScroll: true });
+        topic.row.scrollIntoView({ block: "nearest" });
+      }
+    }
+    function openTopic(id, full = false) {
+      if (!/^\d+$/.test(id)) return;
+      rememberListing(page.path, topics, id);
+      writeSession("preview", full ? id : null);
+      navigateTopic(href(`/t/${id}`));
+    }
+    function move(step) {
+      if (topics.length) {
+        const index = selected + step;
+        if (topics[index]) selectTopic(index, true);
+        else notify(step > 0 ? "已到本页末尾" : "已到本页开头");
+        return;
+      }
+      if (page.kind !== "topic") return;
+      const listing2 = listingFor(page.id);
+      if (!listing2) return notify("从话题列表打开后即可连续切换");
+      const next = listing2.ids[listing2.ids.indexOf(page.id) + step];
+      if (next) openTopic(next, focus);
+      else notify(step > 0 ? "已到本页末尾" : "已到本页开头");
+    }
+    function preview() {
+      if (topics[selected]) return openTopic(topics[selected].id, true);
+      if (!reader) return;
+      focus = !focus;
+      if (focus) mobilePanel = false;
+      sync();
+    }
+    function toggleBoss() {
+      boss = !boss;
+      if (boss) {
+        previousFocus = document.activeElement;
+        dialogs.close(false);
+        lastScroll = scroller.scrollTop;
+        titleBeforeBoss = document.title;
+        document.title = "lib.rs — Codex";
+        toast.hidden = true;
+        mobileSidebar = false;
+        sync();
+        panel.querySelector("pre:not([hidden])").focus({ preventScroll: true });
+        return;
+      }
+      document.title = titleBeforeBoss;
+      sync();
+      if (previousFocus?.isConnected && !previousFocus.closest("[hidden], [inert]")) previousFocus.focus({ preventScroll: true });
+      scroller.scrollTop = lastScroll;
+    }
+    function togglePanel() {
+      const open = panel.hidden;
+      focus = false;
+      mobileSidebar = false;
+      if (wide.matches) {
+        settings.codePanel = open ? "on" : "off";
+        saveSettings();
+      } else {
+        mobilePanel = open;
+        sync();
+        if (open) panel.querySelector("pre:not([hidden])").focus({ preventScroll: true });
+        else panelButton.focus({ preventScroll: true });
+      }
+    }
+    function toggleSidebar() {
+      if (small.matches) {
+        mobileSidebar = !mobileSidebar;
+        mobilePanel = false;
+      } else desktopSidebar = !desktopSidebar;
+      sync();
+      if (small.matches) {
+        const target = mobileSidebar ? sidebar.querySelector(".vcx-brand") : bar.querySelector('[data-action="sidebar"]');
+        target.focus({ preventScroll: true });
+      }
+      if (!small.matches && sidebar.hidden) bar.querySelector('[data-action="sidebar"]').focus({ preventScroll: true });
+    }
+    function closeOverlay() {
+      if (small.matches && mobileSidebar) return toggleSidebar();
+      if (!wide.matches && !panel.hidden) togglePanel();
+    }
+    async function copy(text, success) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const field = document.createElement("textarea");
+        field.className = "vcx-copy-field";
+        field.value = text;
+        const active = document.activeElement;
+        document.body.append(field);
+        field.select();
+        let copied = false;
+        try {
+          copied = document.execCommand("copy");
+        } catch {
+        }
+        field.remove();
+        active?.focus({ preventScroll: true });
+        if (!copied) return notify("无法访问剪贴板");
+      }
+      if (!boss || success === "代码已复制") notify(success);
+    }
+    function copyTopic() {
+      const id = topics[selected]?.id || page.id;
+      if (id) copy(new URL(`/t/${id}`, page.url).href, "已复制原帖链接");
+    }
+    function toggleProject(button) {
+      const slug = button.dataset.project;
+      const branch = document.getElementById(button.getAttribute("aria-controls"));
+      branch.hidden = !branch.hidden;
+      button.setAttribute("aria-expanded", String(!branch.hidden));
+      button.textContent = branch.hidden ? "展开显示 ↓" : "收起 ↑";
+      sidebar.querySelector(`[data-folder="${slug}"]`).innerHTML = icon(branch.hidden ? "folder" : "folderOpen");
+    }
+    function toggleProjects(button) {
+      const open = button.getAttribute("aria-expanded") !== "true";
+      button.setAttribute("aria-expanded", String(open));
+      button.textContent = open ? "收起" : "展开显示";
+      for (const project of sidebar.querySelectorAll("[data-extra-project]")) project.hidden = !open;
+    }
+    function showFloors() {
+      const floors = [{ index: -1, label: "1 楼 · 楼主" }, ...reader.floors()];
+      dialogs.open(`${dialogHeader("选择楼层")}<div class="vcx-dialog-body vcx-floor-list">${floors.map(
+        ({ index, label: label2 }) => `<button type="button" class="vcx-action" data-action="jump-floor" data-index="${index}"><span>${escape(label2)}</span></button>`
+      ).join("")}</div>`);
+    }
+    const actions = {
+      sidebar: toggleSidebar,
+      panel: togglePanel,
+      scrim: closeOverlay,
+      back: () => historyTarget.back(),
+      forward: () => historyTarget.forward(),
+      settings: () => dialogs.open(settingsDialog(settings, demo)),
+      help: () => dialogs.open(helpDialog()),
+      more: () => dialogs.open(moreDialog(href, account, topics.length > 0 || Boolean(reader), focus)),
+      floors: showFloors,
+      "jump-floor": (button) => {
+        const index = Number(button.dataset.index);
+        dialogs.close(false);
+        const floor = reader.jump(index);
+        if (floor) floorButton.textContent = `${floor} / ${page.floors}`;
+      },
+      projects: toggleProjects,
+      project: toggleProject,
+      search: dialogs.search,
+      close: () => dialogs.close(),
+      boss: toggleBoss,
+      theme: () => {
+        settings.theme = root.classList.contains("vcx-dark") ? "light" : "dark";
+        saveSettings();
+      },
+      original: onOriginal,
+      preview: () => {
+        dialogs.close();
+        preview();
+      },
+      copy: () => {
+        dialogs.close();
+        copyTopic();
+      },
+      "copy-code": () => copy(example, "代码已复制"),
+      "editor-view": (button) => {
+        editorView = button.dataset.view;
+        syncEditor();
+      }
+    };
+    wrapperContents.addEventListener("click", (event) => {
+      const trigger = event.target.closest("[data-action]");
+      if (trigger) actions[trigger.dataset.action]?.(trigger);
+      const result = event.target.closest("a[data-topic]");
+      if (result) rememberListing(page.path, topics, result.dataset.topic);
+    });
+    dialog.addEventListener("change", (event) => {
+      const setting = event.target.dataset.setting;
+      if (!setting) return;
+      settings[setting] = setting === "images" ? event.target.checked : event.target.value;
+      if (setting === "codePanel") {
+        mobilePanel = null;
+        if (!wide.matches && settings.codePanel === "on") mobileSidebar = false;
+      }
+      saveSettings();
+    });
+    page.main.addEventListener("click", (event) => {
+      if (focus && event.target.closest('[onclick*="replyOne("]')) {
+        focus = false;
+        sync();
+      }
+    }, { capture: true });
+    page.main.addEventListener("click", (event) => {
+      const control = event.target.closest("a, button, input, select, textarea");
+      if (control && !control.closest(".item_title")) return;
+      const row = event.target.closest(".vcx-native-row");
+      const topic = row && topics.find((item) => item.row === row);
+      if (!topic || event.defaultPrevented) return;
+      rememberListing(page.path, topics, topic.id);
+      if (event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      openTopic(topic.id);
+    });
+    function keydown(event) {
+      if (event.defaultPrevented || event.isComposing || event.altKey) return;
+      const key = event.key.toLowerCase();
+      const element = event.target;
+      const editing = element.matches?.("input, textarea, select") || element.isContentEditable;
+      let action;
+      if (key === "k" && (event.ctrlKey || event.metaKey) && !boss) action = dialogs.search;
+      else if (event.ctrlKey || event.metaKey || event.shiftKey) return;
+      else if (key === "escape" && dialog.open) action = () => dialogs.close();
+      else if (!editing && key === "b" && !event.repeat) action = toggleBoss;
+      else if (dialog.open || boss || editing) return;
+      else if (key === "escape" && root.classList.contains("vcx-overlay")) action = closeOverlay;
+      else if (root.classList.contains("vcx-overlay")) return;
+      else if (key === "escape" && focus) action = preview;
+      else if (key === "k" || key === "j") action = () => move(key === "k" ? 1 : -1);
+      else if (key === "v" && !event.repeat) action = preview;
+      else if (key === "c" && !event.repeat && !getSelection()?.toString()) action = copyTopic;
+      else if (key === "enter" && topics[selected] && !event.repeat && !element.closest?.("a, button, summary")) {
+        action = () => openTopic(topics[selected].id);
+      }
+      if (!action) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      action();
+    }
+    document.addEventListener("keydown", keydown, true);
+    small.addEventListener("change", () => {
+      mobileSidebar = false;
+      sync();
+    });
+    wide.addEventListener("change", () => {
+      mobilePanel = null;
+      sync();
+    });
+    systemDark.addEventListener("change", sync);
+  }
+
+  // src/topic-navigation.js
+  var topicFrameSelector = "iframe[data-vcx-topic-frame]";
+  var readyEvent = "v2ex-codex:topic-ready";
+  var openEvent = "v2ex-codex:open-page";
+  var hashEvent = "v2ex-codex:topic-hash";
+  function topicUrl(value) {
+    const url = new URL(value, location.href);
+    return url.origin === location.origin && url.searchParams.get("v2ex-codex") !== "off" && routeFor(url)?.kind === "topic" ? url : null;
+  }
+  function sameTabLink(event) {
+    if (event.defaultPrevented || event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return null;
+    const anchor = event.target.closest("a[href]");
+    return anchor && (!anchor.target || anchor.target === "_self") && !anchor.hasAttribute("download") ? anchor : null;
+  }
+  function bindTopicFrame(frame) {
+    const open = (href) => frame.dispatchEvent(new CustomEvent(openEvent, { detail: href }));
+    const form = document.getElementById("reply_content")?.form;
+    if (form && !form.target) form.target = "_top";
+    document.addEventListener("click", (event) => {
+      const anchor = sameTabLink(event);
+      if (!anchor) return;
+      const url = new URL(anchor.href, location.href);
+      if (url.protocol !== "https:" && url.protocol !== "http:") return;
+      if (url.origin !== location.origin) {
+        anchor.target = "_top";
+        return;
+      }
+      if (url.pathname === location.pathname && url.search === location.search && url.hash) return;
+      event.preventDefault();
+      open(url.href);
+    });
+    window.addEventListener("hashchange", () => frame.dispatchEvent(new Event(hashEvent)));
+    return { open };
+  }
+  function signalTopicReady(frame) {
+    frame.dispatchEvent(new Event(readyEvent));
+  }
+  function createTopicNavigation() {
+    const listHref = location.href;
+    const listTitle = document.title;
+    let pending;
+    let cached;
+    let visible = null;
+    let listContents;
+    let previousFocus;
+    function cancelPending() {
+      if (!pending) return;
+      clearTimeout(pending.timeout);
+      pending.frame.remove();
+      pending = null;
+    }
+    function setFrameVisible(entry, show) {
+      entry.frame.classList.toggle("vcx-topic-frame-visible", show);
+      entry.frame.inert = !show;
+      if (show) entry.frame.removeAttribute("aria-hidden");
+      else entry.frame.setAttribute("aria-hidden", "true");
+    }
+    function showPage(entry) {
+      if (visible === entry) return;
+      if (visible) setFrameVisible(visible, false);
+      if (entry) {
+        if (!visible) {
+          previousFocus = document.activeElement;
+          document.querySelector(".vcx-dialog[open]")?.close();
+          listContents = [...document.querySelectorAll("#Wrapper, .vcx-chrome")].map((node) => [node, node.inert]);
+          for (const [node] of listContents) node.inert = true;
+        }
+        document.title = entry.title;
+        setFrameVisible(entry, true);
+        entry.frame.contentWindow.focus();
+      } else {
+        for (const [node, inert] of listContents) node.inert = inert;
+        document.title = listTitle;
+        previousFocus?.focus({ preventScroll: true });
+      }
+      visible = entry;
+    }
+    function showTopic(entry, push) {
+      if (push && entry.href !== location.href) history.pushState({ vcxTopic: true }, "", entry.href);
+      else if (entry.href !== location.href) history.replaceState(history.state, "", entry.href);
+      showPage(entry);
+    }
+    function open(value, push = true) {
+      const url = topicUrl(value);
+      if (!url) {
+        location.assign(value);
+        return;
+      }
+      if (pending?.href === url.href && pending.push === push) return;
+      cancelPending();
+      if (cached?.href === url.href) {
+        showTopic(cached, push);
+        return;
+      }
+      const frame = document.createElement("iframe");
+      frame.className = "vcx-topic-frame";
+      frame.dataset.vcxTopicFrame = "";
+      frame.title = "话题详情";
+      setFrameVisible({ frame }, false);
+      const entry = { frame, href: url.href, title: "", push };
+      function fallback() {
+        if (pending !== entry) return;
+        cancelPending();
+        if (push) location.assign(url.href);
+        else location.reload();
+      }
+      frame.addEventListener(readyEvent, () => {
+        const doc = frame.contentDocument;
+        if (doc?.documentElement?.dataset.vcxPage !== "topic" || !topicUrl(doc.URL)) {
+          fallback();
+          return;
+        }
+        entry.href = doc.URL;
+        entry.title = doc.title;
+        if (pending !== entry) {
+          if (visible === entry) {
+            history.replaceState(history.state, "", entry.href);
+            document.title = entry.title;
+          }
+          return;
+        }
+        clearTimeout(entry.timeout);
+        pending = null;
+        const previous = cached;
+        cached = entry;
+        showTopic(entry, push);
+        previous?.frame.remove();
+      });
+      frame.addEventListener(openEvent, (event) => {
+        if (visible !== entry) return;
+        const target = new URL(event.detail, entry.href);
+        if (target.origin !== location.origin) return;
+        if (target.href === listHref) {
+          cancelPending();
+          history.pushState(null, "", target.href);
+          showPage(null);
+        } else open(target.href);
+      });
+      frame.addEventListener(hashEvent, () => {
+        if (visible !== entry) return;
+        const href = frame.contentDocument?.URL;
+        if (!href || !topicUrl(href)) return;
+        entry.href = href;
+        history.replaceState(history.state, "", href);
+      });
+      frame.addEventListener("load", () => {
+        if (pending !== entry) return;
+        clearTimeout(entry.timeout);
+        entry.timeout = setTimeout(fallback, 3e3);
+      });
+      pending = entry;
+      entry.timeout = setTimeout(fallback, 15e3);
+      frame.src = url.href;
+      document.body.append(frame);
+    }
+    document.addEventListener("click", (event) => {
+      const anchor = sameTabLink(event);
+      const url = anchor && topicUrl(anchor.href);
+      if (!url) return;
+      event.preventDefault();
+      open(url.href);
+    });
+    window.addEventListener("popstate", (event) => {
+      if (event.state?.vcxTopic && topicUrl(location.href)) open(location.href, false);
+      else {
+        cancelPending();
+        showPage(null);
+      }
+    });
+    return { open };
+  }
+
+  // src/live.js
+  var parameter = "v2ex-codex";
+  function run(url, route, disabled, settings, frame) {
+    const main = document.getElementById("Main");
+    if (!document.getElementById("Wrapper") || !main || !document.getElementById("Top")) return;
+    const page = describePage(main, route, url);
+    if (!page) return;
+    if (disabled) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "启用 Codex 皮肤";
+      button.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:2000;padding:8px 12px;border:1px solid #71747b;border-radius:8px;background:#252628;color:#f0f0f0;font:13px system-ui;cursor:pointer";
+      button.addEventListener("click", () => {
+        writeSession("disabled", false);
+        url.searchParams.delete(parameter);
+        location.replace(url.href);
+      });
+      document.body.append(button);
+      return;
+    }
+    const original = new URL(url);
+    original.searchParams.set(parameter, "off");
+    const navigation = frame ? bindTopicFrame(frame) : page.kind === "list" ? createTopicNavigation() : null;
+    mount(page, {
+      href: (path) => new URL(path, url).href,
+      original: original.href,
+      settings,
+      navigateTopic: navigation?.open,
+      historyTarget: frame ? window.parent.history : history,
+      onOriginal: () => {
+        writeSession("disabled", true);
+        (frame ? window.parent.location : location).assign(original.href);
+      }
+    });
+  }
+  function start(frame) {
+    const url = new URL(location.href);
+    const route = routeFor(url);
+    if (frame && route?.kind !== "topic") return;
+    const disabled = url.searchParams.get(parameter) === "off" || readSession("disabled") === true;
+    const restoreDraft = !disabled && /^\/new(?:\/[\w-]+)?\/?$/i.test(url.pathname);
+    if (!route && !restoreDraft) return;
+    const settings = route && !disabled ? loadSettings() : null;
+    const waitingForSite = document.readyState === "loading" || document.readyState === "interactive" && performance.getEntriesByType("navigation")[0]?.domContentLoadedEventStart === 0;
+    let rootObserver;
+    let revealPage;
+    if (settings && waitingForSite) {
+      if (document.documentElement) {
+        revealPage = prepareSkin(settings);
+      } else {
+        rootObserver = new MutationObserver(() => {
+          if (!document.documentElement) return;
+          rootObserver.disconnect();
+          revealPage = prepareSkin(settings);
+        });
+        rootObserver.observe(document, { childList: true });
+      }
+    }
+    const destination = settings ? withDefaultTab(url) : url;
+    if (destination !== url) {
+      location.replace(destination.href);
+      return;
+    }
+    function finish() {
+      rootObserver?.disconnect();
+      try {
+        if (restoreDraft) restoreTopicDraft(url.pathname);
+        if (route) run(url, route, disabled, settings, frame);
+      } finally {
+        revealPage?.();
+        if (frame) signalTopicReady(frame);
+      }
+    }
+    if (waitingForSite) {
+      document.addEventListener("DOMContentLoaded", () => setTimeout(finish, 0), { once: true });
+    } else if (document.readyState === "interactive") {
+      setTimeout(finish, 0);
+    } else {
+      finish();
+    }
+  }
+  if (/(^|\.)v2ex\.com$/i.test(location.hostname)) {
+    const frame = window.frameElement;
+    if (window.parent === window || frame?.matches(topicFrameSelector)) start(frame);
+  }
+})();
+/*
+Bootstrap Icons
+The MIT License (MIT)
+
+Copyright (c) 2019-2024 The Bootstrap Authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+Inter
+Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter) Inter-Italic[opsz,wght].ttf: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
+
+This Font Software is licensed under the SIL Open Font License, Version 1.1.
+This license is copied below, and is also available with a FAQ at:
+http://scripts.sil.org/OFL
+
+
+-----------------------------------------------------------
+SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
+-----------------------------------------------------------
+
+PREAMBLE
+The goals of the Open Font License (OFL) are to stimulate worldwide
+development of collaborative font projects, to support the font creation
+efforts of academic and linguistic communities, and to provide a free and
+open framework in which fonts may be shared and improved in partnership
+with others.
+
+The OFL allows the licensed fonts to be used, studied, modified and
+redistributed freely as long as they are not sold by themselves. The
+fonts, including any derivative works, can be bundled, embedded,
+redistributed and/or sold with any software provided that any reserved
+names are not used by derivative works. The fonts and derivatives,
+however, cannot be released under any other type of license. The
+requirement for fonts to remain under this license does not apply
+to any document created using the fonts or their derivatives.
+
+DEFINITIONS
+"Font Software" refers to the set of files released by the Copyright
+Holder(s) under this license and clearly marked as such. This may
+include source files, build scripts and documentation.
+
+"Reserved Font Name" refers to any names specified as such after the
+copyright statement(s).
+
+"Original Version" refers to the collection of Font Software components as
+distributed by the Copyright Holder(s).
+
+"Modified Version" refers to any derivative made by adding to, deleting,
+or substituting -- in part or in whole -- any of the components of the
+Original Version, by changing formats or by porting the Font Software to a
+new environment.
+
+"Author" refers to any designer, engineer, programmer, technical
+writer or other person who contributed to the Font Software.
+
+PERMISSION & CONDITIONS
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the Font Software, to use, study, copy, merge, embed, modify,
+redistribute, and sell modified and unmodified copies of the Font
+Software, subject to the following conditions:
+
+1) Neither the Font Software nor any of its individual components,
+in Original or Modified Versions, may be sold by itself.
+
+2) Original or Modified Versions of the Font Software may be bundled,
+redistributed and/or sold with any software, provided that each copy
+contains the above copyright notice and this license. These can be
+included either as stand-alone text files, human-readable headers or
+in the appropriate machine-readable metadata fields within text or
+binary files as long as those fields can be easily viewed by the user.
+
+3) No Modified Version of the Font Software may use the Reserved Font
+Name(s) unless explicit written permission is granted by the corresponding
+Copyright Holder. This restriction only applies to the primary font name as
+presented to the users.
+
+4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font
+Software shall not be used to promote, endorse or advertise any
+Modified Version, except to acknowledge the contribution(s) of the
+Copyright Holder(s) and the Author(s) or with their explicit written
+permission.
+
+5) The Font Software, modified or unmodified, in part or in whole,
+must be distributed entirely under this license, and must not be
+distributed under any other license. The requirement for fonts to
+remain under this license does not apply to any document created
+using the Font Software.
+
+TERMINATION
+This license becomes null and void if any of the above conditions are
+not met.
+
+DISCLAIMER
+THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+*/
