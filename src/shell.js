@@ -53,7 +53,7 @@ export function shell(page, { href, original, recent, groups, account, topics, d
     <nav class="vcx-strip" aria-label="工作区工具">
       ${iconLink(href(defaultProject.path), "home", "首页", settingsPage || notificationsPage ? "" : 'data-active')}
       ${iconLink(href("/recent"), "clock", "近期活动")}
-      ${iconLink(messages, "at", "我的消息", notificationsPage ? 'aria-current="page" data-active' : "")}
+      ${iconLink(messages, "at", "我的消息", notificationsPage ? 'aria-current="page"' : "")}
       ${iconLink(href("/planes"), "grid", "节点目录")}
       <span class="vcx-flex"></span>
       ${account.signedIn || settingsPage ? iconLink(href("/settings"), "person", "账户设置", settingsPage ? 'aria-current="page" data-active' : "") : ""}

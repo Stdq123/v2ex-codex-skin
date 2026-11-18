@@ -127,12 +127,10 @@ function notifications() {
     [topics[3], "branchkit", "昨天", "里感谢了你的回复", ""],
   ];
   const rows = items.map(([topic, user, time, action, body], index) => `
-    <div class="cell" id="n_${index + 1}"><table><tbody><tr>
-      <td><a href="/member/${user}" aria-label="${user}"><span class="avatar" aria-hidden="true">${user[0].toUpperCase()}</span></a></td>
-      <td><strong><a href="/member/${user}">${user}</a></strong> 在话题 <a href="/t/${topic.id}#reply${topic.replies}">${escape(topic.title)}</a> ${action}
-        <span class="snow">${time}</span>${body ? `<div class="payload">${escape(body)}</div>` : ""}
-      </td>
-    </tr></tbody></table></div>`).join("");
+    <div class="cell" id="n_${index + 1}">
+      <span class="fade"><strong><a href="/member/${user}">${user}</a></strong> 在话题 <a href="/t/${topic.id}#reply${topic.replies}">${escape(topic.title)}</a> ${action}</span>
+      <span class="snow">${time}</span>${body ? `<div class="payload">${escape(body)}</div>` : ""}
+    </div>`).join("");
   return `<div class="box"><div class="header">提醒 <span class="gray">${items.length} 条消息</span></div>
     <div id="notifications">${rows}</div></div>`;
 }
