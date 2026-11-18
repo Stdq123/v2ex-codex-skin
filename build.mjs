@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const root = new URL(".", import.meta.url);
 const pkg = JSON.parse(await readFile(new URL("package.json", root), "utf8"));
+const userscriptUrl = "https://raw.githubusercontent.com/Stdq123/v2ex-codex-skin/main/dist/v2ex-codex.user.js";
 const licenses = await Promise.all(["bootstrap-icons", "inter"].map(name =>
   readFile(new URL(`src/assets/${name}.LICENSE`, root), "utf8"),
 ));
@@ -15,6 +16,8 @@ const metadata = `// ==UserScript==
 // @description  将 V2EX 的话题列表、节点与帖子页面换成 Codex 工作区风格
 // @match        https://v2ex.com/*
 // @match        https://*.v2ex.com/*
+// @updateURL    ${userscriptUrl}
+// @downloadURL  ${userscriptUrl}
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==`;

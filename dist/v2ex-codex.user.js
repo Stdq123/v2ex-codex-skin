@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         V2EX · Codex 桌面皮肤
 // @namespace    https://v2ex.com/
-// @version      0.2.0
+// @version      0.2.1
 // @description  将 V2EX 的话题列表、节点与帖子页面换成 Codex 工作区风格
 // @match        https://v2ex.com/*
 // @match        https://*.v2ex.com/*
+// @updateURL    https://raw.githubusercontent.com/Stdq123/v2ex-codex-skin/main/dist/v2ex-codex.user.js
+// @downloadURL  https://raw.githubusercontent.com/Stdq123/v2ex-codex-skin/main/dist/v2ex-codex.user.js
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==

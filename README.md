@@ -17,8 +17,10 @@
 ## 安装
 
 1. 在浏览器安装脚本管理器。[Tampermonkey](https://www.tampermonkey.net/)
-2. 在 Tampermonkey 中新建脚本，粘贴生成文件的全部内容并保存。[v2ex-codex.user.js](dist/v2ex-codex.user.js)
+2. 打开 GitHub 上的脚本，在 Tampermonkey 安装页确认。[安装脚本](https://raw.githubusercontent.com/Stdq123/v2ex-codex-skin/main/dist/v2ex-codex.user.js)
 3. 打开或刷新 [V2EX](https://www.v2ex.com/)，首页默认显示「全部」。右上角的外链按钮可以在新标签页用原站布局打开当前页面。`settings.json` 也可以在当前标签页切回原站。
+
+从 `0.2.1` 起，Tampermonkey 可通过 GitHub 检查更新。以前通过粘贴安装的用户可用上面的安装链接覆盖现有脚本，接入后续更新。
 
 如果 Chrome 更新脚本后仍先显示原站，可在 Tampermonkey 的高级设置中将 `Content Script API` 设为 `UserScripts API Dynamic`，启用文档开始时立即注入。[Tampermonkey 文档](https://www.tampermonkey.net/documentation.php?locale=en&q=content_script_api)
 
