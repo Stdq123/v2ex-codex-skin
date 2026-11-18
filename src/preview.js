@@ -120,7 +120,24 @@ function accountSettings() {
   </div>`;
 }
 
-const renderPage = { list, directory, topic: thread, new: newTopic, settings: accountSettings };
+function notifications() {
+  const items = [
+    [topics[0], "bytegarden", "13 分钟前", "里回复了你", "处理大文件时，分批读取确实能减小内存占用。"],
+    [topics[2], "songbook", "48 分钟前", "里提到了你", "我把离线同步的例子补到了帖子里。"],
+    [topics[3], "branchkit", "昨天", "里感谢了你的回复", ""],
+  ];
+  const rows = items.map(([topic, user, time, action, body], index) => `
+    <div class="cell" id="n_${index + 1}"><table><tbody><tr>
+      <td><a href="/member/${user}" aria-label="${user}"><span class="avatar" aria-hidden="true">${user[0].toUpperCase()}</span></a></td>
+      <td><strong><a href="/member/${user}">${user}</a></strong> 在话题 <a href="/t/${topic.id}#reply${topic.replies}">${escape(topic.title)}</a> ${action}
+        <span class="snow">${time}</span>${body ? `<div class="payload">${escape(body)}</div>` : ""}
+      </td>
+    </tr></tbody></table></div>`).join("");
+  return `<div class="box"><div class="header">提醒 <span class="gray">${items.length} 条消息</span></div>
+    <div id="notifications">${rows}</div></div>`;
+}
+
+const renderPage = { list, directory, topic: thread, new: newTopic, settings: accountSettings, notifications };
 document.body.innerHTML = `<div id="Top"></div><div id="Wrapper"><div class="content"><main id="Main">${renderPage[route.kind]()}</main></div></div>`;
 const main = document.getElementById("Main");
 main.querySelector("form")?.addEventListener("submit", event => event.preventDefault());

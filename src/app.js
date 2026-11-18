@@ -3,6 +3,7 @@ import nativeStyle from "./native.css";
 import readerStyle from "./reader.css";
 import newTopicStyle from "./new-topic.css";
 import accountSettingsStyle from "./account-settings.css";
+import notificationsStyle from "./notifications.css";
 import glyphs from "./assets/icons.woff2";
 import inter from "./assets/inter-latin.woff2";
 import { mountAccountSettings } from "./account-settings.js";
@@ -21,7 +22,7 @@ let stylesInstalled = false;
 
 function installCss() {
   if (stylesInstalled) return;
-  const css = `${style}\n${nativeStyle}\n${readerStyle}\n${newTopicStyle}\n${accountSettingsStyle}`;
+  const css = `${style}\n${nativeStyle}\n${readerStyle}\n${newTopicStyle}\n${accountSettingsStyle}\n${notificationsStyle}`;
   if ("adoptedStyleSheets" in document && "replaceSync" in CSSStyleSheet.prototype) {
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(css);
@@ -70,7 +71,7 @@ export function mount(page, {
   wrapperContents.className = "vcx-chrome";
   wrapperContents.lang = "zh-CN";
   wrapperContents.innerHTML = shell(page, {
-    href, original, recent: recentTopics(page), groups: projectThreads(page, topics), account, topics,
+    href, original, recent: recentTopics(page), groups: projectThreads(page, topics), account, topics, demo,
   });
   document.body.prepend(wrapperContents);
   installCss();
@@ -121,7 +122,7 @@ export function mount(page, {
   function sync() {
     const dark = setThemeClass(root, settings.theme, systemDark.matches);
     const navVisible = !boss && (small.matches ? mobileSidebar : desktopSidebar);
-    const codeVisible = boss || (page.kind !== "settings" && !focus && (wide.matches ? settings.codePanel !== "off" : mobilePanel ?? settings.codePanel === "on"));
+    const codeVisible = boss || (panelButton !== null && !focus && (wide.matches ? settings.codePanel !== "off" : mobilePanel ?? settings.codePanel === "on"));
     const overlay = !boss && ((small.matches && navVisible) || (!wide.matches && codeVisible));
 
     root.classList.toggle("vcx-boss", boss);

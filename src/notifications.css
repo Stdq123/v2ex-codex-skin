@@ -1,0 +1,108 @@
+html.vcx #Main .vcx-notifications-box {
+  --box-background-color: var(--vcx-raised);
+  --box-background-alt-color: var(--vcx-bubble);
+  --box-border-color: var(--vcx-line);
+  --box-foreground-color: var(--vcx-fg);
+  border: 1px solid var(--vcx-soft-line);
+  border-radius: 14px;
+  background: var(--vcx-raised);
+}
+html.vcx #Main .vcx-notifications-box > .header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--vcx-soft-line);
+  color: var(--vcx-quiet);
+}
+html.vcx #Main .vcx-notifications-box > .header > :is(a[href="/"], .chevron) { display: none; }
+html.vcx #Main .vcx-notifications-title { margin: 0; font: 600 21px/1.35 var(--vcx-font); }
+html.vcx #Main .vcx-notifications-box > .vcx-notifications-title { padding: 16px; }
+html.vcx #Main .vcx-notifications-box > :is(.cell, .inner, .cell_ops) {
+  padding: 12px 16px;
+  overflow-wrap: anywhere;
+}
+html.vcx #Main .vcx-notifications-box :is([id^="n_"], #notifications > .cell) {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--vcx-soft-line);
+  color: var(--vcx-fg);
+  font: 400 13px/1.6 var(--vcx-font);
+  overflow-wrap: anywhere;
+}
+html.vcx #Main .vcx-notifications-box #notifications:last-child > .cell:last-child { border-bottom: 0; }
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell):focus-within { background: var(--vcx-main); }
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) > table {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+}
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) > table > tbody > tr > td {
+  vertical-align: top;
+}
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) > table > tbody > tr > td:first-child:has(> a > .avatar) {
+  width: 44px;
+}
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) .avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--vcx-blue-bg);
+  color: var(--vcx-blue);
+  object-fit: cover;
+}
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) :is(.snow, time) {
+  color: var(--vcx-quiet);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) a {
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) a:is(:hover, :focus-visible) {
+  text-decoration: underline;
+}
+html.vcx #Main .vcx-notifications-box :is([id^="n_"], #notifications > .cell) a[href*="/t/"] {
+  color: var(--vcx-blue);
+}
+.vcx-notifications-box :is([id^="n_"], #notifications > .cell) .payload {
+  display: block;
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
+  margin-block-start: 6px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--vcx-bubble);
+  color: var(--vcx-fg);
+  font: 400 13px/1.6 var(--vcx-font);
+}
+.vcx-notifications-box .payload :is(img, video, iframe) { max-width: 100%; }
+.vcx-notifications-box .payload img { height: auto; }
+.vcx-notifications-box .payload :is(pre, table) { max-width: 100%; overflow-x: auto; }
+.vcx-notifications-box .payload table { display: block; }
+html.vcx #Main .vcx-notifications-box [onclick*="deleteNotification("] {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 5px;
+  color: var(--vcx-quiet);
+}
+html.vcx #Main .vcx-notifications-box [onclick*="deleteNotification("]:is(:hover, :focus-visible) {
+  background: var(--vcx-hover);
+  color: var(--vcx-red);
+}
+html.vcx #Main .vcx-notifications-box :is(.page_current, .page_normal) {
+  display: inline-grid;
+  min-width: 26px;
+  min-height: 26px;
+  place-items: center;
+  box-sizing: border-box;
+  margin-block: 2px;
+  border-radius: 6px;
+  box-shadow: none;
+  font-size: 12px;
+  text-decoration: none;
+}

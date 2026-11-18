@@ -32,27 +32,28 @@ function projectTree(page, href, groups) {
   }).join("") + `<button class="vcx-action vcx-projects-toggle" type="button" data-action="projects" aria-expanded="${showAll}">${showAll ? "收起" : "展开显示"}</button>`;
 }
 
-export function shell(page, { href, original, recent, groups, account, topics }) {
+export function shell(page, { href, original, recent, groups, account, topics, demo }) {
   const thread = page.kind === "topic";
   const writing = page.kind === "new";
   const settingsPage = page.kind === "settings";
-  const simpleContext = writing || settingsPage;
+  const notificationsPage = page.kind === "notifications";
+  const simpleContext = writing || settingsPage || notificationsPage;
   const context = thread ? page.nodeName || "话题" : page.name;
   const contextPath = thread && page.node ? `/go/${page.node}` : page.path;
   const contextLabel = simpleContext ? `<span aria-current="page">${escape(context)}</span>`
     : `<a href="${escape(href(contextPath))}" title="${escape(context)}">${escape(context)}</a>`;
   const summary = thread ? `${page.name} · ${page.floors || "–"} 楼` : page.kind === "list" ? `全部线程 · ${topics.length || "–"}` : "全部节点";
   const newTopic = href(newTopicPath(page));
-  const messages = href(account.signedIn ? "/notifications" : account.path);
+  const messages = href(account.signedIn || demo || notificationsPage ? "/notifications" : account.path);
   const favorites = href(account.signedIn ? "/my/topics" : account.path);
   const pins = topics.filter(topic => topic.pinned).slice(0, 5);
   const latest = recent.length ? recent.slice(0, 4) : topics.slice(0, 4);
 
   return `
     <nav class="vcx-strip" aria-label="工作区工具">
-      ${iconLink(href(defaultProject.path), "home", "首页", settingsPage ? "" : 'data-active')}
+      ${iconLink(href(defaultProject.path), "home", "首页", settingsPage || notificationsPage ? "" : 'data-active')}
       ${iconLink(href("/recent"), "clock", "近期活动")}
-      ${iconLink(messages, "at", "我的消息")}
+      ${iconLink(messages, "at", "我的消息", notificationsPage ? 'aria-current="page" data-active' : "")}
       ${iconLink(href("/planes"), "grid", "节点目录")}
       <span class="vcx-flex"></span>
       ${account.signedIn || settingsPage ? iconLink(href("/settings"), "person", "账户设置", settingsPage ? 'aria-current="page" data-active' : "") : ""}
@@ -78,7 +79,7 @@ export function shell(page, { href, original, recent, groups, account, topics })
           ${link(newTopic, "新话题", "pencil", writing ? 'aria-current="page"' : "")}
           ${link(href(defaultProject.path), "话题", "layers", thread || page.kind === "list" ? 'aria-current="page"' : "")}
           ${link(favorites, "我的收藏", "bookmark")}
-          ${link(messages, "我的消息", "inbox")}
+          ${link(messages, "我的消息", "inbox", notificationsPage ? 'aria-current="page"' : "")}
           ${link(href("/?tab=hot"), "热门话题", "hot")}
           ${link(href("/recent"), "近期活动", "clock")}
           <button class="vcx-action vcx-muted-action" type="button" data-action="more" aria-haspopup="dialog">${icon("more")}<span>更多</span></button>
@@ -104,7 +105,7 @@ export function shell(page, { href, original, recent, groups, account, topics })
       </div>
       <span class="vcx-flex"></span>
       <div class="vcx-top-actions">
-        ${settingsPage ? "" : iconButton("panel", "panel", "切换代码面板", 'aria-controls="vcx-code" aria-pressed="false"')}
+        ${settingsPage || notificationsPage ? "" : iconButton("panel", "panel", "切换代码面板", 'aria-controls="vcx-code" aria-pressed="false"')}
         ${iconLink(original, "external", "在原站布局打开", 'target="_blank" rel="noopener"')}
         ${iconButton("more", "dots", "更多操作", 'aria-haspopup="dialog"')}
       </div>

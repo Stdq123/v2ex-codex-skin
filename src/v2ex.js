@@ -26,6 +26,7 @@ export function routeFor(url) {
   }
   if (pathname === "/recent") return { kind: "list", name: "最新", file: "recent.ts" };
   if (pathname === "/planes") return { kind: "directory", name: "节点目录", file: "nodes.ts" };
+  if (/^\/notifications\/?$/.test(pathname)) return { kind: "notifications", name: "我的消息" };
   const node = pathname.match(/^\/go\/([\w-]+)\/?$/i);
   if (node) return { kind: "list", name: node[1], file: `${node[1]}.ts`, node: node[1] };
   const topic = pathname.match(/^\/t\/(\d+)\/?$/);
@@ -86,6 +87,7 @@ export function describePage(main, route, url) {
     return page;
   }
   if (page.kind === "settings") return page;
+  if (page.kind === "notifications" && main.querySelector("#notifications")) return page;
 
   if (page.node) {
     const header = main.querySelector(".node-header, .box-title");
@@ -231,6 +233,22 @@ export function accountLink(document) {
 
 export function decorateNative(page, href, topics) {
   const { main, kind } = page;
+  if (kind === "notifications") {
+    const list = main.querySelector("#notifications");
+    const box = list?.closest(".box") || list || main.querySelector(".box");
+    if (!box) return;
+    box.classList.add("vcx-notifications-box");
+    const header = box.querySelector(":scope > .header");
+    const heading = main.ownerDocument.createElement("h1");
+    heading.className = "vcx-notifications-title";
+    heading.textContent = page.name;
+    const originalTitle = header && [...header.childNodes].find(node =>
+      node.nodeType === Node.TEXT_NODE && /^(?:[›»]\s*)?(?:提醒系统|(?:站内|我的)?(?:消息|提醒|通知)|Notifications?)$/i.test(node.textContent.trim()),
+    );
+    originalTitle?.remove();
+    (header || box).prepend(heading);
+    return;
+  }
   if (kind === "list") {
     const list = main.querySelector(".item_title")?.closest(".box") || main.querySelector(".box:last-of-type");
     if (!list) return;
