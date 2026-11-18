@@ -10,13 +10,19 @@
 // ==/UserScript==
 (() => {
   // src/skin.css
-  var skin_default = 'html:is(.vcx, .vcx-starting) {\n  color-scheme: light;\n  --vcx-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "V2EX Codex UI", sans-serif;\n  --vcx-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;\n  --vcx-main: #f7f7f8;\n  --vcx-rail: #eff0f1;\n  --vcx-strip-bg: #e2e3e5;\n  --vcx-raised: #fff;\n  --vcx-hover: #e4e5e7;\n  --vcx-selected: #dadbdd;\n  --vcx-editor: #fff;\n  --vcx-composer: #fff;\n  --vcx-tab: #ebebeb;\n  --vcx-bubble: #ededed;\n  --vcx-fg: #1b1c1e;\n  --vcx-rail-fg: #2c2e30;\n  --vcx-muted: #55565a;\n  --vcx-quiet: #6d6f72;\n  --vcx-line: #dedee0;\n  --vcx-soft-line: #e7e7e8;\n  --vcx-blue: #1b68b1;\n  --vcx-blue-bg: #e4edf7;\n  --vcx-green: #24682a;\n  --vcx-add: #e5f5e8;\n  --vcx-remove: #fae9e8;\n  --vcx-red: #922f2b;\n  --vcx-keyword: #aa3d00;\n  --vcx-type: #7740b6;\n  --vcx-comment: #677060;\n  --vcx-backdrop: #10121758;\n  --vcx-strip-w: 52px;\n  --vcx-nav-w: 306px;\n  --vcx-code-w: calc((100vw - var(--vcx-left)) / 2);\n  --vcx-header-h: 46px;\n  --vcx-left: 0px;\n  --vcx-right: 0px;\n  min-width: 0;\n  overflow: hidden;\n  background: var(--vcx-main);\n}\n\nhtml:is(.vcx, .vcx-starting).vcx-dark {\n  color-scheme: dark;\n  --vcx-main: #1e1f20;\n  --vcx-rail: #242526;\n  --vcx-strip-bg: #1a1b1c;\n  --vcx-raised: #262728;\n  --vcx-hover: #2e2f31;\n  --vcx-selected: #38393b;\n  --vcx-editor: #1e1f20;\n  --vcx-composer: #2d2e2f;\n  --vcx-tab: #171819;\n  --vcx-bubble: #313234;\n  --vcx-fg: #ececec;\n  --vcx-rail-fg: #dedede;\n  --vcx-muted: #b9b9b9;\n  --vcx-quiet: #a1a3a5;\n  --vcx-line: #393a3b;\n  --vcx-soft-line: #303133;\n  --vcx-blue: #83c3fe;\n  --vcx-blue-bg: #213a4d;\n  --vcx-green: #9bd492;\n  --vcx-add: #23392c;\n  --vcx-remove: #40292a;\n  --vcx-red: #f2a09c;\n  --vcx-keyword: #f0954e;\n  --vcx-type: #c3a0fb;\n  --vcx-comment: #929d90;\n  --vcx-backdrop: #08090ab0;\n}\n\nhtml.vcx-starting { background: var(--vcx-main) !important; }\nhtml.vcx-starting body { opacity: 0 !important; pointer-events: none !important; }\n\n.vcx-topic-frame {\n  position: fixed;\n  inset: 0;\n  z-index: 3000;\n  width: 100%;\n  height: 100%;\n  border: 0;\n  background: var(--vcx-main);\n  opacity: 0;\n  pointer-events: none;\n}\n.vcx-topic-frame-visible { opacity: 1; pointer-events: auto; }\n\nhtml.vcx.vcx-sidebar-open { --vcx-left: calc(var(--vcx-strip-w) + var(--vcx-nav-w)); }\nhtml.vcx.vcx-panel-open { --vcx-right: var(--vcx-code-w); }\nhtml.vcx :is(.vcx-chrome, #Wrapper) [hidden] { display: none !important; }\n.vcx-chrome { display: contents; }\n.vcx-chrome *, .vcx-chrome *::before, .vcx-chrome *::after,\n.vcx-composer-wrap *, .vcx-composer-wrap *::before, .vcx-composer-wrap *::after { box-sizing: border-box; }\n:is(.vcx-chrome, .vcx-composer-wrap) :is(button, input, select, textarea) { color: inherit; font: inherit; }\n:is(.vcx-chrome, .vcx-composer-wrap) button:not(:disabled) { cursor: pointer; }\n:is(.vcx-chrome, .vcx-composer-wrap) :is(a, a:visited) { color: inherit; text-decoration: none; }\n:is(.vcx-chrome, .vcx #Wrapper) :is(a, button, input, pre, select, textarea):focus-visible {\n  outline: 2px solid var(--vcx-blue);\n  outline-offset: -2px;\n}\n.vcx-chrome :is(h2, p, pre) { margin: 0; }\n.vcx-visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px !important; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }\n.vcx-icon { display: inline-grid; flex: none; place-items: center; width: 1.15em; font: normal 400 1em/1 "V2EX Codex Icons"; }\n.vcx-flex { flex: 1; min-width: 0; }\n.vcx-button, .vcx-icon-button, .vcx-action { border: 0; border-radius: 8px; }\n.vcx-icon-button {\n  display: inline-grid;\n  flex: none;\n  place-items: center;\n  width: 30px;\n  height: 30px;\n  padding: 0;\n  background: transparent;\n  font-size: 14px !important;\n  color: var(--vcx-quiet) !important;\n}\n.vcx-icon-button:is(:hover, :focus-visible):not(:disabled) { background: var(--vcx-hover); color: var(--vcx-fg) !important; }\n.vcx-icon-button:disabled { opacity: .6; }\n.vcx-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  min-height: 30px;\n  padding: 5px 12px;\n  border: 1px solid var(--vcx-line);\n  background: var(--vcx-raised);\n  color: var(--vcx-fg);\n  font: 500 12.5px/1.4 var(--vcx-font);\n}\n.vcx-button:hover { background: var(--vcx-hover); }\n\n.vcx-strip, .vcx-sidebar, .vcx-topbar, .vcx-code, .vcx-dialog, .vcx-toast, .vcx-composer-wrap {\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n}\n.vcx-strip, .vcx-sidebar, .vcx-code {\n  position: fixed;\n  inset-block: 0;\n  display: flex;\n  flex-direction: column;\n  z-index: 101;\n}\n.vcx-strip {\n  left: 0;\n  width: var(--vcx-strip-w);\n  align-items: center;\n  padding: 46px 0 10px;\n  gap: 4px;\n  border-right: 1px solid var(--vcx-line);\n  background: var(--vcx-strip-bg);\n}\n.vcx-strip .vcx-icon-button { width: 34px; height: 34px; font-size: 18px !important; border-radius: 9px; }\n.vcx-strip .vcx-icon-button[data-active] { background: var(--vcx-selected); color: var(--vcx-rail-fg) !important; }\n.vcx-sidebar { left: var(--vcx-strip-w); width: var(--vcx-nav-w); background: var(--vcx-rail); color: var(--vcx-rail-fg); }\n.vcx-window-actions { display: flex; align-items: center; flex: none; height: var(--vcx-header-h); gap: 2px; padding: 0 14px; }\n.vcx-window-actions .vcx-icon-button { width: 20px; height: 22px; font-size: 13px !important; }\n.vcx-window-actions [data-action="forward"] { opacity: .7; }\n.vcx-side-header { display: flex; align-items: center; justify-content: space-between; flex: none; gap: 6px; height: 35px; padding: 2px 14px 10px; }\n.vcx-brand { display: inline-flex; align-items: center; gap: 6px; border-radius: 5px; font-size: 17px; font-weight: 600; letter-spacing: .2px; }\n.vcx-brand .vcx-icon { color: var(--vcx-quiet); font-size: 11px; }\n.vcx-brand-actions { display: flex; align-items: center; gap: 1px; }\n.vcx-brand-actions .vcx-icon-button { width: 20px; height: 22px; font-size: 13px !important; }\n.vcx-sidebar-body { min-height: 0; flex: 1; overflow: auto; padding: 2px 8px 8px; scrollbar-width: thin; scrollbar-color: var(--vcx-line) transparent; }\n.vcx-nav { display: grid; gap: 1px; }\n.vcx-nav-section h2 { padding: 18px 10px 4px; font-size: 12px; color: var(--vcx-quiet); font-weight: 400; }\n.vcx-action {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  width: 100%;\n  min-width: 0;\n  min-height: 29px;\n  padding: 5px 10px;\n  border-radius: 10px;\n  background: transparent;\n  text-align: left;\n  white-space: nowrap;\n  font-size: 13.5px !important;\n  line-height: 19px !important;\n}\n.vcx-action:is(:hover, :focus-visible) { background: var(--vcx-hover); }\n.vcx-action[aria-current="page"] { background: var(--vcx-selected); }\n.vcx-action .vcx-icon { font-size: 15px; color: var(--vcx-quiet); vertical-align: middle; }\n.vcx-action > span:not(.vcx-icon) { overflow: hidden; text-overflow: ellipsis; }\n.vcx-project[aria-current="page"] { background: transparent; }\n.vcx-project[aria-current="page"]:is(:hover, :focus-visible) { background: var(--vcx-hover); }\n.vcx-project [data-folder] { flex: none; }\n.vcx-project code { margin-left: auto; color: var(--vcx-quiet); font: 10.5px/1.4 var(--vcx-mono); }\n.vcx-project-threads .vcx-action, .vcx-tree-toggle { min-height: 26px; padding: 3px 10px 3px 40px; }\n.vcx-chrome :is(.vcx-project-threads .vcx-action, .vcx-tree-toggle, .vcx-projects-toggle, .vcx-muted-action) { color: var(--vcx-quiet); }\n\n.vcx-topbar {\n  position: fixed;\n  top: 0;\n  inset-inline: var(--vcx-left) var(--vcx-right);\n  z-index: 100;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  height: var(--vcx-header-h);\n  padding: 0 12px;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  background: var(--vcx-main);\n}\n.vcx-topbar .vcx-icon-button { font-size: 13px !important; }\n.vcx-top-actions, .vcx-crumb { display: flex; align-items: center; gap: 4px; }\n.vcx-crumb { gap: 8px; min-width: 0; min-height: 30px; font-size: 13px; }\n.vcx-crumb-sep, .vcx-context { color: var(--vcx-quiet); }\n.vcx-crumb a { flex: none; max-width: 36%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.vcx-context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.vcx-topbar .vcx-floor { flex: none; border: 0; border-radius: 6px; padding: 4px 7px; background: transparent; color: var(--vcx-quiet); font-size: 12px; white-space: nowrap; }\n.vcx-floor:hover { background: var(--vcx-hover); }\n.vcx-floor-list { max-height: 54vh; overflow: auto; }\n.vcx-scrim { display: none; }\n\n.vcx-code { right: 0; width: var(--vcx-code-w); min-width: 0; border-left: 1px solid var(--vcx-line); background: var(--vcx-editor); }\n.vcx-editor-tabs { display: flex; align-items: flex-start; gap: 3px; flex: none; height: 42px; padding: 0 9px; background: var(--vcx-tab); }\n.vcx-editor-tab { display: flex; align-items: center; align-self: flex-end; gap: 6px; min-width: 102px; height: 34px; padding: 0 5px 0 12px; border-radius: 9px 9px 0 0; background: var(--vcx-editor); font: 12px/1.3 var(--vcx-mono); white-space: nowrap; }\n.vcx-rust-icon { display: grid; flex: none; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: #45494f; color: #fff; font: 650 8px/1 var(--vcx-mono); }\n.vcx-editor-tab .vcx-icon-button { width: 20px; height: 21px; margin-left: auto; font-size: 10px !important; }\n.vcx-editor-tabs > .vcx-icon-button, .vcx-editor-buttons .vcx-icon-button { width: 27px; height: 28px; margin-top: 3px; font-size: 13px !important; }\n.vcx-editor-buttons { display: flex; align-items: flex-start; gap: 2px; margin-left: auto; }\n.vcx-editor-path { display: flex; align-items: center; gap: 6px; min-height: 43px; flex: none; padding: 8px 14px; color: var(--vcx-quiet); border-bottom: 1px solid var(--vcx-soft-line); font-size: 12px; }\n.vcx-editor-breadcrumbs { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; }\n.vcx-editor-breadcrumbs strong { color: var(--vcx-muted); font-weight: 500; }\n.vcx-editor-switch { display: flex; flex: none; gap: 1px; margin-left: auto; padding: 2px; border-radius: 999px; background: var(--vcx-bubble); }\n.vcx-editor-switch button { padding: 3px 10px; border: 0; border-radius: 999px; background: transparent; color: var(--vcx-quiet); font: 11px/1.35 var(--vcx-font); white-space: nowrap; }\n.vcx-editor-switch button[aria-pressed="true"] { background: var(--vcx-raised); color: var(--vcx-fg); }\n.vcx-editor-language { flex: none; padding: 4px 11px; border-radius: 8px; border: 1px solid var(--vcx-line); background: var(--vcx-bubble); color: var(--vcx-fg); font-size: 12px; }\n.vcx-code pre { flex: 1; min-height: 0; overflow: auto; padding: 8px 0 24px; background: transparent; border: none; scrollbar-width: thin; scrollbar-color: var(--vcx-line) transparent; }\n.vcx-code code, .vcx-code pre { font: 12px/21px var(--vcx-mono); word-wrap: normal; word-break: normal; white-space: pre; }\n.vcx-line { display: inline-block; min-height: 1em; }\n.vcx-line-number { display: inline-block; width: 38px; margin-right: 14px; color: var(--vcx-quiet); text-align: right; user-select: none; }\n.vcx-syntax-keyword { color: var(--vcx-keyword); }\n.vcx-syntax-type { color: var(--vcx-type); }\n.vcx-syntax-string { color: var(--vcx-green); }\n.vcx-syntax-comment { color: var(--vcx-comment); }\n.vcx-code [data-editor-view="diff"] code { display: inline-grid; min-width: 100%; }\n.vcx-code [data-editor-view="diff"] code > span { min-height: 21px; padding-inline: 12px; }\n.vcx-diff-hunk { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\n.vcx-diff-added { background: var(--vcx-add); color: var(--vcx-green); }\n.vcx-diff-removed { background: var(--vcx-remove); color: var(--vcx-red); }\n.vcx-code [data-work-only] { display: none !important; }\n.vcx-boss .vcx-code [data-normal] { display: none !important; }\n.vcx-boss .vcx-code [data-work-only] { display: inline-grid !important; }\n.vcx-boss .vcx-code { width: 100%; border: 0; }\n.vcx-boss .vcx-code pre { padding-left: 18px; font-size: 13px; }\n.vcx-boss .vcx-code code { font-size: inherit; }\n.vcx-boss .vcx-editor-language { margin-left: auto; }\n.vcx-boss :is(.vcx-strip, .vcx-topbar, #Wrapper) { display: none !important; }\n\n.vcx-composer-wrap { position: relative; z-index: 2; flex: none; padding: 6px 16px 10px; }\n\nhtml.vcx #Wrapper .vcx-reply-shell {\n  display: block !important;\n  position: static !important;\n  float: none !important;\n  width: auto !important;\n  min-width: 0 !important;\n  height: auto !important;\n  min-height: 0 !important;\n  max-height: none !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  border: 0 !important;\n  background: transparent !important;\n  font-size: 0;\n  box-shadow: none !important;\n}\nhtml.vcx #Wrapper .vcx-reply-shell > :not(.vcx-reply-shell, .vcx-reply-card) { display: none !important; }\n.vcx-reply-card {\n  --vcx-reply-min-height: 24px;\n  container-type: inline-size;\n  width: 100%;\n  max-width: 760px;\n  margin-inline: auto;\n  padding: 8px 8px 6px 12px;\n  border: 1px solid var(--vcx-soft-line);\n  border-radius: 22px;\n  background: var(--vcx-composer);\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n  text-align: start;\n  box-shadow: 0 2px 8px rgb(0 0 0 / .05);\n}\n.vcx-reply-card:focus-within { border-color: var(--vcx-line); }\nhtml.vcx #Wrapper :is(.vcx-reply-input, .vcx-compose-preview) {\n  display: block;\n  width: 100%;\n  height: auto !important;\n  min-height: var(--vcx-reply-min-height) !important;\n  max-height: min(160px, 25dvh) !important;\n  margin: 0;\n  padding: 0 3px 0 0;\n  overflow: auto;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: 400 14px/1.55 var(--vcx-font);\n}\nhtml.vcx #Wrapper .vcx-reply-input { field-sizing: content; resize: none; box-shadow: none; outline: none; }\nhtml.vcx #Wrapper .vcx-reply-input[data-vcx-empty] { max-height: var(--vcx-reply-min-height) !important; }\n.vcx-compose-preview { white-space: pre-wrap; overflow-wrap: anywhere; }\n.vcx-reply-card #reply-parent {\n  gap: 5px;\n  margin: 0 2px 6px 0;\n  padding: 5px 8px;\n  border-radius: 8px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-muted);\n  font-size: 12px;\n}\n.vcx-reply-card #reply-parent .reply-parent-name { color: var(--vcx-fg); }\n.vcx-reply-card #reply-parent .reply-parent-cancel { margin-inline-start: auto; }\n.vcx-reply-bar { display: flex; align-items: center; gap: 4px; min-height: 30px; margin-top: 2px; }\n.vcx-reply-card :is(.vcx-reply-icon, .vcx-reply-mention, .vcx-reply-signin, .vcx-reply-send) {\n  display: inline-flex;\n  flex: none;\n  align-items: center;\n  justify-content: center;\n  gap: 4px;\n  min-width: 28px;\n  height: 30px;\n  padding: 0 5px;\n  border: 0;\n  border-radius: 8px;\n  background: transparent;\n  white-space: nowrap;\n}\n.vcx-reply-card :is(.vcx-reply-mention, .vcx-reply-signin) { font-size: 12px; color: var(--vcx-muted); }\n.vcx-reply-model {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  min-width: 0;\n  padding-inline: 4px;\n  white-space: nowrap;\n}\n.vcx-reply-model-name { overflow: hidden; text-overflow: ellipsis; }\n.vcx-reply-model :is(.vcx-reply-model-effort, .vcx-icon) { color: var(--vcx-quiet); }\n.vcx-reply-model .vcx-icon { font-size: 10px; }\n@container (max-width: 370px) {\n  .vcx-reply-bar { gap: 2px; }\n  .vcx-reply-card :is(.vcx-reply-mention, .vcx-reply-signin) > span:not(.vcx-icon) { display: none; }\n  .vcx-reply-model { padding-inline: 2px; font-size: 13px; }\n}\n.vcx-reply-card .vcx-reply-icon { font-size: 15px; }\n.vcx-reply-card :is(.vcx-reply-icon, .vcx-reply-mention, .vcx-reply-signin):hover:not(:disabled),\n.vcx-reply-card .vcx-reply-tools[open] > summary { background: var(--vcx-hover); }\n.vcx-reply-card .vcx-reply-icon:disabled { opacity: .4; }\n.vcx-reply-card .vcx-reply-send {\n  width: 30px;\n  padding: 0;\n  border-radius: 50%;\n  background: #2864c8;\n  color: #fff;\n  font-size: 16px;\n}\n.vcx-reply-card .vcx-reply-send:hover:not(:disabled) { background: #1f53ae; }\n.vcx-reply-card .vcx-reply-send:disabled { background: var(--vcx-selected); color: var(--vcx-muted); }\n.vcx-reply-tools { position: relative; }\n.vcx-reply-tools summary { list-style: none; cursor: pointer; }\n.vcx-reply-tools summary::-webkit-details-marker { display: none; }\n.vcx-reply-tools summary:focus-visible { outline: 2px solid var(--vcx-blue); outline-offset: -2px; }\n.vcx-reply-menu {\n  position: absolute;\n  inset-inline-start: 0;\n  bottom: calc(100% + 6px);\n  z-index: 1;\n  min-width: 130px;\n  max-height: min(340px, 48dvh);\n  overflow-y: auto;\n  padding: 4px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 10px;\n  background: var(--vcx-raised);\n  box-shadow: 0 4px 18px rgb(0 0 0 / .12);\n}\n.vcx-reply-card .vcx-reply-menu button {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  gap: 7px;\n  padding: 7px 9px;\n  border: 0;\n  border-radius: 6px;\n  background: transparent;\n  font-size: 12px;\n  white-space: nowrap;\n}\n.vcx-reply-card .vcx-reply-menu button:hover { background: var(--vcx-hover); }\n.vcx-reply-card .vcx-reply-menu button:disabled { opacity: .4; }\n.vcx-reply-card .vcx-reply-menu button[aria-pressed="true"] { color: var(--vcx-blue); }\n\n.vcx-dialog {\n  width: min(526px, calc(100% - 28px));\n  max-height: min(630px, calc(100% - 36px));\n  margin: auto;\n  padding: 0;\n  overflow: auto;\n  border: 1px solid var(--vcx-line);\n  border-radius: 12px;\n  background: var(--vcx-raised);\n  box-shadow: 0 18px 65px #0004;\n}\n.vcx-dialog:not([open]) { display: none; }\n.vcx-dialog::backdrop { background: var(--vcx-backdrop); }\n.vcx-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 53px; padding: 0 12px 0 16px; border-bottom: 1px solid var(--vcx-soft-line); }\n.vcx-dialog-header h2 { font-size: 15px; font-weight: 650; }\n.vcx-dialog-body { padding: 10px 16px 16px; }\n.vcx-keys > div, .vcx-settings > label { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 43px; border-bottom: 1px solid var(--vcx-soft-line); }\n.vcx-keys > div:last-child { border: 0; }\n.vcx-keys kbd { padding: 3px 6px; border: 1px solid var(--vcx-line); border-radius: 4px; background: var(--vcx-main); color: var(--vcx-muted); font: 11px/1.3 var(--vcx-mono); white-space: nowrap; }\n.vcx-settings select { padding: 4px 9px; border: 1px solid var(--vcx-line); border-radius: 6px; background: var(--vcx-main); }\n.vcx-settings small { display: block; margin-bottom: 6px; color: var(--vcx-quiet); }\n.vcx-settings input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--vcx-blue); }\n.vcx-settings > button { margin-top: 12px; }\n.vcx-search-form { padding: 10px; }\n.vcx-search-field { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 10px; border: 1px solid var(--vcx-line); border-radius: 7px; background: var(--vcx-main); }\n.vcx-search-field input { flex: 1; width: 0; padding: 0; border: 0; background: transparent; }\n.vcx-search-field input:focus { outline: none; }\n.vcx-search-field:focus-within { border-color: var(--vcx-blue); }\n.vcx-search-results { max-height: min(430px, 55vh); overflow: auto; padding-top: 5px; }\n.vcx-search-label { padding: 9px 9px 3px; color: var(--vcx-quiet); font-size: 11px; }\n.vcx-empty { padding: 13px 9px; color: var(--vcx-muted); }\n.vcx-toast { position: fixed; top: 58px; right: calc(var(--vcx-right) + 12px); z-index: 160; max-width: calc(100% - 24px); padding: 8px 11px; border: 1px solid var(--vcx-line); border-radius: 7px; background: var(--vcx-raised); box-shadow: 0 4px 18px #0002; }\n.vcx-boss .vcx-toast { right: 12px; }\n.vcx-copy-field { position: fixed; width: 1px; height: 1px; opacity: 0; clip-path: inset(50%); }\n\n@media (max-width: 1179px) {\n  html.vcx.vcx-panel-open { --vcx-right: 0px; }\n  .vcx-code { width: min(500px, calc(100vw - 32px)); z-index: 123; box-shadow: -8px 0 26px #0003; }\n  .vcx-overlay .vcx-scrim { position: fixed; inset: 0; display: block; z-index: 120; width: 100%; padding: 0; border: 0; background: var(--vcx-backdrop); }\n}\n\n@media (max-width: 900px) {\n  html.vcx, html.vcx.vcx-sidebar-open { --vcx-left: 0px; --vcx-strip-w: 0px; --vcx-nav-w: min(306px, 86vw); }\n  .vcx-strip { display: none; }\n  .vcx-topbar { padding: 0 6px; gap: 3px; }\n  .vcx-sidebar { z-index: 123; box-shadow: 8px 0 26px #0003; }\n  .vcx-top-actions { gap: 0; }\n  .vcx-topbar .vcx-icon-button { width: 29px; }\n  .vcx-composer-wrap { padding-inline: 12px; }\n}\n\n@media (max-width: 480px) {\n  .vcx-crumb { gap: 5px; }\n  .vcx-crumb a { max-width: 100%; }\n  .vcx-crumb :is(.vcx-context, .vcx-crumb-sep) { display: none; }\n  .vcx-editor-breadcrumbs > span { display: none; }\n}\n\r\n';
+  var skin_default = 'html:is(.vcx, .vcx-starting) {\n  color-scheme: light;\n  --vcx-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "V2EX Codex UI", sans-serif;\n  --vcx-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;\n  --vcx-main: #f7f7f8;\n  --vcx-rail: #eff0f1;\n  --vcx-strip-bg: #e2e3e5;\n  --vcx-raised: #fff;\n  --vcx-hover: #e4e5e7;\n  --vcx-selected: #dadbdd;\n  --vcx-editor: #fff;\n  --vcx-composer: #fff;\n  --vcx-tab: #ebebeb;\n  --vcx-bubble: #ededed;\n  --vcx-fg: #1b1c1e;\n  --vcx-rail-fg: #2c2e30;\n  --vcx-muted: #55565a;\n  --vcx-quiet: #6d6f72;\n  --vcx-line: #dedee0;\n  --vcx-soft-line: #e7e7e8;\n  --vcx-blue: #1b68b1;\n  --vcx-blue-bg: #e4edf7;\n  --vcx-green: #24682a;\n  --vcx-add: #e5f5e8;\n  --vcx-remove: #fae9e8;\n  --vcx-red: #922f2b;\n  --vcx-keyword: #aa3d00;\n  --vcx-type: #7740b6;\n  --vcx-comment: #677060;\n  --vcx-backdrop: #10121758;\n  --vcx-strip-w: 52px;\n  --vcx-nav-w: 306px;\n  --vcx-code-w: calc((100vw - var(--vcx-left)) / 2);\n  --vcx-header-h: 46px;\n  --vcx-left: 0px;\n  --vcx-right: 0px;\n  min-width: 0;\n  overflow: hidden;\n  background: var(--vcx-main);\n}\n\nhtml:is(.vcx, .vcx-starting).vcx-dark {\n  color-scheme: dark;\n  --vcx-main: #1e1f20;\n  --vcx-rail: #242526;\n  --vcx-strip-bg: #1a1b1c;\n  --vcx-raised: #262728;\n  --vcx-hover: #2e2f31;\n  --vcx-selected: #38393b;\n  --vcx-editor: #1e1f20;\n  --vcx-composer: #2d2e2f;\n  --vcx-tab: #171819;\n  --vcx-bubble: #313234;\n  --vcx-fg: #ececec;\n  --vcx-rail-fg: #dedede;\n  --vcx-muted: #b9b9b9;\n  --vcx-quiet: #a1a3a5;\n  --vcx-line: #393a3b;\n  --vcx-soft-line: #303133;\n  --vcx-blue: #83c3fe;\n  --vcx-blue-bg: #213a4d;\n  --vcx-green: #9bd492;\n  --vcx-add: #23392c;\n  --vcx-remove: #40292a;\n  --vcx-red: #f2a09c;\n  --vcx-keyword: #f0954e;\n  --vcx-type: #c3a0fb;\n  --vcx-comment: #929d90;\n  --vcx-backdrop: #08090ab0;\n}\n\nhtml.vcx-starting { background: var(--vcx-main) !important; }\nhtml.vcx-starting body { opacity: 0 !important; pointer-events: none !important; }\n\n.vcx-topic-frame {\n  position: fixed;\n  inset: 0;\n  z-index: 3000;\n  width: 100%;\n  height: 100%;\n  border: 0;\n  background: var(--vcx-main);\n  opacity: 0;\n  pointer-events: none;\n}\n.vcx-topic-frame-visible { opacity: 1; pointer-events: auto; }\n\nhtml.vcx.vcx-sidebar-open { --vcx-left: calc(var(--vcx-strip-w) + var(--vcx-nav-w)); }\nhtml.vcx.vcx-panel-open { --vcx-right: var(--vcx-code-w); }\nhtml.vcx :is(.vcx-chrome, #Wrapper) [hidden] { display: none !important; }\n.vcx-chrome { display: contents; }\n.vcx-chrome *, .vcx-chrome *::before, .vcx-chrome *::after,\n.vcx-composer-wrap *, .vcx-composer-wrap *::before, .vcx-composer-wrap *::after { box-sizing: border-box; }\n:is(.vcx-chrome, .vcx-composer-wrap) :is(button, input, select, textarea) { color: inherit; font: inherit; }\n:is(.vcx-chrome, .vcx-composer-wrap) button:not(:disabled) { cursor: pointer; }\n:is(.vcx-chrome, .vcx-composer-wrap) :is(a, a:visited) { color: inherit; text-decoration: none; }\n:is(.vcx-chrome, .vcx #Wrapper) :is(a, button, input, pre, select, textarea):focus-visible {\n  outline: 2px solid var(--vcx-blue);\n  outline-offset: -2px;\n}\n.vcx-chrome :is(h2, p, pre) { margin: 0; }\n.vcx-visually-hidden { position: absolute !important; width: 1px; height: 1px; margin: -1px !important; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }\n.vcx-icon { display: inline-grid; flex: none; place-items: center; width: 1.15em; font: normal 400 1em/1 "V2EX Codex Icons"; }\n.vcx-flex { flex: 1; min-width: 0; }\n.vcx-button, .vcx-icon-button, .vcx-action { border: 0; border-radius: 8px; }\n.vcx-icon-button {\n  display: inline-grid;\n  flex: none;\n  place-items: center;\n  width: 30px;\n  height: 30px;\n  padding: 0;\n  background: transparent;\n  font-size: 14px !important;\n  color: var(--vcx-quiet) !important;\n}\n.vcx-icon-button:is(:hover, :focus-visible):not(:disabled) { background: var(--vcx-hover); color: var(--vcx-fg) !important; }\n.vcx-icon-button:disabled { opacity: .6; }\n.vcx-button {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  gap: 6px;\n  min-height: 30px;\n  padding: 5px 12px;\n  border: 1px solid var(--vcx-line);\n  background: var(--vcx-raised);\n  color: var(--vcx-fg);\n  font: 500 12.5px/1.4 var(--vcx-font);\n}\n.vcx-button:hover { background: var(--vcx-hover); }\n\n.vcx-strip, .vcx-sidebar, .vcx-topbar, .vcx-code, .vcx-dialog, .vcx-toast, .vcx-composer-wrap {\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n}\n.vcx-strip, .vcx-sidebar, .vcx-code {\n  position: fixed;\n  inset-block: 0;\n  display: flex;\n  flex-direction: column;\n  z-index: 101;\n}\n.vcx-strip {\n  left: 0;\n  width: var(--vcx-strip-w);\n  align-items: center;\n  padding: 46px 0 10px;\n  gap: 4px;\n  border-right: 1px solid var(--vcx-line);\n  background: var(--vcx-strip-bg);\n}\n.vcx-strip .vcx-icon-button { width: 34px; height: 34px; font-size: 18px !important; border-radius: 9px; }\n.vcx-strip .vcx-icon-button[data-active] { background: var(--vcx-selected); color: var(--vcx-rail-fg) !important; }\n.vcx-sidebar { left: var(--vcx-strip-w); width: var(--vcx-nav-w); background: var(--vcx-rail); color: var(--vcx-rail-fg); }\n.vcx-window-actions { display: flex; align-items: center; flex: none; height: var(--vcx-header-h); gap: 2px; padding: 0 14px; }\n.vcx-window-actions .vcx-icon-button { width: 20px; height: 22px; font-size: 13px !important; }\n.vcx-window-actions [data-action="forward"] { opacity: .7; }\n.vcx-side-header { display: flex; align-items: center; justify-content: space-between; flex: none; gap: 6px; height: 35px; padding: 2px 14px 10px; }\n.vcx-brand { display: inline-flex; align-items: center; gap: 6px; border-radius: 5px; font-size: 17px; font-weight: 600; letter-spacing: .2px; }\n.vcx-brand .vcx-icon { color: var(--vcx-quiet); font-size: 11px; }\n.vcx-brand-actions { display: flex; align-items: center; gap: 1px; }\n.vcx-brand-actions .vcx-icon-button { width: 20px; height: 22px; font-size: 13px !important; }\n.vcx-sidebar-body { min-height: 0; flex: 1; overflow: auto; padding: 2px 8px 8px; scrollbar-width: thin; scrollbar-color: var(--vcx-line) transparent; }\n.vcx-nav { display: grid; gap: 1px; }\n.vcx-nav-section h2 { padding: 18px 10px 4px; font-size: 12px; color: var(--vcx-quiet); font-weight: 400; }\n.vcx-action {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  width: 100%;\n  min-width: 0;\n  min-height: 29px;\n  padding: 5px 10px;\n  border-radius: 10px;\n  background: transparent;\n  text-align: left;\n  white-space: nowrap;\n  font-size: 13.5px !important;\n  line-height: 19px !important;\n}\n.vcx-action:is(:hover, :focus-visible) { background: var(--vcx-hover); }\n.vcx-action[aria-current="page"] { background: var(--vcx-selected); }\n.vcx-action .vcx-icon { font-size: 15px; color: var(--vcx-quiet); vertical-align: middle; }\n.vcx-action > span:not(.vcx-icon) { overflow: hidden; text-overflow: ellipsis; }\n.vcx-project[aria-current="page"] { background: transparent; }\n.vcx-project[aria-current="page"]:is(:hover, :focus-visible) { background: var(--vcx-hover); }\n.vcx-project [data-folder] { flex: none; }\n.vcx-project code { margin-left: auto; color: var(--vcx-quiet); font: 10.5px/1.4 var(--vcx-mono); }\n.vcx-project-threads .vcx-action, .vcx-tree-toggle { min-height: 26px; padding: 3px 10px 3px 40px; }\n.vcx-chrome :is(.vcx-project-threads .vcx-action, .vcx-tree-toggle, .vcx-projects-toggle, .vcx-muted-action) { color: var(--vcx-quiet); }\n\n.vcx-topbar {\n  position: fixed;\n  top: 0;\n  inset-inline: var(--vcx-left) var(--vcx-right);\n  z-index: 100;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n  height: var(--vcx-header-h);\n  padding: 0 12px;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  background: var(--vcx-main);\n}\n.vcx-topbar .vcx-icon-button { font-size: 13px !important; }\n.vcx-top-actions, .vcx-crumb { display: flex; align-items: center; gap: 4px; }\n.vcx-crumb { gap: 8px; min-width: 0; min-height: 30px; font-size: 13px; }\n.vcx-crumb-sep, .vcx-context { color: var(--vcx-quiet); }\n.vcx-crumb a { flex: none; max-width: 36%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.vcx-context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.vcx-topbar .vcx-floor { flex: none; border: 0; border-radius: 6px; padding: 4px 7px; background: transparent; color: var(--vcx-quiet); font-size: 12px; white-space: nowrap; }\n.vcx-floor:hover { background: var(--vcx-hover); }\n.vcx-floor-list { max-height: 54vh; overflow: auto; }\n.vcx-scrim { display: none; }\n\n.vcx-code { right: 0; width: var(--vcx-code-w); min-width: 0; border-left: 1px solid var(--vcx-line); background: var(--vcx-editor); }\n.vcx-editor-tabs { display: flex; align-items: flex-start; gap: 3px; flex: none; height: 42px; padding: 0 9px; background: var(--vcx-tab); }\n.vcx-editor-tab { display: flex; align-items: center; align-self: flex-end; gap: 6px; min-width: 102px; height: 34px; padding: 0 5px 0 12px; border-radius: 9px 9px 0 0; background: var(--vcx-editor); font: 12px/1.3 var(--vcx-mono); white-space: nowrap; }\n.vcx-rust-icon { display: grid; flex: none; place-items: center; width: 15px; height: 15px; border-radius: 50%; background: #45494f; color: #fff; font: 650 8px/1 var(--vcx-mono); }\n.vcx-editor-tab .vcx-icon-button { width: 20px; height: 21px; margin-left: auto; font-size: 10px !important; }\n.vcx-editor-tabs > .vcx-icon-button, .vcx-editor-buttons .vcx-icon-button { width: 27px; height: 28px; margin-top: 3px; font-size: 13px !important; }\n.vcx-editor-buttons { display: flex; align-items: flex-start; gap: 2px; margin-left: auto; }\n.vcx-editor-path { display: flex; align-items: center; gap: 6px; min-height: 43px; flex: none; padding: 8px 14px; color: var(--vcx-quiet); border-bottom: 1px solid var(--vcx-soft-line); font-size: 12px; }\n.vcx-editor-breadcrumbs { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; white-space: nowrap; }\n.vcx-editor-breadcrumbs strong { color: var(--vcx-muted); font-weight: 500; }\n.vcx-editor-switch { display: flex; flex: none; gap: 1px; margin-left: auto; padding: 2px; border-radius: 999px; background: var(--vcx-bubble); }\n.vcx-editor-switch button { padding: 3px 10px; border: 0; border-radius: 999px; background: transparent; color: var(--vcx-quiet); font: 11px/1.35 var(--vcx-font); white-space: nowrap; }\n.vcx-editor-switch button[aria-pressed="true"] { background: var(--vcx-raised); color: var(--vcx-fg); }\n.vcx-editor-language { flex: none; padding: 4px 11px; border-radius: 8px; border: 1px solid var(--vcx-line); background: var(--vcx-bubble); color: var(--vcx-fg); font-size: 12px; }\n.vcx-code pre { flex: 1; min-height: 0; overflow: auto; padding: 8px 0 24px; background: transparent; border: none; scrollbar-width: thin; scrollbar-color: var(--vcx-line) transparent; }\n.vcx-code code, .vcx-code pre { font: 12px/21px var(--vcx-mono); word-wrap: normal; word-break: normal; white-space: pre; }\n.vcx-line { display: inline-block; min-height: 1em; }\n.vcx-line-number { display: inline-block; width: 38px; margin-right: 14px; color: var(--vcx-quiet); text-align: right; user-select: none; }\n.vcx-syntax-keyword { color: var(--vcx-keyword); }\n.vcx-syntax-type { color: var(--vcx-type); }\n.vcx-syntax-string { color: var(--vcx-green); }\n.vcx-syntax-comment { color: var(--vcx-comment); }\n.vcx-code [data-editor-view="diff"] code { display: inline-grid; min-width: 100%; }\n.vcx-code [data-editor-view="diff"] code > span { min-height: 21px; padding-inline: 12px; }\n.vcx-diff-hunk { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\n.vcx-diff-added { background: var(--vcx-add); color: var(--vcx-green); }\n.vcx-diff-removed { background: var(--vcx-remove); color: var(--vcx-red); }\n.vcx-code [data-work-only] { display: none !important; }\n.vcx-boss .vcx-code [data-normal] { display: none !important; }\n.vcx-boss .vcx-code [data-work-only] { display: inline-grid !important; }\n.vcx-boss .vcx-code { width: 100%; border: 0; }\n.vcx-boss .vcx-code pre { padding-left: 18px; font-size: 13px; }\n.vcx-boss .vcx-code code { font-size: inherit; }\n.vcx-boss .vcx-editor-language { margin-left: auto; }\n.vcx-boss :is(.vcx-strip, .vcx-topbar, #Wrapper) { display: none !important; }\n\n.vcx-composer-wrap { position: relative; z-index: 2; flex: none; padding: 6px 16px 10px; }\n\nhtml.vcx #Wrapper .vcx-reply-shell {\n  display: block !important;\n  position: static !important;\n  float: none !important;\n  width: auto !important;\n  min-width: 0 !important;\n  height: auto !important;\n  min-height: 0 !important;\n  max-height: none !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  border: 0 !important;\n  background: transparent !important;\n  font-size: 0;\n  box-shadow: none !important;\n}\nhtml.vcx #Wrapper .vcx-reply-shell > :not(.vcx-reply-shell, .vcx-reply-card) { display: none !important; }\n.vcx-reply-card {\n  --vcx-reply-min-height: 24px;\n  container-type: inline-size;\n  width: 100%;\n  max-width: 760px;\n  margin-inline: auto;\n  padding: 8px 8px 6px 12px;\n  border: 1px solid var(--vcx-soft-line);\n  border-radius: 22px;\n  background: var(--vcx-composer);\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n  text-align: start;\n  box-shadow: 0 2px 8px rgb(0 0 0 / .05);\n}\n.vcx-reply-card:focus-within { border-color: var(--vcx-line); }\nhtml.vcx #Wrapper :is(.vcx-reply-input, .vcx-compose-preview) {\n  display: block;\n  width: 100%;\n  height: auto !important;\n  min-height: var(--vcx-reply-min-height) !important;\n  max-height: min(160px, 25dvh) !important;\n  margin: 0;\n  padding: 0 3px 0 0;\n  overflow: auto;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: 400 14px/1.55 var(--vcx-font);\n}\nhtml.vcx #Wrapper .vcx-reply-input { field-sizing: content; resize: none; box-shadow: none; outline: none; }\nhtml.vcx #Wrapper .vcx-reply-input[data-vcx-empty] { max-height: var(--vcx-reply-min-height) !important; }\nhtml.vcx #Wrapper .vcx-reply-input::placeholder { color: var(--vcx-quiet); opacity: 1; }\n.vcx-compose-preview { white-space: pre-wrap; overflow-wrap: anywhere; }\n.vcx-reply-card #reply-parent {\n  gap: 5px;\n  margin: 0 2px 6px 0;\n  padding: 5px 8px;\n  border-radius: 8px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-muted);\n  font-size: 12px;\n}\n.vcx-reply-card #reply-parent .reply-parent-name { color: var(--vcx-fg); }\n.vcx-reply-card #reply-parent .reply-parent-cancel { margin-inline-start: auto; }\n.vcx-reply-bar { display: flex; align-items: center; gap: 4px; min-height: 30px; margin-top: 2px; }\n.vcx-reply-card :is(.vcx-reply-icon, .vcx-reply-mention, .vcx-reply-signin, .vcx-reply-send) {\n  display: inline-flex;\n  flex: none;\n  align-items: center;\n  justify-content: center;\n  gap: 4px;\n  min-width: 28px;\n  height: 30px;\n  padding: 0 5px;\n  border: 0;\n  border-radius: 8px;\n  background: transparent;\n  white-space: nowrap;\n}\n.vcx-reply-card :is(.vcx-reply-mention, .vcx-reply-signin) { font-size: 12px; color: var(--vcx-muted); }\n.vcx-reply-model {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  min-width: 0;\n  padding-inline: 4px;\n  white-space: nowrap;\n}\n.vcx-reply-model-name { overflow: hidden; text-overflow: ellipsis; }\n.vcx-reply-model :is(.vcx-reply-model-effort, .vcx-icon) { color: var(--vcx-quiet); }\n.vcx-reply-model .vcx-icon { font-size: 10px; }\n@container (max-width: 370px) {\n  .vcx-reply-bar { gap: 2px; }\n  .vcx-reply-card :is(.vcx-reply-mention, .vcx-reply-signin) > span:not(.vcx-icon) { display: none; }\n  .vcx-reply-model { padding-inline: 2px; font-size: 13px; }\n}\n.vcx-reply-card .vcx-reply-icon { font-size: 15px; }\n.vcx-reply-card :is(.vcx-reply-icon, .vcx-reply-mention, .vcx-reply-signin):hover:not(:disabled),\n.vcx-reply-card .vcx-reply-tools[open] > summary { background: var(--vcx-hover); }\n.vcx-reply-card .vcx-reply-icon:disabled { opacity: .4; }\n.vcx-reply-card .vcx-reply-send {\n  width: 30px;\n  padding: 0;\n  border-radius: 50%;\n  background: #2864c8;\n  color: #fff;\n  font-size: 16px;\n}\n.vcx-reply-card .vcx-reply-send:hover:not(:disabled) { background: #1f53ae; }\n.vcx-reply-card .vcx-reply-send:disabled { background: var(--vcx-selected); color: var(--vcx-muted); }\n.vcx-reply-tools { position: relative; }\n.vcx-reply-tools summary { list-style: none; cursor: pointer; }\n.vcx-reply-tools summary::-webkit-details-marker { display: none; }\n.vcx-reply-tools summary:focus-visible { outline: 2px solid var(--vcx-blue); outline-offset: -2px; }\n.vcx-reply-menu {\n  position: absolute;\n  inset-inline-start: 0;\n  bottom: calc(100% + 6px);\n  z-index: 1;\n  min-width: 130px;\n  max-height: min(340px, 48dvh);\n  overflow-y: auto;\n  padding: 4px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 10px;\n  background: var(--vcx-raised);\n  box-shadow: 0 4px 18px rgb(0 0 0 / .12);\n}\n.vcx-reply-card .vcx-reply-menu button {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  gap: 7px;\n  padding: 7px 9px;\n  border: 0;\n  border-radius: 6px;\n  background: transparent;\n  font-size: 12px;\n  white-space: nowrap;\n}\n.vcx-reply-card .vcx-reply-menu button:hover { background: var(--vcx-hover); }\n.vcx-reply-card .vcx-reply-menu button:disabled { opacity: .4; }\n.vcx-reply-card .vcx-reply-menu button[aria-pressed="true"] { color: var(--vcx-blue); }\n\n.vcx-dialog {\n  width: min(526px, calc(100% - 28px));\n  max-height: min(630px, calc(100% - 36px));\n  margin: auto;\n  padding: 0;\n  overflow: auto;\n  border: 1px solid var(--vcx-line);\n  border-radius: 12px;\n  background: var(--vcx-raised);\n  box-shadow: 0 18px 65px #0004;\n}\n.vcx-dialog:not([open]) { display: none; }\n.vcx-dialog::backdrop { background: var(--vcx-backdrop); }\n.vcx-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 53px; padding: 0 12px 0 16px; border-bottom: 1px solid var(--vcx-soft-line); }\n.vcx-dialog-header h2 { font-size: 15px; font-weight: 650; }\n.vcx-dialog-body { padding: 10px 16px 16px; }\n.vcx-keys > div, .vcx-settings > label { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 43px; border-bottom: 1px solid var(--vcx-soft-line); }\n.vcx-keys > div:last-child { border: 0; }\n.vcx-keys kbd { padding: 3px 6px; border: 1px solid var(--vcx-line); border-radius: 4px; background: var(--vcx-main); color: var(--vcx-muted); font: 11px/1.3 var(--vcx-mono); white-space: nowrap; }\n.vcx-settings select { padding: 4px 9px; border: 1px solid var(--vcx-line); border-radius: 6px; background: var(--vcx-main); }\n.vcx-settings small { display: block; margin-bottom: 6px; color: var(--vcx-quiet); }\n.vcx-settings input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--vcx-blue); }\n.vcx-settings > button { margin-top: 12px; }\n.vcx-search-form { padding: 10px; }\n.vcx-search-field { display: flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 10px; border: 1px solid var(--vcx-line); border-radius: 7px; background: var(--vcx-main); }\n.vcx-search-field input { flex: 1; width: 0; padding: 0; border: 0; background: transparent; }\n.vcx-search-field input:focus { outline: none; }\n.vcx-search-field:focus-within { border-color: var(--vcx-blue); }\n.vcx-search-results { max-height: min(430px, 55vh); overflow: auto; padding-top: 5px; }\n.vcx-search-label { padding: 9px 9px 3px; color: var(--vcx-quiet); font-size: 11px; }\n.vcx-empty { padding: 13px 9px; color: var(--vcx-muted); }\n.vcx-toast { position: fixed; top: 58px; right: calc(var(--vcx-right) + 12px); z-index: 160; max-width: calc(100% - 24px); padding: 8px 11px; border: 1px solid var(--vcx-line); border-radius: 7px; background: var(--vcx-raised); box-shadow: 0 4px 18px #0002; }\n.vcx-boss .vcx-toast { right: 12px; }\n.vcx-copy-field { position: fixed; width: 1px; height: 1px; opacity: 0; clip-path: inset(50%); }\n\n@media (max-width: 1179px) {\n  html.vcx.vcx-panel-open { --vcx-right: 0px; }\n  .vcx-code { width: min(500px, calc(100vw - 32px)); z-index: 123; box-shadow: -8px 0 26px #0003; }\n  .vcx-overlay .vcx-scrim { position: fixed; inset: 0; display: block; z-index: 120; width: 100%; padding: 0; border: 0; background: var(--vcx-backdrop); }\n}\n\n@media (max-width: 900px) {\n  html.vcx, html.vcx.vcx-sidebar-open { --vcx-left: 0px; --vcx-strip-w: 0px; --vcx-nav-w: min(306px, 86vw); }\n  .vcx-strip { display: none; }\n  .vcx-topbar { padding: 0 6px; gap: 3px; }\n  .vcx-sidebar { z-index: 123; box-shadow: 8px 0 26px #0003; }\n  .vcx-top-actions { gap: 0; }\n  .vcx-topbar .vcx-icon-button { width: 29px; }\n  .vcx-composer-wrap { padding-inline: 12px; }\n}\n\n@media (max-width: 480px) {\n  .vcx-crumb { gap: 5px; }\n  .vcx-crumb a { max-width: 100%; }\n  .vcx-crumb :is(.vcx-context, .vcx-crumb-sep) { display: none; }\n  .vcx-editor-breadcrumbs > span { display: none; }\n}\n\r\n';
 
   // src/native.css
-  var native_default = 'html.vcx body {\n  min-width: 0 !important;\n  margin: 0 !important;\n  overflow: hidden !important;\n  background: var(--vcx-main) !important;\n  color: var(--vcx-fg);\n  font-family: var(--vcx-font);\n}\nhtml.vcx :is(#Top, #Bottom, #Leftbar, #Rightbar, .scroll-top) { display: none !important; }\nhtml.vcx #Wrapper {\n  position: fixed;\n  inset: var(--vcx-header-h) var(--vcx-right) 0 var(--vcx-left);\n  display: flex;\n  flex-direction: column;\n  min-width: 0 !important;\n  min-height: 0 !important;\n  height: auto !important;\n  margin: 0 !important;\n  background: var(--vcx-main) !important;\n  overflow: hidden;\n  text-align: start;\n}\nhtml.vcx #Wrapper > .content {\n  flex: 1;\n  width: auto !important;\n  min-width: 0 !important;\n  min-height: 0;\n  max-width: none !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  overflow: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--vcx-line) transparent;\n}\nhtml.vcx #Main {\n  box-sizing: border-box;\n  width: min(100%, 840px) !important;\n  min-width: 0 !important;\n  float: none !important;\n  margin: 0 auto !important;\n  padding: 34px 40px 40px;\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main > .sep20:first-child { display: none; }\nhtml.vcx #Main .box { box-shadow: none !important; border: 1px solid var(--vcx-soft-line); border-radius: 9px; background: var(--vcx-raised); color: var(--vcx-fg); }\nhtml.vcx #Main :is(.header, .cell) { border-bottom-color: var(--vcx-soft-line); }\nhtml.vcx #Main :is(.gray, .fade, .ago, small) { color: var(--vcx-quiet) !important; }\nhtml.vcx #Main a:is(:link, :visited) { color: var(--vcx-fg); }\nhtml.vcx #Main a:hover { color: var(--vcx-blue); }\nhtml.vcx #Main :is(h1, h2, h3) { color: var(--vcx-fg); }\nhtml.vcx #Main :is(input[type="text"], input[type="search"], textarea, select) { border-color: var(--vcx-line); background: var(--vcx-editor); color: var(--vcx-fg); }\nhtml.vcx #Main :is(.super, .btn, .page_normal, .page_current) { border-color: var(--vcx-line); color: var(--vcx-fg); background: var(--vcx-raised); }\nhtml.vcx #Main .page_current { background: var(--vcx-selected); }\nhtml.vcx #Main .page_normal:hover { background: var(--vcx-hover); }\nhtml.vcx #Main :is(.tab-alt, .tab_alt, a.node) { background: var(--vcx-hover); color: var(--vcx-muted); }\nhtml.vcx #Main :is(.loading, .sticky, .subtle) { background-color: var(--vcx-bubble); color: var(--vcx-fg); }\n\nhtml.vcx #Main .vcx-list-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 2px; }\nhtml.vcx #Main .vcx-list-title { display: flex; align-items: center; gap: 4px; min-width: 0; }\nhtml.vcx #Main .vcx-list-title .vcx-icon-button { width: 26px; height: 26px; cursor: pointer; }\nhtml.vcx #Main .vcx-list-head h1 { margin: 0; font: 600 20px/1.35 var(--vcx-font); letter-spacing: .2px; overflow-wrap: anywhere; }\nhtml.vcx #Main .vcx-list-head .vcx-button { box-sizing: border-box; flex: none; border-radius: 999px; color: var(--vcx-fg); background: var(--vcx-bubble); text-decoration: none; white-space: nowrap; }\nhtml.vcx #Main .vcx-list-head .vcx-button:hover { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-list-description { margin-bottom: 16px; color: var(--vcx-quiet); font-size: 12.5px; line-height: 16px; }\nhtml.vcx #Main .vcx-native-list { background: transparent; border: 0; }\nhtml.vcx #Main :is(#Tabs, #SecondaryTabs) { display: none; }\nhtml.vcx #Main #vcx-list-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 0 10px; }\nhtml.vcx #Main #vcx-list-filters a { padding: 3px 11px; border-radius: 999px; background: var(--vcx-bubble); color: var(--vcx-muted); font-size: 12px; text-decoration: none; }\nhtml.vcx #Main #vcx-list-filters a:is(:hover, [aria-current="page"]) { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\nhtml.vcx #Main .vcx-native-list > .header { padding: 1px 0 8px; color: var(--vcx-muted); font-size: 12px; }\nhtml.vcx #Main .vcx-native-list > .header > :is(a[href="/"], .chevron) { display: none; }\nhtml.vcx #Main .vcx-native-row {\n  min-width: 0;\n  margin: 0;\n  padding: 2px 0;\n  border: 0;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  background: transparent !important;\n}\nhtml.vcx #Main .vcx-native-row:first-of-type { padding-top: 0; }\nhtml.vcx #Main .vcx-row-layout {\n  box-sizing: border-box;\n  display: grid;\n  grid-template-columns: 7px minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 10px;\n  min-height: 55px;\n  margin: 0 -10px;\n  padding: 9px 10px;\n  border-radius: 10px;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-row-layout:hover { background: var(--vcx-raised); }\nhtml.vcx #Main .vcx-selected .vcx-row-layout { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-row-dot { box-sizing: border-box; width: 7px; height: 7px; border: 1px solid var(--vcx-quiet); border-radius: 50%; }\nhtml.vcx #Main .vcx-selected .vcx-row-dot { border-color: var(--vcx-blue); background: var(--vcx-blue); }\nhtml.vcx #Main .vcx-row-pin { color: var(--vcx-quiet); font-size: 11px; }\nhtml.vcx #Main .vcx-row-texts { display: flex; flex-direction: column; gap: 2px; min-width: 0; }\nhtml.vcx #Main .vcx-native-row .item_title { display: block; min-width: 0; }\nhtml.vcx #Main .vcx-native-row .item_title a { display: block; overflow: hidden; color: var(--vcx-muted); font: 400 13.5px/19px var(--vcx-font); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }\nhtml.vcx #Main .vcx-native-row a:hover { color: var(--vcx-fg); text-decoration: underline; text-underline-offset: 2px; }\nhtml.vcx #Main .vcx-row-sub { overflow: hidden; color: var(--vcx-quiet); font: 400 12px/16px var(--vcx-font); text-overflow: ellipsis; white-space: nowrap; }\nhtml.vcx #Main .vcx-row-sub a { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: none; }\nhtml.vcx #Main .vcx-row-meta { display: flex; align-items: center; gap: 8px; color: var(--vcx-quiet); font: 400 12px/16px var(--vcx-font); white-space: nowrap; }\nhtml.vcx #Main .vcx-row-replies :is(.count_livid, .count_orange) { margin: 0; padding: 1px 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: none; }\nhtml.vcx #Main .ps_container { border-radius: 6px; background: var(--vcx-main); }\nhtml.vcx #Main .vcx-native-node-head { margin-bottom: 12px; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header { padding: 10px 12px; border-bottom: 0; border-radius: inherit; background: var(--vcx-raised); color: var(--vcx-fg); }\nhtml.vcx #Main .vcx-native-node-head :is(.node-title, h1, .node-name) { font-size: 14px; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header .title { flex-wrap: wrap; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header .intro { color: var(--vcx-muted); }\nhtml.vcx #Main .vcx-native-node-head .page-content-header img { max-width: 44px; height: auto; }\n\nhtml.vcx .vcx-image-note { display: none; }\nhtml.vcx[data-vcx-images="off"] #Main [data-vcx-image] { display: none !important; }\nhtml.vcx[data-vcx-images="off"] #Main .vcx-image-note { display: inline-block; padding: 1px 6px; border: 1px solid var(--vcx-soft-line); border-radius: 4px; background: var(--vcx-rail); color: var(--vcx-muted); font: 11px/1.6 var(--vcx-mono); }\nhtml.vcx #Main :is(.reply-ad, .cell:has(ins.adsbygoogle):not(:has(.item_title, .topic_content, .reply_content))) { display: none !important; }\n\n@media (max-width: 900px) {\n  html.vcx #Main { padding: 20px 16px 28px; }\n  html.vcx #Main .ps_container { overflow-x: auto; }\n}\n@media (max-width: 480px) {\n  html.vcx #Main .vcx-row-meta { flex-direction: column; align-items: flex-end; gap: 2px; }\n}\n\n';
+  var native_default = 'html.vcx body {\n  min-width: 0 !important;\n  margin: 0 !important;\n  overflow: hidden !important;\n  background: var(--vcx-main) !important;\n  color: var(--vcx-fg);\n  font-family: var(--vcx-font);\n}\nhtml.vcx :is(#Top, #Bottom, #Leftbar, #Rightbar, .scroll-top) { display: none !important; }\nhtml.vcx #Wrapper {\n  position: fixed;\n  inset: var(--vcx-header-h) var(--vcx-right) 0 var(--vcx-left);\n  display: flex;\n  flex-direction: column;\n  min-width: 0 !important;\n  min-height: 0 !important;\n  height: auto !important;\n  margin: 0 !important;\n  background: var(--vcx-main) !important;\n  overflow: hidden;\n  text-align: start;\n}\nhtml.vcx #Wrapper > .content {\n  flex: 1;\n  width: auto !important;\n  min-width: 0 !important;\n  min-height: 0;\n  max-width: none !important;\n  margin: 0 !important;\n  padding: 0 !important;\n  overflow: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--vcx-line) transparent;\n}\nhtml.vcx #Main {\n  box-sizing: border-box;\n  width: min(100%, 840px) !important;\n  min-width: 0 !important;\n  float: none !important;\n  margin: 0 auto !important;\n  padding: 34px 40px 40px;\n  color: var(--vcx-fg);\n  font: 400 14px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main > .sep20:first-child { display: none; }\nhtml.vcx #Main .box { box-shadow: none !important; border: 1px solid var(--vcx-soft-line); border-radius: 9px; background: var(--vcx-raised); color: var(--vcx-fg); }\nhtml.vcx #Main :is(.header, .cell) { border-bottom-color: var(--vcx-soft-line); }\nhtml.vcx #Main :is(.gray, .fade, .ago, small) { color: var(--vcx-quiet) !important; }\nhtml.vcx #Main a:is(:link, :visited) { color: var(--vcx-fg); }\nhtml.vcx #Main a:hover { color: var(--vcx-blue); }\nhtml.vcx #Main :is(h1, h2, h3) { color: var(--vcx-fg); }\nhtml.vcx #Main :is(input[type="text"], input[type="search"], textarea, select) { border-color: var(--vcx-line); background: var(--vcx-editor); color: var(--vcx-fg); }\nhtml.vcx #Main :is(.super, .btn, .page_normal, .page_current) { border-color: var(--vcx-line); color: var(--vcx-fg); background: var(--vcx-raised); }\nhtml.vcx #Main .page_current { background: var(--vcx-selected); }\nhtml.vcx #Main .page_normal:hover { background: var(--vcx-hover); }\nhtml.vcx #Main :is(.tab-alt, .tab_alt, a.node) { background: var(--vcx-hover); color: var(--vcx-muted); }\nhtml.vcx #Main :is(.loading, .sticky, .subtle) { background-color: var(--vcx-bubble); color: var(--vcx-fg); }\n\nhtml.vcx #Main .vcx-list-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 2px; }\nhtml.vcx #Main .vcx-list-title { display: flex; align-items: center; gap: 4px; min-width: 0; }\nhtml.vcx #Main .vcx-list-title .vcx-icon-button { width: 26px; height: 26px; cursor: pointer; }\nhtml.vcx #Main .vcx-list-head h1 { margin: 0; font: 600 20px/1.35 var(--vcx-font); letter-spacing: .2px; overflow-wrap: anywhere; }\nhtml.vcx #Main .vcx-list-head .vcx-button { box-sizing: border-box; flex: none; border-radius: 999px; color: var(--vcx-fg); background: var(--vcx-bubble); text-decoration: none; white-space: nowrap; }\nhtml.vcx #Main .vcx-list-head .vcx-button:hover { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-list-description { margin-bottom: 16px; color: var(--vcx-quiet); font-size: 12.5px; line-height: 16px; }\nhtml.vcx #Main .vcx-native-list { background: transparent; border: 0; }\nhtml.vcx #Main :is(#Tabs, #SecondaryTabs) { display: none; }\nhtml.vcx #Main #vcx-list-filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 0 10px; }\nhtml.vcx #Main #vcx-list-filters a { padding: 3px 11px; border-radius: 999px; background: var(--vcx-bubble); color: var(--vcx-muted); font-size: 12px; text-decoration: none; }\nhtml.vcx #Main #vcx-list-filters a:is(:hover, [aria-current="page"]) { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\nhtml.vcx #Main .vcx-native-list > .header { padding: 1px 0 8px; color: var(--vcx-muted); font-size: 12px; }\nhtml.vcx #Main .vcx-native-list > .header > :is(a[href="/"], .chevron) { display: none; }\nhtml.vcx #Main .vcx-native-row {\n  min-width: 0;\n  margin: 0;\n  padding: 2px 0;\n  border: 0;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  background: transparent !important;\n}\nhtml.vcx #Main .vcx-native-row:first-of-type { padding-top: 0; }\nhtml.vcx #Main .vcx-row-layout {\n  box-sizing: border-box;\n  display: grid;\n  grid-template-columns: 7px minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 10px;\n  min-height: 55px;\n  margin: 0 -10px;\n  padding: 9px 10px;\n  border-radius: 10px;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-row-layout:hover { background: var(--vcx-raised); }\nhtml.vcx #Main .vcx-selected .vcx-row-layout { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-row-dot { box-sizing: border-box; width: 7px; height: 7px; border: 1px solid var(--vcx-quiet); border-radius: 50%; }\nhtml.vcx #Main .vcx-selected .vcx-row-dot { border-color: var(--vcx-blue); background: var(--vcx-blue); }\nhtml.vcx #Main .vcx-row-pin { color: var(--vcx-quiet); font-size: 11px; }\nhtml.vcx #Main .vcx-row-texts { display: flex; flex-direction: column; gap: 2px; min-width: 0; }\nhtml.vcx #Main .vcx-native-row .item_title { display: block; min-width: 0; }\nhtml.vcx #Main .vcx-native-row .item_title a { display: block; overflow: hidden; color: var(--vcx-muted); font: 400 13.5px/19px var(--vcx-font); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }\nhtml.vcx #Main .vcx-native-row a:hover { color: var(--vcx-fg); text-decoration: underline; text-underline-offset: 2px; }\nhtml.vcx #Main .vcx-row-sub { overflow: hidden; color: var(--vcx-quiet); font: 400 12px/16px var(--vcx-font); text-overflow: ellipsis; white-space: nowrap; }\nhtml.vcx #Main .vcx-row-sub a { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: none; }\nhtml.vcx #Main .vcx-row-meta { display: flex; align-items: center; gap: 8px; color: var(--vcx-quiet); font: 400 12px/16px var(--vcx-font); white-space: nowrap; }\nhtml.vcx #Main .vcx-row-replies :is(.count_livid, .count_orange) { margin: 0; padding: 1px 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: none; }\nhtml.vcx #Main .ps_container { border-radius: 6px; background: var(--vcx-main); }\nhtml.vcx #Main .vcx-native-node-head { margin-bottom: 12px; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header { padding: 10px 12px; border-bottom: 0; border-radius: inherit; background: var(--vcx-raised); color: var(--vcx-fg); }\nhtml.vcx #Main .vcx-native-node-head :is(.node-title, h1, .node-name) { font-size: 14px; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header .title { flex-wrap: wrap; }\nhtml.vcx #Main .vcx-native-node-head .page-content-header .intro { color: var(--vcx-muted); }\nhtml.vcx #Main .vcx-native-node-head .page-content-header img { max-width: 44px; height: auto; }\n\nhtml.vcx .vcx-image-note { display: none; }\nhtml.vcx[data-vcx-images="off"] #Main [data-vcx-image] { display: none !important; }\nhtml.vcx[data-vcx-images="off"] #Main .vcx-image-note { display: inline-block; padding: 1px 6px; border: 1px solid var(--vcx-soft-line); border-radius: 4px; background: var(--vcx-rail); color: var(--vcx-muted); font: 11px/1.6 var(--vcx-mono); }\nhtml.vcx #Main :is(.reply-ad, .cell:has(ins.adsbygoogle):not(:has(.item_title, .topic_content, .reply_content))) { display: none !important; }\n\nhtml.vcx[data-vcx-page="new"] #Main {\n  --box-foreground-color: var(--vcx-fg);\n  --box-background-color: var(--vcx-raised);\n  --box-border-color: var(--vcx-soft-line);\n  --box-border-focus-color: var(--vcx-blue);\n  padding: 28px clamp(16px, 5%, 40px) 32px;\n}\nhtml.vcx[data-vcx-page="new"] #Main > .box { border-radius: 12px; }\nhtml.vcx[data-vcx-page="new"] #Main :is(.box, form) > :is(.header, .cell, .inner) {\n  padding: 12px clamp(12px, 3vw, 20px);\n}\nhtml.vcx[data-vcx-page="new"] #Main .header h1 { margin: 0; font: 600 18px/1.35 var(--vcx-font); }\nhtml.vcx[data-vcx-page="new"] #Main .flex-one-row { flex-wrap: wrap; }\nhtml.vcx[data-vcx-page="new"] #Main :is(#topic_title, #topic_content, .CodeMirror) {\n  box-sizing: border-box;\n  width: 100%;\n  max-width: 100%;\n  padding: 8px 12px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 8px;\n  background: var(--vcx-editor);\n  color: var(--vcx-fg);\n  font: inherit;\n}\nhtml.vcx[data-vcx-page="new"] #Main #topic_title { font-size: 16px; font-weight: 600; }\nhtml.vcx[data-vcx-page="new"] #Main :is(#topic_content, .CodeMirror) { min-height: 160px; line-height: 1.65; }\nhtml.vcx[data-vcx-page="new"] #Main .CodeMirror-cursor { border-left-color: var(--vcx-fg); }\nhtml.vcx[data-vcx-page="new"] #Main .CodeMirror :is(.cm-header, .cm-link, .cm-url) { color: var(--vcx-blue); }\nhtml.vcx[data-vcx-page="new"] #Main :is(select, .select2-container) { max-width: 100%; }\nhtml.vcx[data-vcx-page="new"] #Main select:not(.select2-hidden-accessible) {\n  min-height: 34px;\n  padding: 4px 8px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 8px;\n  font: inherit;\n}\nhtml.vcx[data-vcx-page="new"] :is(.select2-container .select2-selection--single, .select2-dropdown, .select2-search__field) {\n  border-color: var(--vcx-line);\n  background: var(--vcx-editor);\n  color: var(--vcx-fg);\n}\nhtml.vcx[data-vcx-page="new"] .select2-container .select2-selection--single .select2-selection__rendered { color: var(--vcx-fg); }\nhtml.vcx[data-vcx-page="new"] .select2-container .select2-results__option[aria-selected="true"] {\n  background: var(--vcx-selected);\n  color: var(--vcx-fg);\n}\nhtml.vcx[data-vcx-page="new"] .select2-container .select2-results__option--highlighted[aria-selected] {\n  background: var(--vcx-blue-bg);\n  color: var(--vcx-blue);\n}\nhtml.vcx[data-vcx-page="new"] #Main :is(.super, [type="submit"], [onclick*="publishTopic("], .vcx-restore-topic-draft) {\n  min-height: 34px;\n  padding: 6px 12px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 8px;\n  background: var(--vcx-raised);\n  color: var(--vcx-fg);\n  font: 500 13px/1.4 var(--vcx-font);\n  text-shadow: none;\n  box-shadow: none;\n}\nhtml.vcx[data-vcx-page="new"] #Main :is([type="submit"], [onclick*="publishTopic("]):not(:disabled) {\n  border-color: transparent;\n  background: var(--vcx-blue);\n  color: var(--vcx-main);\n}\nhtml.vcx[data-vcx-page="new"] #Main :is(.super, [type="submit"], [onclick*="publishTopic("], .vcx-restore-topic-draft):hover:not(:disabled) {\n  filter: brightness(.94);\n  cursor: pointer;\n}\nhtml.vcx[data-vcx-page="new"] #Main .vcx-restore-topic-draft { margin-top: 8px; }\nhtml.vcx[data-vcx-page="new"] #Main :is(.problem, #error_message) { color: var(--vcx-red); }\nhtml.vcx[data-vcx-page="new"] #Main .problem { border-color: var(--vcx-red); background: var(--vcx-remove); }\n\n@media (max-width: 900px) {\n  html.vcx #Main { padding: 20px 16px 28px; }\n  html.vcx #Main .ps_container { overflow-x: auto; }\n}\n@media (max-width: 480px) {\n  html.vcx #Main .vcx-row-meta { flex-direction: column; align-items: flex-end; gap: 2px; }\n}\n\n';
 
   // src/reader.css
-  var reader_default = 'html.vcx[data-vcx-page="topic"] #Main {\n  --vcx-reader-dim: #737477;\n  --vcx-reader-faint: #a2a3a5;\n  --vcx-reader-inset: #fafafa;\n  --vcx-reader-accent: #2a98ff;\n  padding: 20px clamp(16px, 5%, 40px) 28px;\n}\nhtml.vcx.vcx-dark[data-vcx-page="topic"] #Main {\n  --vcx-reader-dim: #909090;\n  --vcx-reader-faint: #646464;\n  --vcx-reader-inset: #212223;\n  --vcx-reader-accent: var(--vcx-blue);\n}\n\nhtml.vcx #Main .vcx-native-topic, html.vcx #Main #topic-replies .reply-threads { border: 0; background: transparent; }\nhtml.vcx #Main .vcx-native-topic + .sep20 { height: 14px; }\nhtml.vcx #Main .vcx-post-bubble {\n  box-sizing: border-box;\n  width: fit-content;\n  max-width: 85%;\n  min-width: 0;\n  margin: 0 0 6px auto;\n  padding: 10px 16px;\n  border: 0;\n  border-radius: 16px;\n  background: var(--vcx-bubble);\n  font: 400 13.5px/1.6 var(--vcx-font);\n  overflow-wrap: anywhere;\n  scroll-margin-top: 12px;\n}\nhtml.vcx #Main .vcx-original-post > h1 { margin: 0; font: inherit; }\nhtml.vcx #Main .vcx-topic-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px 10px;\n  margin-top: 8px;\n  font: 400 12px/1.5 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-original-post .vcx-topic-tags a:any-link {\n  color: var(--vcx-blue);\n  text-decoration: none;\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-native-topic > .subtle.vcx-post-bubble { margin-top: 8px; }\nhtml.vcx #Main .vcx-native-topic > .outdated {\n  margin: 6px 0;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-reader-dim);\n  font-size: 12px;\n}\nhtml.vcx #Main .vcx-op-meta {\n  padding: 0;\n  border: 0;\n  overflow: visible;\n  font-size: 0;\n  line-height: 0;\n}\nhtml.vcx #Main .vcx-op-meta > :is(.fr, .flex-one-row, .sep10) { display: none; }\nhtml.vcx #Main .vcx-turn-footer {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px 8px;\n  font: 400 12.5px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-op-meta .vcx-turn-footer { padding: 3px 2px; }\nhtml.vcx #Main .vcx-reply-meta { margin-top: 6px; }\nhtml.vcx #Main .vcx-turn-byline {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 2px 6px;\n  min-width: 0;\n  color: var(--vcx-reader-faint);\n  opacity: .55;\n  transition: opacity .15s;\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-byline {\n  color: var(--vcx-reader-dim);\n  opacity: .9;\n}\nhtml.vcx #Main .vcx-turn-byline :is(small, strong, .ago, .small, .topic_stats) {\n  color: inherit !important;\n  font: inherit;\n  text-shadow: none;\n}\nhtml.vcx #Main .vcx-turn-byline a { color: inherit; text-decoration: none; }\nhtml.vcx #Main .vcx-turn-byline a:hover { color: var(--vcx-fg); text-decoration: underline; }\nhtml.vcx #Main .vcx-turn-byline svg { width: 14px; height: 14px; flex: none; }\nhtml.vcx #Main .vcx-turn-byline .vcx-reply-thanks { display: inline-flex; align-items: center; gap: 3px; }\nhtml.vcx #Main .vcx-reply-thanks img { display: none; }\nhtml.vcx #Main .vcx-post-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--vcx-reader-dim); }\nhtml.vcx #Main .vcx-turn-actions {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 4px;\n  margin-inline-start: auto;\n}\nhtml.vcx #Main .vcx-turn-actions :is(.topic_buttons, .votes) {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px;\n  margin: 0;\n  padding: 0;\n  background: transparent;\n  font-size: 0;\n}\nhtml.vcx #Main .vcx-turn-actions .topic_buttons .fr:not(:has(a, button)) { display: none; }\nhtml.vcx #Main .vcx-turn-actions :is(.vcx-native-reply-actions, .vcx-native-reply-actions .flex-one-row) { display: contents; }\nhtml.vcx #Main .vcx-turn-actions .badges { display: none; }\nhtml.vcx #Main .vcx-turn-actions .vcx-reply-action :is(img, .fa) { display: none; }\nhtml.vcx #Main .vcx-turn-actions :is(a, button, .thanked, .topic_thanked, .vcx-reply-action) {\n  box-sizing: border-box;\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  min-height: 22px;\n  padding: 3px 10px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 999px;\n  background: transparent;\n  color: var(--vcx-reader-dim);\n  font: 400 12px/1.2 var(--vcx-font);\n  text-decoration: none;\n  text-shadow: none;\n  white-space: nowrap;\n}\nhtml.vcx #Main .vcx-turn-actions .vote { min-width: 0; padding-inline: 7px; }\nhtml.vcx #Main .vcx-turn-actions :is(a, button):hover { background: var(--vcx-raised); color: var(--vcx-fg); cursor: pointer; }\nhtml.vcx #Main .vcx-turn-actions :is(.thanked, .topic_thanked) { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\nhtml.vcx #Main .vcx-turn-actions svg { width: 13px; height: 13px; flex: none; }\n@media (hover: hover) and (min-width: 700px) {\n  html.vcx #Main .vcx-turn-actions { opacity: 0; pointer-events: none; transition: opacity .15s; }\n  html.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-actions,\n  html.vcx #Main .vcx-turn-actions:has(.thanked, .topic_thanked) { opacity: 1; pointer-events: auto; }\n}\n\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) {\n  color: var(--vcx-fg);\n  font: 400 13.5px/1.6 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main :is(.reply_content, .reply_content .markdown_body) { line-height: 1.75; }\nhtml.vcx #Main .topic_content p { margin: 6px 0; }\nhtml.vcx #Main .reply_content p { margin: 9px 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :first-child { margin-top: 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :last-child { margin-bottom: 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(h1, h2, h3, h4, h5, h6) { margin: 14px 0 7px; font-weight: 600; line-height: 1.4; }\nhtml.vcx #Main :is(.topic_content, .reply_content) h2 { font-size: 17px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) h3 { font-size: 15px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(ol, ul) { margin: 8px 0; padding-inline-start: 20px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) li { margin: 4px 0; line-height: 1.8; }\nhtml.vcx #Main :is(.topic_content, .reply_content) a { color: var(--vcx-blue); text-decoration: none; text-underline-offset: 2px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) a:hover { text-decoration: underline; }\nhtml.vcx #Main :is(.topic_content, .reply_content) img { max-width: 100%; height: auto; border-radius: 6px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) code:not(pre code) {\n  padding: 2.5px 6px;\n  border: 0;\n  border-radius: 6px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-fg);\n  font: 12px var(--vcx-mono);\n}\nhtml.vcx #Main .vcx-post-bubble code:not(pre code) { background: var(--vcx-reader-inset); }\nhtml.vcx #Main :is(.topic_content, .reply_content) hr { margin: 16px 0; border: 0; border-top: 1px solid var(--vcx-soft-line); }\nhtml.vcx #Main :is(.topic_content, .reply_content) table { display: block; max-width: 100%; margin: 12px 0; overflow: auto; border-collapse: collapse; font-size: 13px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(th, td) { padding: 6px 10px; border: 1px solid var(--vcx-line); }\nhtml.vcx #Main :is(.topic_content, .reply_content) th { background: var(--vcx-raised); font-weight: 600; }\n\nhtml.vcx #Main .vcx-think {\n  margin: 10px 0;\n  color: var(--vcx-reader-dim);\n  font: 400 12.5px/1.4 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-think-head {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  list-style: none;\n  cursor: pointer;\n  user-select: none;\n}\nhtml.vcx #Main :is(.vcx-think-head, .vcx-quote > summary)::-webkit-details-marker { display: none; }\nhtml.vcx #Main :is(.vcx-think-head, .vcx-quote > summary):focus-visible { outline: 2px solid var(--vcx-blue); outline-offset: 2px; }\nhtml.vcx #Main .vcx-think-head:hover { color: var(--vcx-muted); }\nhtml.vcx #Main .vcx-think-star { color: var(--vcx-reader-accent); }\nhtml.vcx #Main .vcx-think-chev { font-size: 10px; }\nhtml.vcx #Main .vcx-think[open] .vcx-think-chev::after { content: "▾"; }\nhtml.vcx #Main .vcx-think:not([open]) .vcx-think-chev::after { content: "▸"; }\nhtml.vcx #Main .vcx-think-body {\n  margin: 7px 0 2px;\n  padding-inline-start: 10px;\n  border-inline-start: 1px solid var(--vcx-soft-line);\n  color: var(--vcx-muted);\n  line-height: 1.7;\n  white-space: pre-wrap;\n}\nhtml.vcx #Main .vcx-runline {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px 8px;\n  margin: 12px 0;\n  color: var(--vcx-reader-dim);\n  font: 400 12.5px/1.4 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-runline svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-faint); }\nhtml.vcx #Main .vcx-runline code {\n  min-width: 0;\n  padding: 1.5px 7px;\n  border: 0;\n  border-radius: 6px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-fg);\n  font: 11.5px var(--vcx-mono);\n}\n\nhtml.vcx #Main .vcx-quote {\n  margin: 14px 0;\n  border: 1px solid var(--vcx-line);\n  border-radius: 10px;\n  background: var(--vcx-raised);\n}\nhtml.vcx #Main .vcx-quote > summary {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 8px 12px;\n  color: var(--vcx-muted);\n  font: 400 12.5px/1.4 var(--vcx-mono);\n  list-style: none;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-quote > summary svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-dim); }\nhtml.vcx #Main .vcx-quote > summary .chev { margin-inline-start: auto; }\nhtml.vcx #Main .vcx-quote[open] > summary .chev { transform: rotate(90deg); }\nhtml.vcx #Main .vcx-quote > .vcx-quote-body {\n  margin: 0;\n  padding: 10px 14px;\n  border: 0;\n  border-top: 1px solid var(--vcx-soft-line);\n  background: transparent;\n  color: var(--vcx-muted);\n  font: 400 13.5px/1.7 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-quote .vcx-quote-body > p { margin: 6px 0; }\n\nhtml.vcx #Main .vcx-snippet {\n  min-width: 0;\n  margin: 14px 0;\n  overflow: hidden;\n  border: 1px solid var(--vcx-soft-line);\n  border-radius: 10px;\n  background: var(--vcx-reader-inset);\n}\nhtml.vcx #Main .vcx-snippet-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  padding: 7px 12px;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  color: var(--vcx-reader-dim);\n  font: 12px/1.4 var(--vcx-mono);\n}\nhtml.vcx #Main .vcx-snippet-header button {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  border: 0;\n  border-radius: 5px;\n  background: transparent;\n  color: var(--vcx-muted);\n  padding: 2px 4px;\n  font: inherit;\n  white-space: nowrap;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-snippet-header svg { width: 13px; height: 13px; }\nhtml.vcx #Main .vcx-snippet-header button:hover { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-snippet pre {\n  margin: 0;\n  padding: 12px 14px;\n  overflow: auto;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: 12.5px/1.65 var(--vcx-mono);\n  white-space: pre;\n  overflow-wrap: normal;\n}\nhtml.vcx #Main .vcx-snippet pre code { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }\n\nhtml.vcx #Main #topic-replies .vcx-turn { background: transparent; border: 0; scroll-margin-top: 12px; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d) > .vcx-turn { padding-block: 0 12px; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn { padding-inline: 0; }\nhtml.vcx #Main #topic-replies .vcx-turn > table { table-layout: fixed; width: 100%; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn > table > tbody > tr > td:not(:has(.reply_content)) { display: none; }\nhtml.vcx #Main #topic-replies .vcx-turn > table > tbody > tr > td:has(.reply_content) { padding: 0; }\nhtml.vcx #Main #topic-replies .vcx-turn .reply_content { margin: 0; }\nhtml.vcx #Main #topic-replies .vcx-reply-summary { min-height: 0; padding: 5px 0; border: 0; }\nhtml.vcx #Main #topic-replies .vcx-reply-summary:not(:has(a, button, .reply-lines)) { display: none; }\nhtml.vcx #Main #topic-replies .vcx-reply-summary > .gray { display: none; }\n\n@media (max-width: 900px) {\n  html.vcx #Main .vcx-post-bubble { max-width: 92%; }\n}\n@media (max-width: 480px) {\n  html.vcx #Main .vcx-turn-byline { opacity: 1; color: var(--vcx-quiet); }\n}\n';
+  var reader_default = 'html.vcx[data-vcx-page="topic"] #Main {\n  --vcx-reader-dim: #737477;\n  --vcx-reader-faint: #a2a3a5;\n  --vcx-reader-inset: #fafafa;\n  --vcx-reader-accent: #2a98ff;\n  padding: 20px clamp(16px, 5%, 40px) 28px;\n}\nhtml.vcx.vcx-dark[data-vcx-page="topic"] #Main {\n  --vcx-reader-dim: #909090;\n  --vcx-reader-faint: #646464;\n  --vcx-reader-inset: #212223;\n  --vcx-reader-accent: var(--vcx-blue);\n}\n\nhtml.vcx #Main .vcx-native-topic, html.vcx #Main #topic-replies .reply-threads { border: 0; background: transparent; }\nhtml.vcx #Main .vcx-native-topic + .sep20 { height: 14px; }\nhtml.vcx #Main .vcx-post-bubble {\n  box-sizing: border-box;\n  width: fit-content;\n  max-width: 85%;\n  min-width: 0;\n  margin: 0 0 6px auto;\n  padding: 10px 16px;\n  border: 0;\n  border-radius: 16px;\n  background: var(--vcx-bubble);\n  font: 400 13.5px/1.6 var(--vcx-font);\n  overflow-wrap: anywhere;\n  scroll-margin-top: 12px;\n}\nhtml.vcx #Main .vcx-original-post > h1 { margin: 0; font: inherit; }\nhtml.vcx #Main .vcx-topic-tags {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px 10px;\n  margin-top: 8px;\n  font: 400 12px/1.5 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-original-post .vcx-topic-tags a:any-link {\n  color: var(--vcx-blue);\n  text-decoration: none;\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-native-topic > .subtle.vcx-post-bubble { margin-top: 8px; }\nhtml.vcx #Main .vcx-native-topic > .outdated {\n  margin: 6px 0;\n  padding: 0;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-reader-dim);\n  font-size: 12px;\n}\nhtml.vcx #Main .vcx-op-meta {\n  padding: 0;\n  border: 0;\n  overflow: visible;\n  font-size: 0;\n  line-height: 0;\n}\nhtml.vcx #Main .vcx-op-meta > :is(.fr, .flex-one-row, .sep10) { display: none; }\nhtml.vcx #Main .vcx-turn-footer {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px 8px;\n  font: 400 12.5px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-op-meta .vcx-turn-footer { padding: 3px 2px; }\nhtml.vcx #Main .vcx-reply-meta { margin-top: 6px; }\nhtml.vcx #Main .vcx-turn-byline {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 2px 6px;\n  min-width: 0;\n  color: var(--vcx-reader-faint);\n  opacity: .55;\n  transition: opacity .15s;\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-byline {\n  color: var(--vcx-reader-dim);\n  opacity: .9;\n}\nhtml.vcx #Main .vcx-turn-byline :is(small, strong, .ago, .small, .topic_stats) {\n  color: inherit !important;\n  font: inherit;\n  text-shadow: none;\n}\nhtml.vcx #Main .vcx-turn-byline a { color: inherit; text-decoration: none; }\nhtml.vcx #Main .vcx-turn-byline a:hover { color: var(--vcx-fg); text-decoration: underline; }\nhtml.vcx #Main .vcx-turn-byline svg { width: 14px; height: 14px; flex: none; }\nhtml.vcx #Main .vcx-turn-byline .vcx-reply-thanks { display: inline-flex; align-items: center; gap: 3px; }\nhtml.vcx #Main .vcx-reply-thanks img { display: none; }\nhtml.vcx #Main .vcx-post-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--vcx-reader-dim); }\nhtml.vcx #Main .vcx-turn-actions {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: flex-end;\n  gap: 4px;\n  margin-inline-start: auto;\n}\nhtml.vcx #Main .vcx-turn-actions :is(.topic_buttons, .votes) {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px;\n  margin: 0;\n  padding: 0;\n  background: transparent;\n  font-size: 0;\n}\nhtml.vcx #Main .vcx-turn-actions .topic_buttons .fr:not(:has(a, button)) { display: none; }\nhtml.vcx #Main .vcx-turn-actions :is(.vcx-native-reply-actions, .vcx-native-reply-actions .flex-one-row) { display: contents; }\nhtml.vcx #Main .vcx-turn-actions .badges { display: none; }\nhtml.vcx #Main .vcx-turn-actions .vcx-reply-action :is(img, .fa) { display: none; }\nhtml.vcx #Main .vcx-turn-actions :is(a, button, .thanked, .topic_thanked, .vcx-reply-action) {\n  box-sizing: border-box;\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  min-height: 22px;\n  padding: 3px 10px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 999px;\n  background: transparent;\n  color: var(--vcx-reader-dim);\n  font: 400 12px/1.2 var(--vcx-font);\n  text-decoration: none;\n  text-shadow: none;\n  white-space: nowrap;\n}\nhtml.vcx #Main .vcx-turn-actions .vote { min-width: 0; padding-inline: 7px; }\nhtml.vcx #Main .vcx-turn-actions :is(a, button):hover { background: var(--vcx-raised); color: var(--vcx-fg); cursor: pointer; }\nhtml.vcx #Main .vcx-turn-actions :is(.thanked, .topic_thanked) { background: var(--vcx-blue-bg); color: var(--vcx-blue); }\nhtml.vcx #Main .vcx-turn-actions svg { width: 13px; height: 13px; flex: none; }\n@media (hover: hover) and (min-width: 700px) {\n  html.vcx #Main .vcx-turn-actions { opacity: 0; pointer-events: none; transition: opacity .15s; }\n  html.vcx #Main :is(.vcx-native-topic, .vcx-turn):is(:hover, :focus-within) .vcx-turn-actions,\n  html.vcx #Main .vcx-turn-actions:has(.thanked, .topic_thanked) { opacity: 1; pointer-events: auto; }\n}\n\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) {\n  color: var(--vcx-fg);\n  font: 400 13.5px/1.6 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main :is(.reply_content, .reply_content .markdown_body) { line-height: 1.75; }\nhtml.vcx #Main .topic_content p { margin: 6px 0; }\nhtml.vcx #Main .reply_content p { margin: 9px 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :first-child { margin-top: 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content, .markdown_body) > :last-child { margin-bottom: 0; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(h1, h2, h3, h4, h5, h6) { margin: 14px 0 7px; font-weight: 600; line-height: 1.4; }\nhtml.vcx #Main :is(.topic_content, .reply_content) h2 { font-size: 17px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) h3 { font-size: 15px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(ol, ul) { margin: 8px 0; padding-inline-start: 20px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) li { margin: 4px 0; line-height: 1.8; }\nhtml.vcx #Main :is(.topic_content, .reply_content) a { color: var(--vcx-blue); text-decoration: none; text-underline-offset: 2px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) a:hover { text-decoration: underline; }\nhtml.vcx #Main :is(.topic_content, .reply_content) img { max-width: 100%; height: auto; border-radius: 6px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) code:not(pre code) {\n  padding: 2.5px 6px;\n  border: 0;\n  border-radius: 6px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-fg);\n  font: 12px var(--vcx-mono);\n}\nhtml.vcx #Main .vcx-post-bubble code:not(pre code) { background: var(--vcx-reader-inset); }\nhtml.vcx #Main :is(.topic_content, .reply_content) hr { margin: 16px 0; border: 0; border-top: 1px solid var(--vcx-soft-line); }\nhtml.vcx #Main :is(.topic_content, .reply_content) table { display: block; max-width: 100%; margin: 12px 0; overflow: auto; border-collapse: collapse; font-size: 13px; }\nhtml.vcx #Main :is(.topic_content, .reply_content) :is(th, td) { padding: 6px 10px; border: 1px solid var(--vcx-line); }\nhtml.vcx #Main :is(.topic_content, .reply_content) th { background: var(--vcx-raised); font-weight: 600; }\n\nhtml.vcx #Main .vcx-think {\n  margin: 10px 0;\n  color: var(--vcx-reader-dim);\n  font: 400 12.5px/1.4 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-think-head {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  list-style: none;\n  cursor: pointer;\n  user-select: none;\n}\nhtml.vcx #Main :is(.vcx-think-head, .vcx-quote > summary)::-webkit-details-marker { display: none; }\nhtml.vcx #Main :is(.vcx-think-head, .vcx-quote > summary):focus-visible { outline: 2px solid var(--vcx-blue); outline-offset: 2px; }\nhtml.vcx #Main .vcx-think-head:hover { color: var(--vcx-muted); }\nhtml.vcx #Main .vcx-think-star { color: var(--vcx-reader-accent); }\nhtml.vcx #Main .vcx-think-chev { font-size: 10px; }\nhtml.vcx #Main .vcx-think[open] .vcx-think-chev::after { content: "▾"; }\nhtml.vcx #Main .vcx-think:not([open]) .vcx-think-chev::after { content: "▸"; }\nhtml.vcx #Main .vcx-think-body {\n  margin: 7px 0 2px;\n  padding-inline-start: 10px;\n  border-inline-start: 1px solid var(--vcx-soft-line);\n  color: var(--vcx-muted);\n  line-height: 1.7;\n  white-space: pre-wrap;\n}\nhtml.vcx #Main .vcx-runline {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 4px 8px;\n  margin: 12px 0;\n  color: var(--vcx-reader-dim);\n  font: 400 12.5px/1.4 var(--vcx-font);\n  overflow-wrap: anywhere;\n}\nhtml.vcx #Main .vcx-runline svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-faint); }\nhtml.vcx #Main .vcx-runline code {\n  min-width: 0;\n  padding: 1.5px 7px;\n  border: 0;\n  border-radius: 6px;\n  background: var(--vcx-bubble);\n  color: var(--vcx-fg);\n  font: 11.5px var(--vcx-mono);\n}\n\nhtml.vcx #Main .vcx-quote {\n  margin: 14px 0;\n  border: 1px solid var(--vcx-line);\n  border-radius: 10px;\n  background: var(--vcx-raised);\n}\nhtml.vcx #Main .vcx-quote > summary {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 8px 12px;\n  color: var(--vcx-muted);\n  font: 400 12.5px/1.4 var(--vcx-mono);\n  list-style: none;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-quote > summary svg { width: 14px; height: 14px; flex: none; color: var(--vcx-reader-dim); }\nhtml.vcx #Main .vcx-quote > summary .chev { margin-inline-start: auto; }\nhtml.vcx #Main .vcx-quote[open] > summary .chev { transform: rotate(90deg); }\nhtml.vcx #Main .vcx-quote > .vcx-quote-body {\n  margin: 0;\n  padding: 10px 14px;\n  border: 0;\n  border-top: 1px solid var(--vcx-soft-line);\n  background: transparent;\n  color: var(--vcx-muted);\n  font: 400 13.5px/1.7 var(--vcx-font);\n}\nhtml.vcx #Main .vcx-quote .vcx-quote-body > p { margin: 6px 0; }\n\nhtml.vcx #Main .vcx-snippet {\n  min-width: 0;\n  margin: 14px 0;\n  overflow: hidden;\n  border: 1px solid var(--vcx-soft-line);\n  border-radius: 10px;\n  background: var(--vcx-reader-inset);\n}\nhtml.vcx #Main .vcx-snippet-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  padding: 7px 12px;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  color: var(--vcx-reader-dim);\n  font: 12px/1.4 var(--vcx-mono);\n}\nhtml.vcx #Main .vcx-snippet-header button {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  border: 0;\n  border-radius: 5px;\n  background: transparent;\n  color: var(--vcx-muted);\n  padding: 2px 4px;\n  font: inherit;\n  white-space: nowrap;\n  cursor: pointer;\n}\nhtml.vcx #Main .vcx-snippet-header svg { width: 13px; height: 13px; }\nhtml.vcx #Main .vcx-snippet-header button:hover { background: var(--vcx-hover); }\nhtml.vcx #Main .vcx-snippet pre {\n  margin: 0;\n  padding: 12px 14px;\n  overflow: auto;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: 12.5px/1.65 var(--vcx-mono);\n  white-space: pre;\n  overflow-wrap: normal;\n}\nhtml.vcx #Main .vcx-snippet pre code { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; }\n\nhtml.vcx #Main #topic-replies .vcx-turn { background: transparent; border: 0; scroll-margin-top: 12px; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d) > .vcx-turn { padding-block: 0 12px; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn { padding-inline: 0; }\nhtml.vcx #Main #topic-replies .vcx-turn > table { table-layout: fixed; width: 100%; }\nhtml.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn > table > tbody > tr > td:not(:has(.reply_content)) { display: none; }\nhtml.vcx #Main #topic-replies .vcx-turn > table > tbody > tr > td:has(.reply_content) { padding: 0; }\nhtml.vcx #Main #topic-replies .vcx-turn .reply_content { margin: 0; }\nhtml.vcx #Main #topic-replies > #no-comments-yet {\n  padding: 0;\n  border: 0;\n  background: transparent;\n  color: var(--vcx-reader-dim);\n  font: 400 12.5px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main #topic-replies .vcx-reply-summary { min-height: 0; padding: 5px 0; border: 0; }\nhtml.vcx #Main #topic-replies > .vcx-reply-summary { background: transparent; }\nhtml.vcx #Main #topic-replies > .vcx-reply-summary > .inner { padding: 0; }\nhtml.vcx #Main #topic-replies .vcx-reply-summary:not(:has(a, button, form, input, .reply-lines)) { display: none; }\nhtml.vcx #Main #topic-replies > .vcx-reply-summary .fa-tags,\nhtml.vcx #Main #topic-replies .vcx-reply-summary > .gray { display: none; }\n\n@media (max-width: 900px) {\n  html.vcx #Main .vcx-post-bubble { max-width: 92%; }\n}\n@media (max-width: 480px) {\n  html.vcx #Main .vcx-turn-byline { opacity: 1; color: var(--vcx-quiet); }\n}\n';
+
+  // src/new-topic.css
+  var new_topic_default = 'html.vcx #Main.vcx-new-topic-page { padding: 20px clamp(12px, 4vw, 40px) 24px; }\nhtml.vcx #Main .vcx-new-topic-box { border: 0; background: transparent; }\nhtml.vcx #Main .vcx-new-topic-box :is(.cell, .inner):has(.vcx-new-topic) { padding: 0; border: 0; }\n.vcx-new-topic {\n  display: grid;\n  grid-template-rows: minmax(100px, 1fr) auto;\n  gap: 20px;\n  min-height: max(340px, calc(100dvh - var(--vcx-header-h) - 44px));\n}\n.vcx-topic-title { display: grid; place-items: center; min-width: 0; padding: 0 12px; }\nhtml.vcx #Main.vcx-new-topic-page .vcx-topic-title :is(#topic_title, input, textarea) {\n  box-sizing: border-box;\n  width: min(100%, 600px);\n  height: 1.7em !important;\n  min-height: 0;\n  padding: 4px 8px;\n  border: 0;\n  border-bottom: 1px solid var(--vcx-line);\n  border-radius: 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  box-shadow: none;\n  font: 500 clamp(21px, 3vw, 34px)/1.3 var(--vcx-font);\n  text-align: center;\n  resize: none;\n}\nhtml.vcx #Main.vcx-new-topic-page .vcx-topic-title :is(textarea#topic_title, textarea[name="title"]) {\n  height: auto !important;\n  min-height: 1.7em;\n  max-height: 4.5em;\n  field-sizing: content;\n}\nhtml.vcx #Main .vcx-topic-title :is(input, textarea)::placeholder { color: var(--vcx-quiet); opacity: 1; }\nhtml.vcx #Main.vcx-new-topic-page .vcx-topic-title :is(#topic_title, input, textarea):focus {\n  outline: none;\n  border-color: var(--vcx-blue);\n}\n.vcx-topic-card {\n  min-width: 0;\n  padding: 10px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 14px;\n  background: var(--vcx-raised);\n}\n.vcx-topic-context {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 0;\n  padding: 4px;\n  border-radius: 8px;\n  background: var(--vcx-main);\n}\n.vcx-topic-site, .vcx-topic-node {\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  min-width: 0;\n  color: var(--vcx-muted);\n}\n.vcx-topic-site { flex: none; padding: 5px 7px; font-weight: 600; }\n.vcx-topic-node { padding-left: 8px; border-left: 1px solid var(--vcx-line); }\nhtml.vcx #Main .vcx-topic-context select:not(.select2-hidden-accessible) {\n  width: auto !important;\n  min-width: 0;\n  min-height: 28px;\n  max-width: min(360px, 100%);\n  padding: 3px 5px;\n  border: 0;\n  border-radius: 4px;\n  background: transparent;\n  font-size: 13px;\n}\nhtml.vcx #Main .vcx-topic-context .select2-container { width: auto !important; min-width: 0; }\nhtml.vcx #Main .vcx-topic-context .select2-selection--single { border: 0; background: transparent; }\n.vcx-topic-body { min-width: 0; padding-block: 5px; }\nhtml.vcx #Main.vcx-new-topic-page .vcx-topic-body :is(#topic_content, textarea[name="content"], .CodeMirror) {\n  box-sizing: border-box;\n  width: 100%;\n  min-height: 64px;\n  max-height: min(34dvh, 252px);\n  padding: 8px;\n  border: 0;\n  border-radius: 6px;\n  background: transparent;\n  color: var(--vcx-fg);\n  box-shadow: none;\n  font: 400 14px/1.6 var(--vcx-font);\n}\nhtml.vcx #Main.vcx-new-topic-page .vcx-topic-body textarea:not(.CodeMirror textarea) {\n  height: auto !important;\n  field-sizing: content;\n  resize: none;\n}\n.vcx-topic-body textarea::placeholder { color: var(--vcx-quiet); opacity: 1; }\nhtml.vcx #Main.vcx-new-topic-page .vcx-topic-body .CodeMirror {\n  position: relative;\n  height: auto;\n  padding: 2px 4px;\n  font-family: var(--vcx-mono);\n}\n.vcx-topic-body .CodeMirror[data-vcx-placeholder]::after {\n  position: absolute;\n  inset-block-start: 6px;\n  inset-inline-start: 8px;\n  color: var(--vcx-quiet);\n  font: 400 14px/1.6 var(--vcx-font);\n  pointer-events: none;\n  content: attr(data-vcx-placeholder);\n}\n.vcx-topic-body .CodeMirror pre.CodeMirror-placeholder { color: var(--vcx-quiet); }\n.vcx-topic-body .CodeMirror-scroll { min-height: 60px; max-height: min(32dvh, 244px); }\n.vcx-topic-toolbar, .vcx-topic-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; }\n.vcx-topic-actions { justify-content: flex-end; margin-inline-start: auto; }\n.vcx-topic-files { position: relative; flex: none; }\n.vcx-topic-files > summary {\n  display: grid;\n  place-items: center;\n  width: 34px;\n  height: 34px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 8px;\n  color: var(--vcx-fg);\n  font-size: 19px;\n  list-style: none;\n  cursor: pointer;\n}\n.vcx-topic-files > summary::-webkit-details-marker { display: none; }\n.vcx-topic-files > summary:is(:hover, :focus-visible), .vcx-topic-files[open] > summary { background: var(--vcx-hover); }\n.vcx-topic-files > summary:focus-visible { outline: 2px solid var(--vcx-blue); }\n.vcx-topic-file-menu {\n  position: absolute;\n  z-index: 2;\n  inset-inline-start: 0;\n  inset-block-end: calc(100% + 6px);\n  box-sizing: border-box;\n  width: max-content;\n  max-width: calc(100vw - 48px);\n  padding: 4px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 8px;\n  background: var(--vcx-raised);\n  box-shadow: 0 6px 18px #0002;\n}\n.vcx-topic-file-menu button {\n  display: block;\n  width: 100%;\n  min-height: 30px;\n  padding: 4px 9px;\n  border: 0;\n  border-radius: 5px;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: inherit;\n  text-align: start;\n  cursor: pointer;\n}\n.vcx-topic-file-menu button:hover:not(:disabled) { background: var(--vcx-hover); }\n.vcx-topic-file-menu button:disabled { color: var(--vcx-quiet); cursor: default; }\nhtml.vcx #Main.vcx-new-topic-page .vcx-topic-publish { margin: 0; }\nhtml.vcx #Main .vcx-topic-actions .vcx-restore-topic-draft { margin: 0; }\n.vcx-topic-feedback :is(.vcx-topic-status, #error_message, .problem):empty { margin: 0; padding: 0; border: 0; }\n.vcx-topic-status:not(:empty) { padding: 6px 2px 0; color: var(--vcx-muted); font-size: 12px; overflow-wrap: anywhere; }\nhtml.vcx #Main.vcx-new-topic-page #topic_preview { margin-top: 12px; border: 1px solid var(--vcx-line); border-radius: 8px; overflow-wrap: anywhere; }\nhtml.vcx #Main.vcx-new-topic-page #topic_preview img { max-width: 100%; height: auto; }\n\n@media (max-width: 480px) {\n  html.vcx #Main.vcx-new-topic-page { padding-inline: 12px; }\n  .vcx-topic-card { padding: 8px; }\n  .vcx-topic-title { padding-inline: 0; }\n  .vcx-topic-toolbar, .vcx-topic-actions { gap: 4px; }\n  html.vcx[data-vcx-page="new"] #Main .vcx-topic-actions :is(.super, [type="submit"], .vcx-restore-topic-draft) {\n    padding-inline: 8px;\n  }\n}\n';
+
+  // src/account-settings.css
+  var account_settings_default = 'html.vcx[data-vcx-page="settings"] {\n  --vcx-account-rail: color-mix(in srgb, var(--vcx-rail) 48%, var(--vcx-raised));\n  --vcx-account-fill: color-mix(in srgb, var(--vcx-hover) 54%, var(--vcx-account-rail));\n}\nhtml.vcx[data-vcx-page="settings"] :is(body, #Wrapper, .vcx-topbar) { background: var(--vcx-editor) !important; }\nhtml.vcx[data-vcx-page="settings"] .vcx-sidebar { border-inline-end: 1px solid var(--vcx-soft-line); background: var(--vcx-account-rail); }\n.vcx-account-sidebar-header { flex: none; padding: 8px 14px 14px; }\n.vcx-account-sidebar-header h2 { margin: 0 0 14px; padding: 0; border: 0; font: 650 20px/1.3 var(--vcx-font); }\n.vcx-account-search { min-height: 38px; padding-inline: 12px; border: 0; border-radius: 20px; background: var(--vcx-account-fill); color: var(--vcx-muted); }\n.vcx-account-search:focus-within { box-shadow: inset 0 0 0 1px var(--vcx-blue); }\n.vcx-account-search input { color: var(--vcx-fg); }\n.vcx-account-navigation { padding: 0 5px; }\n.vcx-account-navigation .vcx-account-group { margin: 0 0 18px; }\n.vcx-account-navigation .vcx-account-group h2 { margin: 0 10px 5px; padding: 8px 0 2px; border: 0; font-weight: 500; }\n.vcx-account-navigation .vcx-action { min-height: 35px; padding-inline: 10px; border-radius: 8px; font-size: 14px; }\n.vcx-account-navigation .vcx-action[aria-current="page"] {\n  background: var(--vcx-account-fill);\n  color: var(--vcx-fg);\n  font-weight: 550;\n}\n.vcx-account-no-results { padding: 8px 12px; color: var(--vcx-muted); }\n\nhtml.vcx #Main.vcx-account-page {\n  --box-foreground-color: var(--vcx-fg);\n  --box-background-color: var(--vcx-raised);\n  --box-border-color: var(--vcx-soft-line);\n  --box-border-focus-color: var(--vcx-blue);\n  width: min(100%, 880px) !important;\n  padding: 34px clamp(16px, 4vw, 46px) 40px;\n  overflow-wrap: anywhere;\n}\n.vcx-account-heading { margin: 0 0 26px; }\nhtml.vcx #Main .vcx-account-heading h1 { margin: 0; font: 650 30px/1.25 var(--vcx-font); }\nhtml.vcx #Main.vcx-account-page :is(.vcx-account-native-menu, .vcx-account-native-heading),\nhtml.vcx #Main.vcx-account-page > .vcx-account-heading + .sep20 { display: none; }\nhtml.vcx #Main.vcx-account-page > .box { border-radius: 14px; }\nhtml.vcx #Main.vcx-account-page :is(.box, form) > .header,\nhtml.vcx #Main.vcx-account-page :is(.box, form) > .cell.section {\n  padding: 12px 16px;\n  border-bottom: 1px solid var(--vcx-soft-line);\n  border-radius: 13px 13px 0 0;\n  background: transparent;\n  color: var(--vcx-fg);\n  font: 600 14px/1.4 var(--vcx-font);\n}\nhtml.vcx #Main.vcx-account-page :is(.cell, .inner, .cell_ops):not(.page-content-header) { padding: 12px 16px; }\nhtml.vcx #Main.vcx-account-page .cell_ops { border-top: 1px solid var(--vcx-soft-line); background: transparent; }\nhtml.vcx #Main.vcx-account-page .flex-one-row { flex-wrap: wrap; }\nhtml.vcx #Main.vcx-account-page :is(img, textarea, input, select, button) { max-width: 100%; }\nhtml.vcx #Main.vcx-account-page img { height: auto; }\nhtml.vcx #Main.vcx-account-page :is(select, textarea, input:is([type="text"], [type="email"], [type="password"], [type="url"], [type="number"], [type="tel"], :not([type]))) {\n  box-sizing: border-box;\n  min-height: 34px;\n  padding: 6px 10px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 8px;\n  outline-offset: 2px;\n  background: var(--vcx-editor);\n  color: var(--vcx-fg);\n  font: inherit;\n  box-shadow: none;\n}\nhtml.vcx #Main.vcx-account-page textarea { width: min(100%, 480px); resize: vertical; }\nhtml.vcx #Main.vcx-account-page :is(input, select, textarea):focus-visible { outline: 2px solid var(--vcx-blue); }\nhtml.vcx #Main.vcx-account-page input:is([type="checkbox"], [type="radio"]) { accent-color: var(--vcx-blue); }\nhtml.vcx #Main.vcx-account-page :is(input.vcx-account-switch, input[role="switch"], .vcx-account-native-switch > label) {\n  appearance: none;\n  box-sizing: border-box;\n  display: inline-block;\n  width: 34px;\n  height: 20px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 20px;\n  background: radial-gradient(circle at 9px 50%, var(--vcx-raised) 5px, transparent 6px) var(--vcx-selected);\n  vertical-align: middle;\n  cursor: pointer;\n}\nhtml.vcx #Main.vcx-account-page :is(input.vcx-account-switch:checked, input[role="switch"]:checked, .vcx-account-native-switch > input:checked + label) {\n  border-color: var(--vcx-blue);\n  background: radial-gradient(circle at calc(100% - 9px) 50%, var(--vcx-main) 5px, transparent 6px) var(--vcx-blue);\n}\nhtml.vcx #Main.vcx-account-page .vcx-account-native-switch {\n  position: relative;\n  display: inline-block;\n  flex: none;\n  width: 34px;\n  min-width: 34px;\n  max-width: 34px;\n  height: 20px;\n  line-height: 0;\n  vertical-align: middle;\n}\nhtml.vcx #Main.vcx-account-page .vcx-account-native-switch > input {\n  display: block;\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  margin: 0;\n  opacity: 0;\n  pointer-events: none;\n}\nhtml.vcx #Main.vcx-account-page .vcx-account-native-switch > label :is(.frame, .switch) { display: none; }\nhtml.vcx #Main.vcx-account-page .vcx-account-native-switch > input:focus-visible + label { outline: 2px solid var(--vcx-blue); outline-offset: 2px; }\nhtml.vcx #Main.vcx-account-page .vcx-account-native-switch > input:disabled + label { opacity: .65; cursor: default; }\nhtml.vcx #Main.vcx-account-page .flex-one-row:has(> .vcx-account-native-switch) { justify-content: flex-end; gap: 8px 12px; }\nhtml.vcx #Main.vcx-account-page .flex-one-row > .vcx-account-native-switch { order: 1; }\nhtml.vcx #Main.vcx-account-page :is(.super, [type="submit"], .vcx-account-open) {\n  min-height: 34px;\n  padding: 6px 11px;\n  border: 1px solid var(--vcx-line);\n  border-radius: 8px;\n  background: var(--vcx-main);\n  color: var(--vcx-fg);\n  font: 500 13px/1.4 var(--vcx-font);\n  text-shadow: none;\n  box-shadow: none;\n  white-space: normal;\n}\nhtml.vcx #Main.vcx-account-page :is([type="submit"], .vcx-account-open):not(:disabled) {\n  border-color: transparent;\n  background: var(--vcx-blue);\n  color: var(--vcx-main);\n  cursor: pointer;\n}\nhtml.vcx #Main.vcx-account-page :is(button, input, .super):disabled { opacity: .65; cursor: default; }\nhtml.vcx #Main.vcx-account-page :is(.super, [type="submit"], .vcx-account-open):hover:not(:disabled) { filter: brightness(.95); }\nhtml.vcx #Main.vcx-account-page .problem {\n  border-color: var(--vcx-blue);\n  background: var(--vcx-blue-bg);\n  color: var(--vcx-fg);\n}\nhtml.vcx #Main.vcx-account-page :is(.gray, .fade, .settings-explanation, small) { color: var(--vcx-quiet); }\n\nhtml.vcx #Main .vcx-account-field-table { width: 100%; table-layout: fixed; border-collapse: collapse; }\nhtml.vcx #Main .vcx-account-field-table tr + tr { border-top: 1px solid var(--vcx-soft-line); }\nhtml.vcx #Main .vcx-account-field-table td { padding: 11px 0; vertical-align: middle; text-align: start; }\nhtml.vcx #Main .vcx-account-field-table td:first-child:not([colspan]) { width: 39% !important; padding-inline-end: 16px; font-weight: 550; }\nhtml.vcx #Main .vcx-account-field-table td:first-child small { display: block; margin-top: 3px; font-size: 12px; font-weight: 400; }\nhtml.vcx #Main .vcx-account-field-table td:nth-child(2) { text-align: end; }\nhtml.vcx #Main .vcx-account-field-table td:nth-child(2) > :is(input, select, textarea, button) { max-width: 100%; }\nhtml.vcx #Main .vcx-account-field-table:not(.vcx-account-profile-table) tr:last-child td:has([type="submit"]) { padding-bottom: 0; }\n\nhtml.vcx #Main.vcx-account-page .vcx-account-profile-box { border: 0; background: transparent; }\nhtml.vcx #Main.vcx-account-page .vcx-account-profile-box .inner:has(.vcx-account-profile-table) { padding: 0; }\nhtml.vcx #Main .vcx-account-profile-table, html.vcx #Main .vcx-account-profile-table > tbody { display: block; }\nhtml.vcx #Main .vcx-account-profile-table tr:not(.vcx-account-section-title) {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);\n  align-items: center;\n  min-height: 48px;\n  padding-inline: 16px;\n  border-inline: 1px solid var(--vcx-soft-line);\n  background: var(--vcx-raised);\n}\nhtml.vcx #Main .vcx-account-profile-table tr:has(> td.alt) { background: var(--vcx-main); }\nhtml.vcx #Main .vcx-account-profile-table td.alt { background: transparent; }\nhtml.vcx #Main .vcx-account-profile-table tr.vcx-account-note-row { grid-template-columns: minmax(0, 1fr); min-height: 0; border-top: 0; }\nhtml.vcx #Main .vcx-account-profile-table .vcx-account-note-row td:first-child { display: none; }\nhtml.vcx #Main .vcx-account-profile-table .vcx-account-note-row td:nth-child(2) { padding-top: 0; color: var(--vcx-quiet); text-align: start; }\nhtml.vcx #Main .vcx-account-profile-table td:first-child:not([colspan]) { width: auto !important; }\nhtml.vcx #Main .vcx-account-profile-table .vcx-account-section-title { display: block; margin-bottom: 9px; border: 0; }\nhtml.vcx #Main .vcx-account-profile-table .vcx-account-section-title:not(:first-child) { margin-top: 24px; }\nhtml.vcx #Main .vcx-account-section-title td { padding: 0; }\nhtml.vcx #Main .vcx-account-section-title h2 { margin: 0; padding: 0; border: 0; color: var(--vcx-fg); font: 600 14px/1.4 var(--vcx-font); }\nhtml.vcx #Main .vcx-account-card-first { border-start-start-radius: 12px; border-start-end-radius: 12px; }\nhtml.vcx #Main .vcx-account-card-last { border-bottom: 1px solid var(--vcx-soft-line); border-end-start-radius: 12px; border-end-end-radius: 12px; }\n\nhtml.vcx #Main.vcx-account-page :is(.social-settings-form, .privacy-settings-form) > div {\n  display: grid;\n  grid-template-columns: minmax(110px, 39%) minmax(0, 1fr);\n  gap: 6px 14px;\n  align-items: center;\n  padding: 11px 0;\n  background: transparent;\n}\nhtml.vcx #Main.vcx-account-page :is(.social-settings-form, .privacy-settings-form) > div + div { border-top: 1px solid var(--vcx-soft-line); }\nhtml.vcx #Main.vcx-account-page .social-settings-form > div > div:first-child {\n  width: auto;\n  min-width: 0;\n  margin: 0;\n  justify-content: flex-start;\n  text-align: start;\n}\nhtml.vcx #Main.vcx-account-page .social-settings-form > div > :is(input, textarea, select) { justify-self: end; }\nhtml.vcx #Main.vcx-account-page .privacy-settings-form > div > span { justify-self: start; font-weight: 550; }\nhtml.vcx #Main.vcx-account-page .privacy-settings-form > div > select { justify-self: end; }\nhtml.vcx #Main.vcx-account-page .privacy-settings-form > div > .settings-explanation { grid-area: 2 / 1 / 3 / -1; }\nhtml.vcx #Main.vcx-account-page .block-stat { padding: 12px 16px; background: transparent; }\nhtml.vcx #Main.vcx-account-page .block-stat + .block-stat { border-top: 1px solid var(--vcx-soft-line); }\nhtml.vcx #Main.vcx-account-page .block-stat span { width: auto; text-align: start; }\nhtml.vcx #Main.vcx-account-page .block-stat strong { text-align: end; }\n\nhtml.vcx #Main.vcx-account-page .token-item {\n  gap: 4px;\n  margin: 8px 16px;\n  padding: 8px 10px;\n  border: 1px solid var(--vcx-soft-line);\n  border-radius: 9px;\n  background: var(--vcx-main);\n  box-shadow: none;\n}\nhtml.vcx #Main.vcx-account-page .token-info { min-width: 0; }\nhtml.vcx #Main.vcx-account-page .token-token { margin: 0 0 3px; color: var(--vcx-fg); font: 500 13px/1.4 var(--vcx-mono); text-shadow: none; }\nhtml.vcx #Main.vcx-account-page .token-desc { color: var(--vcx-quiet); }\nhtml.vcx #Main.vcx-account-page :is(.token-delete, .token-download) { flex: none; }\nhtml.vcx #Main.vcx-account-page :is(.token-delete, .token-download):hover { background: var(--vcx-hover); }\n\n@media (max-width: 600px) {\n  html.vcx #Main.vcx-account-page { padding: 20px 12px 28px; }\n  .vcx-account-heading { margin-bottom: 19px; }\n  html.vcx #Main .vcx-account-heading h1 { font-size: 25px; }\n  html.vcx #Main.vcx-account-page :is(.cell, .inner, .cell_ops):not(.page-content-header) { padding-inline: 12px; }\n  html.vcx #Main .vcx-account-field-table :is(tbody, tr, td) { display: block; }\n  html.vcx #Main .vcx-account-field-table td:first-child:not([colspan]) { width: auto !important; padding: 7px 0 2px; }\n  html.vcx #Main .vcx-account-field-table td:nth-child(2) { padding-top: 2px; text-align: start; }\n  html.vcx #Main .vcx-account-field-table tr:has(td:nth-child(2) input[type="submit"]) td:first-child:empty { display: none; }\n  html.vcx #Main .vcx-account-profile-table tr:not(.vcx-account-section-title) { grid-template-columns: minmax(0, 1fr); padding-inline: 12px; }\n  html.vcx #Main.vcx-account-page .flex-one-row:has(> .vcx-account-native-switch) { justify-content: flex-start; }\n  html.vcx #Main.vcx-account-page .flex-one-row > .vcx-account-native-switch { order: 0; }\n  html.vcx #Main.vcx-account-page :is(.social-settings-form, .privacy-settings-form) > div { grid-template-columns: minmax(0, 1fr); }\n  html.vcx #Main.vcx-account-page .social-settings-form > div > :is(input, textarea, select) { justify-self: start; }\n  html.vcx #Main.vcx-account-page .privacy-settings-form > div > select { justify-self: start; }\n  html.vcx #Main.vcx-account-page .privacy-settings-form > div > .settings-explanation { grid-area: auto; }\n}\n\n@media (forced-colors: active) {\n  html.vcx #Main.vcx-account-page :is(input.vcx-account-switch, input[role="switch"], .vcx-account-native-switch > input) {\n    appearance: auto;\n    width: auto;\n    height: auto;\n  }\n  html.vcx #Main.vcx-account-page .vcx-account-native-switch > input { position: static; opacity: 1; pointer-events: auto; }\n  html.vcx #Main.vcx-account-page .vcx-account-native-switch > label { display: none; }\n}\n';
 
   // src/assets/icons.woff2
   var icons_default = "data:font/woff2;base64,d09GMgABAAAAABFwAAsAAAAAI8wAABEhAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHCoGYACDBAq+ALFIATYCJANqC2gABCAFgRAHIBtpHFGUklYjgC8STDxrlN9T6kcdSSe0Ju39EZLM/jzO2Uvz0/wmaSMtNYo0FUzHOkdayhWxBC9Mhakx1cLGdib01DhTzg1ODSbW/E8MuDj1AjR4Lp4WoJhEPLpaKhe0ZgX6XQwYx3T9N9PCXQfh2RdfaU90/7kkoUh32rTQQsvAyp1nLfleifm++eZebVJMBwiOhGqnukmTXO6au0vy968Z5F5+tyLgLKICyhAckZoDBcKO3YSZndbTOcQVFbb9yREKJn+Mhg28eYsPA0Qb/HNAAAADXkgFjb+8SgHD4hmrloIVEABALAZfORGRSRwFSviz8EFkpr8LjoIBqg+uAYoE91B1cwOz4fl/K+yckwkA8UQQEtCDADA1sUgSk+mEm4iI7o+7BYqBAuu/FRCCBtgPt8ArOBt7cBcex1fxXSqhz2iYfqQrXI1mjbZzF3fzal7PG7mPh/hT/pMvSj92i7wkH8k/giK6aaterw9Yq50bZ+21B+8M/al/p/+60G/6fxgGv3eGJw1PGB40bDDMMpTob9Pv0e/Wb9AH9dO4d7lJXAGXy8Wz/7N/sM+xz7D3sgPsnewd7AG2la1hJ7DZLDBzmPlMKzOVmcJM1n2p+1y33v9v8WM4Hgh49AIU5wpnJObQGLZ3LLGNE6ARnUylMUABAYRliXaniK++BH1NTIFUXVvKnzRRTq0RUrTXS9jc1cbp6Di7qPdYdfqPFTmbXW/QSw6lpcNoyixyI5pNRTpJFgSHy9J+10SbTWATecHK6XUVLXkCuLlZk2CyYiQwjNmOeD24y4wj5bSCp7QJugSR4dwS4kWdXkwnHHpHgtUapzeIgqBzNxQw5hxmwezYX+0T4veE4jYroxN5MHku9SMY0q8XrbAAYJx3RUfGtBD9ihoIA7IswCvjw9L22Fl3+gSYJ9wfwlAz9xTt8XP+zFEzZC4iMmBxxtzCLLlPihNxf7y0Ez8yw3rMfYvMLCtRnwezNvQT+XjjjaO9eLAg+VJSk10TtNcO2ZQ8EUyvgFn/s7It534JEEJW5iFi1ecUnWSBU9d9NIeD2DLHIZFQIZGhaWiGHkgAVRvg5bW7aC/5C+Z8x5877nMfMUfPaE+VQN+iIBi6atX3oBxzaDKiE9Z+qp98DrhIWNbrtL3sql66yJQe4/faQeeyxDuDGDvNN92i6Lbk3Mt3yavDKSNt1dewvEHYeAsgtMTPFJ28LIJLkRF5cFkZbfUPF4COqDqtysEvQAR4OceQvxmzTZLdFBFLUHgLwiG+f4eFG3QSHgji4FZSF34FTyxF6W6f/+ffC3du3OvLxe3Vw6ur7Wv3+G5PAF8TLZw6tN9QpRiDyANRUiUZ8d33PcpXBCO//2594F6l1bJfhrnGtvJ9tM22iuHA6hjMSCQHWNk2jCGfgnm72Tow1GhbvzQLlvN3hbpusIQsN7Mt30xKRxZzDeq9D7d6i5zm4SUpSkbDzzHzE8YHZw/k9tf7w1oQQpIcyemBqT8099k3k/pp0m8T7Mns3eW6GIpFL3YneK/R/17t7bvPbdv65dIsFq5puL93HO3GXz0KQYjJqYsHR8KsDTv1ETBH7/Rdg1ZNVCAp46RVQ0mSRl9Lb4xDrlAazWSRh5isjK/b6IJClMbl48dwmjKVNpE8TcWSCYDoqP9Q2IhP6hA/5UZPqLW8Ll9lk8NmFocQxGchIhrDfucCgNfR3gm1WyzMcunb1jbNd0vwMK7RcVYLEUKWxXooJQWCDUeJSDlGU6USgU3nEBObT5pJEjYZixjZeCazY/ZJiiQqoFZgBSLSkPULakNWDEgj+kW1IitFpAn9ktqgl5LQn/Vh7s67iYhEiodQn4rsQY46uALGsRrkwchiY3r0dKBTh7bQFMlTG0WZZQKIeJh587DlcMQ6i0ACy6Hpb1MpPCdDqdnNgaLeBvB+BRy1PgGqVJUdqP6qZWQFCwvXZGxH07Rs1SsLG7075Mr2WlXFlhz5+WejBw/PvvgySMk/z8svydSNUhc/nz1NUyW1WILC1UbRKp44DwxGodDoU3VnYS5ouQefjJtMCKLRULwTXGOViofDcLSUMY/jSRP3SzNPCf3WXnRCa7/6EawcrVouF4ClxPAKiKA+p3xmUmJkJTsF/FpCIAeG/fNiF0MUqHhbxkd+x4aKTGPUcqzKnzkKQBMWi7FVxlXPJ9qcWrdHaVjpzgNwtBcrIrHYYa484F4lIkPg23K51Qrt9tuJOqefc333+oFBfzdKv2DQT17mgzyIrUD8da9y/Qd8SzKb8KFgKfy/Vx4cFafnYu/2B8UgB04EgZ/P9YXItYo3AMOBT5vz1vVZc7u97V+8MM+fu9VKu/vPX3Qnh+bbB6br7fbqYbXpH9uIIECSXIIJgoEZujEiCxFtPymMWWJ3EXsIKAn9lOtjhrGcPyXFiH5uAjZnlANC1xZ0j0FjolWP0cQju46MOLDvETvUtpPExqOrhxeL9jDeHXX7/6mLN2+fP/HvhTu3+ljcsfKZI6fd2WPXoh46rjktN4Uju51TTA+Xh4dIM/Aj1z3dXaieDLBDKXZXy4ALVap2MzuvXedMzblPTa39ObTNQUytxjIGuhekFgHFaYpGBmyP58jBXqprQHIyP8MfJyqhPS2tdUpKMUE2A6hXxtXtro1kEe05f2adxd5chTu7wcnE3W928CDDl4ERmNM62kuIdvNAd40bk0OWkB99HZVxAEuhkBM7AyLlq8jRr5EfFi9OlquqChEZp6IQiqOxggrpXZRxTSP/i4exOuj/ecqlm5K8gTxbnFA/y5AGafEta/NnNeT8ztFz6UoTr0nRMcZDuZtN3KUJGtvvnPnkblEcsY84/9v2h15BFSqFAE+PnLTZWTGurGL689MryuJEJt52cs6THau1qztun19jdN46pq3Yxeyq0I7dmhlr5oNHyweEGrJdRbvKZhT4i5ftotw8jtJ/tGSVldmj/EFHMdz8K1LJzdw/7CAXM8jy3GZSxQE2AfnRIMjgyr7J+lSdSKEDKHiqT8YqlvtOBZGC/QgiYQtkh2Vmmlz5qfmu1BQzfncMe3cdYw/yf0q40+Fw/5PZX5sj03K/c9pYGsicu+6TvK7S2X1p9ZABSXL28/vuckpMQdrxAvqhQWulo3QvjtI5uvPl67Ty87psHMW9lqwRVCGyF+NzmODUJqmpbDM5PEt6ZYW3S5CK7mJYMUdJJwk6DTaZjQpCGOMphHNC4kcyLS9wclhMxc5l3TKWdV8nho843kSpe5kMLEFoqk7yqOU+HbjRSlFGdtKO7Xk3n8jOz9sWWXNff/m8L+fNN5qMdEU6pTJWl52tRpSTSXePBH30hBaHS/597YI/EoJVP5/iM082+N9a+3EJOqayxWLxLXfLe1AAzXjRaS6a4Sxxl1LzkAovcUYmbpYm9H/yBgkvO7EcjcpYwVJJ8YVl3ZmE12kYjwMlWhY4h4MDCzzws8P0VEo05W6TI+TIjWbCU7jyDYgKlQF3e4lKZ3WIcqkW4OKXOYmfLi2LF3hlREFIO+ebIkLseO7E6+XgXho4/V0IZoQYJRmlVSN952TmASEj4h636e73uWkV/YX9FdOuDH83LVw4xg5fkbj372lgPgJ/2/W+69v88FHhg3/9SVteZnzaG5ZVsqWE993vJ7hTnwX0Jvm+Trb3P7hP17mntGQu1XdbkT5u24k6/RRb8tu+Eeslq37K9EFta1l+xuKi9522aZfXnHrrJdCNAK8KAT56LepWCvOT2B5DKf8iX2pge7gWfDdmd2gH6BfpAS27g4nenhTA8thRrKmn54D0K/fPA8MDHfu+0StcDLfyCGa7xDvEh0xOHhlv3SEP65CCFLPnW74QBZC2mCpHbJftGvMQc812PToqpyCeRwoaJhXkJeW6tjaNO3lF8WxqSX2bTGba7uwSObujmZRwORtEPhBvYmTmJhni7hH3yuFfauWh2qGhWirl41mlPw8NbnEXhVfUjQ7+Ruv2cJF7y+DQz6WzPk6hyi1I9r7yitc+8+M/NmPmR9Vem+980mbM7OiYaT/ZydsMb/VHM4/UPz++U6j3LYPnlp6egKBGxRkPnc7wCjN/PJh0N7xe6/2rftbSaa8LbyYtWdHYMyNVbGlVBeXxbt+eHRukK1yML3aNL0EB5EP+XF+uEu9MRSW6UstIHxlA6//1RpbrrwKnSJ9koB6a6wBCvBncwvsF/6ZNTqxiaWjWynkXx7OzhiSOO5+eOoi0c2vXmjPkLtxgTTgMHd8hl69cIRX04kZQJlMXdaGKsJJzUj6Zo3QtRv60v4Y3I/v1K/T7/U0SWmC/yvzEXLUvQBKcNuTlHQyVsqWLFy85q0FJDvnS1hV7O61ErpD8gafJRSHjf14VvhNUfpA3ceRm4XeG78IDeBBH6UEvHU1SBmgvjHaGDPNQAsDYAXq0B78B7IHmB/ZCNuTEnK+fSD0adR3/urRhrhRNUpOif2Vk72XgP6fQ6C/G/Zmh3yeTHcKNKIAGdob91j9/LaHYlD6sJV1Uvv93Q3LaPWIvE8glUBNF3yme0rKaArqMKiCpZhbovWIfU1RwNxgZNxZVbQFVMMqlwOPs41x7cZvpKA990KGcD7JDZlHHqfbVEj4TiGSYXPkm7/+tXqfpKeNOY9TUybf+7zXlu7J6WGA7OZ7dyfJcJwtsyTILWDzdHgtAt9dIGw2EZ+oPXv7F4hXljNx+1Z0eTEsrT88trL4577gXvMWV1T94HG7XdiajGB1MT4Yha7KU73fJ0UPRAWXLVoH4kygg3yWJpelczDuqd19OcnaTCnoH+eEE0Ibekg31jwK+T5WwvFbGzqeeFiDsbtjrcYeBGDgcXRulaqPr11O6XAXpdEhFOup10REMOsRkN6ljkB8xOrIU3n7auqTKKPb25LQUvz+lYcq/jQ25B4jc7T2fXIZDSx5qe6Yenm17aInJ3JOch+pUCe1EfiQ8Lec3CrNnN5iRklupaNXwEStzVWRumLOzMV9+WkDnAUqpMFVKrJpzynfcd6r2FaGB6qROBMTFkgIZkaatg9Zh9jlhQtIVIloUQJ2dSMHKBRjVwQqASZKy6VvYGffWN5gEcfOFJX4x3g4aTzry5Bjh0BvF8OWC1E2tFwY/Q8zQkchrPXBdyC9EBX/gmOPZ332X71vuv+T77Tno7iFVPWFhRWPYKW1SFoflv/76V0SRsRzsOpjw6JnEgTSHT6g7PDie/cf6jyVm1SDwWDPEUjk5GL+e5a18AQWvFE6PT3RYpb1OYriIj/vMXv+k90yy/ncLxztqi5LFBLtehIPjn7DVtNfYoleutCuNOwmDlJhs4BYW9ftrhDXmRsL6X8XBm6+M+9tMQKTOsRvvHLYGrUd7kDZ/ZMvq72xB200rEKx5XheIN9OWKt8UrSWx3j099XRih0Wf6mjKchtvNO6UtFLJ0yZ7NaSMyVjFctf0rumPMlvtotrQGXOzL/sOnN8JO046h6TMSERWnti1aCLzFbIgIpgkwGdypGTIRceuuNqByk52EXbDjhpvUiZc0+o2050vg6AhmrDHrnipXK1NVBdyE82xGM+C0RiAKZVFbaGxTL2G2CDSsG0lavZ7H6xYbKwAkr2EK3bNR+AWGO3zWCLLoHkMRkWIaX2EbU5+mBCwkKm0yV/Af5NTYTTw3e12GKtTIEB8BWb2/Vld/OQxzI43cZPngW3p28Uu+p64jigAAAwa+AE9gw6W2AEQEBgaaBugX7ErVBJD2NDv2DV5tf2sAqILsvxEBpjg2N20UAMkEEgHBCQC5LkGDAahOclrjmApBWbI1LXAZ8Iyz1fBSnNbATOgG7JgAczixaVuDTAH5sFqWAwzOkgTQ1ZU9AV4hWTIg2zIBRKCDZMAAAAA";
@@ -89,6 +95,159 @@
   }
   function iconButton(action, glyph, label2, extra = "") {
     return `<button type="button" class="vcx-icon-button" data-action="${action}" title="${escape(label2)}" aria-label="${escape(label2)}" ${extra}>${icon(glyph)}</button>`;
+  }
+
+  // src/account-settings.js
+  var groups = [
+    ["账号", [
+      ["profile", "通用", "gear"],
+      ["social", "个人资料", "person"],
+      ["avatar", "头像", "pencil"],
+      ["crypto", "加密货币", "branch"]
+    ]],
+    ["访问", [
+      ["password", "密码", "lock"],
+      ["invite", "邀请码", "inbox"],
+      ["tokens", "个人访问令牌", "command"],
+      ["2fa", "2FA", "lock"]
+    ]],
+    ["社区", [
+      ["block", "屏蔽", "filter"],
+      ["privacy", "隐私", "bookmark"]
+    ]]
+  ].map(([label2, entries2]) => ({
+    label: label2,
+    entries: entries2.map(([id, name, glyph]) => ({ id, name, glyph, path: `/settings/${id}` }))
+  }));
+  var entries = new Map(groups.flatMap((group) => group.entries.map((entry) => [entry.path, entry])));
+  function accountSettingFor(pathname) {
+    const path = pathname.replace(/\/$/, "");
+    return entries.get(path === "/settings" ? "/settings/profile" : path);
+  }
+  function accountSettingsSidebar(setting, href) {
+    return `<div class="vcx-account-sidebar-header">
+    <h2>设置</h2>
+    <label class="vcx-search-field vcx-account-search">
+      ${icon("search")}<input type="search" aria-label="搜索设置分类" placeholder="搜索设置" autocomplete="off" spellcheck="false">
+    </label>
+  </div>
+  <div class="vcx-sidebar-body">
+    <nav class="vcx-account-navigation" aria-label="设置分类">
+      ${groups.map((group) => `<section class="vcx-account-group vcx-nav-section">
+        <h2>${escape(group.label)}</h2>
+        <div class="vcx-nav">${group.entries.map((entry) => link(
+      href(entry.path),
+      entry.name,
+      entry.glyph,
+      `data-account-setting="${entry.id}"${entry.id === setting.id ? ' aria-current="page"' : ""}`
+    )).join("")}</div>
+      </section>`).join("")}
+    </nav>
+    <p class="vcx-account-no-results" role="status" hidden>没有匹配的设置分类</p>
+  </div>`;
+  }
+  function hideNativeMenu(main, url) {
+    for (const region of main.querySelectorAll("#Tabs, .tabs, .settings-tabs, .settings-nav, .header, .cell, .inner, nav")) {
+      if (region.querySelector("form, input, button, select, textarea, .problem, [role='alert']")) continue;
+      const links = [...region.querySelectorAll("a[href]")];
+      const settings = links.filter((anchor) => anchor.origin === url.origin && accountSettingFor(anchor.pathname));
+      if (settings.length >= 3 && links.every((anchor) => settings.includes(anchor) || anchor.origin === url.origin && anchor.pathname === "/")) {
+        region.classList.add("vcx-account-native-menu");
+      }
+    }
+  }
+  function groupProfileFields(table) {
+    const rows = [...table.rows];
+    if (table.tBodies.length !== 1 || rows.some((row) => row.cells.length !== 2 || [...row.cells].some((cell) => cell.colSpan !== 1 || cell.rowSpan !== 1))) return;
+    const firstPreference = rows.findIndex((row) => row.cells[1].querySelector('select, input[type="radio"], input[type="checkbox"]'));
+    if (firstPreference < 1) return;
+    table.classList.add("vcx-account-profile-table");
+    table.closest(".box")?.classList.add("vcx-account-profile-box");
+    for (const row of rows) {
+      const [label2, content] = row.cells;
+      if (!label2.textContent.trim() && !label2.firstElementChild && content.querySelector("small, .gray, .fade") && !content.querySelector("input, select, textarea, button")) {
+        row.classList.add("vcx-account-note-row");
+      }
+    }
+    for (const [name, fields] of [["账号信息", rows.slice(0, firstPreference)], ["站点偏好", rows.slice(firstPreference)]]) {
+      const row = document.createElement("tr");
+      row.className = "vcx-account-section-title";
+      const label2 = document.createElement("h2");
+      label2.textContent = name;
+      const cell = row.insertCell();
+      cell.colSpan = 2;
+      cell.append(label2);
+      fields[0].before(row);
+      fields[0].classList.add("vcx-account-card-first");
+      fields.at(-1).classList.add("vcx-account-card-last");
+    }
+  }
+  function arrangeFields(main, setting) {
+    for (const table of main.querySelectorAll("form table")) {
+      if (table.querySelector("th") || ![...table.rows].every((row) => row.cells.length <= 2)) continue;
+      if ([...table.rows].some((row) => row.cells[1]?.querySelector("input, select, textarea, button"))) {
+        table.classList.add("vcx-account-field-table");
+        if (setting.id === "profile") groupProfileFields(table);
+      }
+    }
+    if (setting.id !== "profile" && setting.id !== "privacy") return;
+    for (const field of main.querySelectorAll('input[type="checkbox"]')) {
+      const row = field.closest("tr, .cell, .privacy-settings-form > div");
+      if (row?.querySelectorAll('input[type="checkbox"]').length !== 1) continue;
+      const wrapper = field.closest(".onoffswitch");
+      if (!wrapper) {
+        field.classList.add("vcx-account-switch");
+        continue;
+      }
+      const label2 = field.nextElementSibling;
+      if (field.parentElement !== wrapper || !label2?.matches("label:has(.frame, .switch)")) continue;
+      wrapper.classList.add("vcx-account-native-switch");
+      const name = row.cells?.[0]?.textContent.trim();
+      if (name && !label2.textContent.trim() && !field.hasAttribute("aria-label") && !field.hasAttribute("aria-labelledby")) {
+        field.setAttribute("aria-label", name);
+      }
+    }
+  }
+  function mountAccountSettings(page, sidebar) {
+    const { main, setting, url } = page;
+    hideNativeMenu(main, url);
+    arrangeFields(main, setting);
+    const nativeHeading = main.querySelector(":scope > .box > .page-content-header");
+    if (nativeHeading && !nativeHeading.querySelector("a, button, input, [role='button']")) {
+      nativeHeading.classList.add("vcx-account-native-heading");
+    }
+    const heading = document.createElement("header");
+    heading.className = "vcx-account-heading";
+    const title = document.createElement("h1");
+    title.textContent = setting.name;
+    heading.append(title);
+    main.classList.add("vcx-account-page");
+    main.prepend(heading);
+    const search = sidebar.querySelector(".vcx-account-search input");
+    const sections = [...sidebar.querySelectorAll(".vcx-account-group")];
+    const empty = sidebar.querySelector(".vcx-account-no-results");
+    function filter() {
+      const query = search.value.trim().toLowerCase();
+      let matches = 0;
+      for (const section of sections) {
+        const items = [...section.querySelectorAll("[data-account-setting]")];
+        for (const item of items) {
+          const label2 = `${item.dataset.accountSetting} ${item.lastElementChild.textContent}`.toLowerCase();
+          item.hidden = !label2.includes(query);
+          if (!item.hidden) matches++;
+        }
+        section.hidden = items.every((item) => item.hidden);
+      }
+      empty.hidden = matches > 0;
+    }
+    search.addEventListener("input", filter);
+    search.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !search.value) return;
+      event.preventDefault();
+      search.value = "";
+      filter();
+    });
+    return search;
   }
 
   // src/code-panel.js
@@ -280,6 +439,13 @@ mod tests {
     if (node) return { kind: "list", name: node[1], file: `${node[1]}.ts`, node: node[1] };
     const topic = pathname.match(/^\/t\/(\d+)\/?$/);
     if (topic) return { kind: "topic", id: topic[1], file: `#${topic[1]}` };
+    const newTopic = pathname.match(/^\/new(?:\/([\w-]+))?\/?$/i);
+    if (newTopic || /^\/write\/?$/.test(pathname)) {
+      const slug = newTopic ? newTopic[1] : searchParams.get("node");
+      return { kind: "new", name: "新话题", node: /^[\w-]+$/.test(slug || "") ? slug : void 0 };
+    }
+    const setting = accountSettingFor(pathname);
+    if (setting) return { kind: "settings", setting, name: setting.name };
     return null;
   }
   function topicId(path) {
@@ -318,6 +484,11 @@ mod tests {
       page.back = listingFor(page.id)?.path || defaultProject.path;
       return page;
     }
+    if (page.kind === "new") {
+      page.back = page.node ? `/go/${page.node}` : defaultProject.path;
+      return page;
+    }
+    if (page.kind === "settings") return page;
     if (page.node) {
       const header = main.querySelector(".node-header, .box-title");
       if (!header) return null;
@@ -429,12 +600,12 @@ mod tests {
   }
   function projectThreads(page, topics) {
     const stored = readSession("projects");
-    const groups = stored && typeof stored === "object" ? stored : {};
+    const groups2 = stored && typeof stored === "object" ? stored : {};
     if (page.tab && topics.length) {
-      groups[page.tab] = topics.slice(0, 4).map(({ id, title }) => ({ id, title }));
-      writeSession("projects", groups);
+      groups2[page.tab] = topics.slice(0, 4).map(({ id, title }) => ({ id, title }));
+      writeSession("projects", groups2);
     }
-    return groups;
+    return groups2;
   }
   function accountLink(document2) {
     const account = document2.querySelector('#Top a[href^="/member/"]');
@@ -443,7 +614,7 @@ mod tests {
       const url = new URL(anchor.href);
       return url.protocol === "https:" && /(^|\.)v2ex\.com$/i.test(url.hostname) && url.pathname === "/signin";
     });
-    return { path: signIn?.href || "/signin", name: "登录 V2EX", signedIn: false };
+    return { path: signIn?.href || "/signin", name: "登录", signedIn: false };
   }
   function decorateNative(page, href, topics) {
     const { main, kind } = page;
@@ -494,6 +665,7 @@ mod tests {
   }
 
   // src/composer.js
+  var composerPlaceholder = "和 Codex 一起工作";
   var formats = {
     bold: ["加粗", "**", "**", "粗体"],
     italic: ["斜体", "*", "*", "斜体"],
@@ -551,7 +723,7 @@ mod tests {
     return { form, submit };
   }
   function mountComposer(page, { href, account, demo, copy }) {
-    if (page.kind === "directory") return null;
+    if (page.kind !== "list" && page.kind !== "topic") return null;
     const { main, url, path, id } = page;
     const reply = page.kind === "topic";
     const key = reply ? `draft:${id}` : "draft:new";
@@ -593,7 +765,7 @@ mod tests {
     const field = card.querySelector("textarea");
     field.classList.add("vcx-reply-input");
     field.rows = 1;
-    field.removeAttribute("placeholder");
+    field.placeholder = composerPlaceholder;
     field.setAttribute("aria-label", reply ? "回复内容" : "新话题草稿");
     const tools = card.querySelector(".vcx-reply-tools");
     const send = card.querySelector("[data-reply-send]");
@@ -633,7 +805,8 @@ mod tests {
       if (native.submit) new MutationObserver(sync).observe(native.submit, { attributeFilter: ["disabled"] });
     }
     const saved = readSession(key);
-    if (!field.value && typeof saved === "string") {
+    if (field.value && !field.value.trim()) field.value = "";
+    if (!field.value && typeof saved === "string" && saved.trim()) {
       field.value = saved;
       if (native) {
         field.dispatchEvent(new Event("input", { bubbles: true }));
@@ -679,30 +852,6 @@ mod tests {
     sync();
     return wrap;
   }
-  function restoreTopicDraft(path) {
-    const pending = readSession("compose-transfer");
-    if (pending?.path !== path || typeof pending.text !== "string" || !pending.text.trim()) return;
-    const field = document.querySelector("textarea#topic_content");
-    if (!field || !document.getElementById("topic_title")) return;
-    function restore() {
-      field.value = pending.text;
-      field.dispatchEvent(new Event("input", { bubbles: true }));
-      writeSession("compose-transfer", null);
-      if (readSession("draft:new") === pending.text) writeSession("draft:new", null);
-    }
-    if (!field.value) restore();
-    else {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = "载入 Codex 皮肤的发帖草稿";
-      button.addEventListener("click", () => {
-        restore();
-        button.remove();
-        field.focus();
-      });
-      field.after(button);
-    }
-  }
 
   // src/shell.js
   function iconLink(href, glyph, name, extra = "") {
@@ -713,7 +862,7 @@ mod tests {
       (item) => link(href(`/t/${item.id}`), item.title, "", `data-topic="${item.id}" title="${escape(item.title)}"${item.id === page.id ? ' aria-current="page"' : ""}`)
     ).join("");
   }
-  function projectTree(page, href, groups) {
+  function projectTree(page, href, groups2) {
     const section = page.tab || new URL(page.back || page.path, page.url).searchParams.get("tab") || defaultProject.slug;
     const visibleCount = 6;
     const showAll = projects.findIndex((project) => project.slug === section) >= visibleCount;
@@ -721,7 +870,7 @@ mod tests {
       const open = section === slug;
       const extra = index >= visibleCount;
       const branch = `vcx-project-${slug}`;
-      const children = Array.isArray(groups[slug]) ? threadLinks(groups[slug], page, href) : "";
+      const children = Array.isArray(groups2[slug]) ? threadLinks(groups2[slug], page, href) : "";
       return `<div ${extra ? "data-extra-project" : ""}${extra && !showAll ? " hidden" : ""}>
       <a class="vcx-action vcx-project" href="${escape(href(path))}" ${slug === page.tab ? 'aria-current="page"' : ""}>
         <span data-folder="${slug}">${icon(open ? "folderOpen" : "folder")}</span><span>${escape(name)}</span><code>${file}</code>
@@ -731,10 +880,14 @@ mod tests {
     </div>`;
     }).join("") + `<button class="vcx-action vcx-projects-toggle" type="button" data-action="projects" aria-expanded="${showAll}">${showAll ? "收起" : "展开显示"}</button>`;
   }
-  function shell(page, { href, original, recent, groups, account, topics }) {
+  function shell(page, { href, original, recent, groups: groups2, account, topics }) {
     const thread = page.kind === "topic";
+    const writing = page.kind === "new";
+    const settingsPage = page.kind === "settings";
+    const simpleContext = writing || settingsPage;
     const context = thread ? page.nodeName || "话题" : page.name;
     const contextPath = thread && page.node ? `/go/${page.node}` : page.path;
+    const contextLabel = simpleContext ? `<span aria-current="page">${escape(context)}</span>` : `<a href="${escape(href(contextPath))}" title="${escape(context)}">${escape(context)}</a>`;
     const summary = thread ? `${page.name} · ${page.floors || "–"} 楼` : page.kind === "list" ? `全部线程 · ${topics.length || "–"}` : "全部节点";
     const newTopic = href(newTopicPath(page));
     const messages = href(account.signedIn ? "/notifications" : account.path);
@@ -743,22 +896,23 @@ mod tests {
     const latest = recent.length ? recent.slice(0, 4) : topics.slice(0, 4);
     return `
     <nav class="vcx-strip" aria-label="工作区工具">
-      ${iconLink(href(defaultProject.path), "home", "首页", "data-active")}
+      ${iconLink(href(defaultProject.path), "home", "首页", settingsPage ? "" : "data-active")}
       ${iconLink(href("/recent"), "clock", "近期活动")}
       ${iconLink(messages, "at", "我的消息")}
       ${iconLink(href("/planes"), "grid", "节点目录")}
       <span class="vcx-flex"></span>
-      ${iconButton("settings", "gear", "设置")}
+      ${account.signedIn || settingsPage ? iconLink(href("/settings"), "person", "账户设置", settingsPage ? 'aria-current="page" data-active' : "") : ""}
+      ${iconButton("settings", "gear", "皮肤设置")}
     </nav>
     <button class="vcx-scrim" type="button" data-action="scrim" tabindex="-1" aria-hidden="true"></button>
-    <aside class="vcx-sidebar" id="vcx-sidebar" aria-label="V2EX 导航">
+    <aside class="vcx-sidebar" id="vcx-sidebar" aria-label="${settingsPage ? "账户设置" : "V2EX 导航"}">
       <div class="vcx-window-actions">
         ${iconButton("sidebar", "sidebar", "切换侧栏", 'aria-controls="vcx-sidebar"')}
         ${iconButton("back", "left", "后退")}${iconButton("forward", "right", "前进")}
         <span class="vcx-flex"></span>
         ${iconButton("theme", "moon", "切换明暗主题")}
       </div>
-      <header class="vcx-side-header">
+      ${settingsPage ? accountSettingsSidebar(page.setting, href) : `<header class="vcx-side-header">
         <a class="vcx-brand" href="${escape(href(defaultProject.path))}">Codex ${icon("down")}</a>
         <div class="vcx-brand-actions">
           ${iconButton("search", "search", "搜索（Ctrl / ⌘ + K）", 'aria-haspopup="dialog"')}
@@ -767,8 +921,8 @@ mod tests {
       </header>
       <div class="vcx-sidebar-body">
         <nav class="vcx-nav vcx-primary" aria-label="话题入口">
-          ${link(newTopic, "新话题", "pencil")}
-          ${link(href(defaultProject.path), "话题", "layers", page.kind !== "directory" ? 'aria-current="page"' : "")}
+          ${link(newTopic, "新话题", "pencil", writing ? 'aria-current="page"' : "")}
+          ${link(href(defaultProject.path), "话题", "layers", thread || page.kind === "list" ? 'aria-current="page"' : "")}
           ${link(favorites, "我的收藏", "bookmark")}
           ${link(messages, "我的消息", "inbox")}
           ${link(href("/?tab=hot"), "热门话题", "hot")}
@@ -778,25 +932,25 @@ mod tests {
         ${pins.length ? `<section class="vcx-nav-section"><h2>置顶</h2><div class="vcx-nav">${threadLinks(pins, page, href)}</div></section>` : ""}
         <section class="vcx-nav-section" aria-labelledby="vcx-project-label">
           <h2 id="vcx-project-label">项目</h2>
-          <nav class="vcx-nav" aria-label="V2EX 分区">${projectTree(page, href, groups)}</nav>
+          <nav class="vcx-nav" aria-label="V2EX 分区">${projectTree(page, href, groups2)}</nav>
         </section>
         ${latest.length ? `<section class="vcx-nav-section" aria-labelledby="vcx-recent-label">
           <h2 id="vcx-recent-label">最近</h2>
           <nav class="vcx-nav" aria-label="最近话题">${threadLinks(latest, page, href)}</nav>
         </section>` : ""}
-      </div>
+      </div>`}
     </aside>
     <header class="vcx-topbar">
-      ${iconButton("sidebar", "sidebar", "切换侧栏", 'aria-controls="vcx-sidebar"')}
-      ${iconLink(href(thread ? page.back : defaultProject.path), "folder", thread ? "返回话题列表" : "返回项目首页")}
+      ${iconButton("sidebar", "sidebar", settingsPage ? "设置分类" : "切换侧栏", 'aria-controls="vcx-sidebar"')}
+      ${iconLink(href(page.back || defaultProject.path), "folder", page.back ? "返回话题列表" : "返回项目首页")}
       <div class="vcx-crumb">
-        <a href="${escape(href(contextPath))}" title="${escape(context)}">${escape(context)}</a><span class="vcx-crumb-sep" aria-hidden="true">/</span>
-        <span class="vcx-context" title="${escape(summary)}">${escape(summary)}</span>
+        ${contextLabel}
+        ${simpleContext ? "" : `<span class="vcx-crumb-sep" aria-hidden="true">/</span><span class="vcx-context" title="${escape(summary)}">${escape(summary)}</span>`}
         ${thread && page.floors ? `<button class="vcx-floor" type="button" data-action="floors" aria-label="选择楼层" aria-haspopup="dialog">1 / ${page.floors}</button>` : ""}
       </div>
       <span class="vcx-flex"></span>
       <div class="vcx-top-actions">
-        ${iconButton("panel", "panel", "切换代码面板", 'aria-controls="vcx-code" aria-pressed="false"')}
+        ${settingsPage ? "" : iconButton("panel", "panel", "切换代码面板", 'aria-controls="vcx-code" aria-pressed="false"')}
         ${iconLink(original, "external", "在原站布局打开", 'target="_blank" rel="noopener"')}
         ${iconButton("more", "dots", "更多操作", 'aria-haspopup="dialog"')}
       </div>
@@ -829,7 +983,7 @@ mod tests {
     ];
     return `${dialogHeader("更多操作")}<div class="vcx-dialog-body vcx-nav">${options.map(
       ([action, glyph, text]) => `<button class="vcx-action" type="button" data-action="${action}">${icon(glyph)}<span>${text}</span></button>`
-    ).join("")}${link(href(account.path), account.name, "person")}</div>`;
+    ).join("")}${link(href("/settings"), "账户设置", "gear")}${link(href(account.path), account.name, "person")}</div>`;
   }
   function settingsDialog(settings, demo) {
     return `${dialogHeader("settings.json")}
@@ -903,6 +1057,365 @@ mod tests {
     return { open, close, search };
   }
 
+  // src/topic-files.js
+  var textFiles = ".txt,.md,.markdown,text/plain,text/markdown";
+  var imageFiles = "image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp";
+  function fileAction(menu, label2, types, select) {
+    const field = document.createElement("input");
+    field.type = "file";
+    field.accept = types;
+    field.hidden = true;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = label2;
+    button.addEventListener("click", () => {
+      menu.open = false;
+      menu.querySelector("summary").focus({ preventScroll: true });
+      field.click();
+    });
+    field.addEventListener("change", () => {
+      const file = field.files[0];
+      field.value = "";
+      if (file) select(file);
+    });
+    menu.querySelector(".vcx-topic-file-menu").append(button, field);
+    return button;
+  }
+  function bindTopicFiles(menu, editor, { demo, isMarkdown, status }) {
+    let busy = false;
+    const report = (message) => {
+      status.textContent = message;
+    };
+    const summary = menu.querySelector("summary");
+    menu.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !menu.open) return;
+      event.preventDefault();
+      menu.open = false;
+      summary.focus({ preventScroll: true });
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (menu.open && !menu.contains(event.target)) menu.open = false;
+    });
+    const upload = window.initImageDragDropUpload;
+    if (!demo && typeof upload === "function" && typeof DataTransfer === "function") {
+      let insertImage = function(result) {
+        const source = result?.url_o;
+        if (typeof source !== "string" || !/^(?:https?:)?\/\//i.test(source)) {
+          report("图库未返回图片链接");
+          return;
+        }
+        const url = source.startsWith("//") ? `https:${source}` : source;
+        const escaped = url.replaceAll("(", "%28").replaceAll(")", "%29");
+        editor.insert(isMarkdown() ? `
+![](${escaped})
+` : `
+${url}
+`);
+        report("图片已插入正文");
+      };
+      const zone = document.createElement("div");
+      const imageButton = fileAction(menu, "上传图片到 V2EX", imageFiles, (file) => {
+        if (busy) {
+          report("请等当前文件处理完成");
+          return;
+        }
+        try {
+          const transfer = new DataTransfer();
+          transfer.items.add(file);
+          zone.dispatchEvent(new DragEvent("drop", { cancelable: true, dataTransfer: transfer }));
+        } catch {
+          report("无法读取所选图片");
+        }
+      });
+      upload({
+        zone,
+        onUploadStart: () => {
+          busy = true;
+          imageButton.disabled = true;
+          report("正在上传图片…");
+        },
+        onUploadSuccess: insertImage,
+        onDuplicate: insertImage,
+        onUploadError: (message) => report(message || "图片上传失败"),
+        onAllComplete: () => {
+          busy = false;
+          imageButton.disabled = false;
+        }
+      });
+    }
+    fileAction(menu, "导入文本或 Markdown", textFiles, async (file) => {
+      if (busy) {
+        report("请等当前文件处理完成");
+        return;
+      }
+      if (!/\.(?:txt|md|markdown)$/i.test(file.name) && !file.type.startsWith("text/")) {
+        report("请选择文本或 Markdown 文件");
+        return;
+      }
+      busy = true;
+      try {
+        const content = await file.text();
+        if (!content) {
+          report("所选文件没有文本");
+          return;
+        }
+        editor.insert(content);
+        report("文本已插入正文");
+      } catch {
+        report("无法读取所选文本文件");
+      } finally {
+        busy = false;
+      }
+    });
+    return () => busy;
+  }
+
+  // src/new-topic.js
+  var nativeRow = ".cell, .inner, .dock_area, .header";
+  var activeControl = 'a[href], button, [role="button"], input:not([type="hidden"]), select, textarea:not([hidden], .vcx-topic-editor-source), [contenteditable], #topic_preview, .problem, #error_message';
+  function notifyInput(field) {
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  function bodyEditor(main) {
+    const field = main.querySelector('textarea#topic_content, textarea[name="content"]');
+    const widget = main.querySelector(".CodeMirror");
+    const mirror = widget?.CodeMirror;
+    if (mirror) {
+      field?.classList.add("vcx-topic-editor-source");
+      mirror.getInputField?.()?.setAttribute("aria-label", "正文");
+      if (mirror.getOption?.("placeholder") !== void 0) {
+        mirror.setOption("placeholder", composerPlaceholder);
+      } else {
+        const syncPlaceholder = () => {
+          if (mirror.getValue()) delete widget.dataset.vcxPlaceholder;
+          else widget.dataset.vcxPlaceholder = composerPlaceholder;
+        };
+        mirror.on?.("change", syncPlaceholder);
+        syncPlaceholder();
+      }
+      return {
+        element: widget,
+        value: () => mirror.getValue(),
+        write: (text) => mirror.setValue(text),
+        insert: (text) => mirror.replaceSelection(text, "end"),
+        focus: () => mirror.focus(),
+        refresh: () => mirror.refresh?.()
+      };
+    }
+    if (!field || field.hidden || field.style.display === "none") return null;
+    field.rows = 2;
+    field.placeholder = composerPlaceholder;
+    field.setAttribute("aria-label", "正文");
+    return {
+      element: field,
+      value: () => field.value,
+      write(text) {
+        field.value = text;
+        notifyInput(field);
+      },
+      insert(text) {
+        field.setRangeText(text, field.selectionStart, field.selectionEnd, "end");
+        notifyInput(field);
+      },
+      focus: () => field.focus()
+    };
+  }
+  function syntaxValue(host) {
+    return host.querySelector('#select_syntax, select[name="syntax"], input[name="syntax"]:checked')?.value;
+  }
+  function restoreDraft(page, host, title, editor) {
+    const pending = readSession("compose-transfer");
+    if (pending?.path !== newTopicPath(page) || typeof pending.text !== "string") return null;
+    const switching = typeof pending.title === "string";
+    if (!switching && !pending.text.trim()) return null;
+    function restore() {
+      if (switching) {
+        title.value = pending.title;
+        notifyInput(title);
+        const select = host.querySelector('#select_syntax, select[name="syntax"]');
+        const syntax2 = select ? [...select.options].find((option) => option.value === pending.syntax) : [...host.querySelectorAll('input[name="syntax"][type="radio"]')].find((field) => field.value === pending.syntax);
+        if (syntax2) {
+          if (select) select.value = syntax2.value;
+          else syntax2.checked = true;
+          (select || syntax2).dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+      editor.write(pending.text);
+      writeSession("compose-transfer", null);
+      if (!switching && readSession("draft:new") === pending.text) writeSession("draft:new", null);
+    }
+    const body = editor.value();
+    const hasDraft = body && body !== pending.text || switching && title.value && title.value !== pending.title;
+    if (!hasDraft) {
+      restore();
+      return null;
+    }
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "vcx-restore-topic-draft";
+    button.textContent = switching ? "载入切换前的草稿" : "载入列表草稿";
+    button.addEventListener("click", () => {
+      restore();
+      button.remove();
+      editor.focus();
+    });
+    return button;
+  }
+  function fixedNodeSelect(page, change2, report) {
+    const select = document.createElement("select");
+    select.setAttribute("aria-label", "选择节点");
+    const current = page.node || "";
+    const nodeLink = current && [...page.main.querySelectorAll('a[href^="/go/"]')].find((link2) => link2.pathname === `/go/${current}`);
+    select.append(new Option(nodeLink?.textContent?.trim() || current || "选择节点", current));
+    let loading = false;
+    async function load() {
+      if (loading || select.options.length > 1) return;
+      loading = true;
+      try {
+        const nodes = window.fetchNodeList ? await window.fetchNodeList() : await fetch("/api/nodes/list.json?fields=name,title&sort_by=topics&reverse=1").then((response) => response.json());
+        if (!Array.isArray(nodes)) throw new Error("Missing nodes");
+        const options = document.createDocumentFragment();
+        for (const { name, title } of nodes) {
+          if (typeof name !== "string" || !/^[\w-]+$/.test(name)) continue;
+          if (name === current) select.options[0].text = title || name;
+          else options.append(new Option(title || name, name));
+        }
+        select.append(options);
+      } catch {
+        report("节点加载失败，请重新打开节点选择");
+      } finally {
+        loading = false;
+      }
+    }
+    select.addEventListener("focus", load);
+    select.addEventListener("change", () => {
+      if (select.value !== current && !change2(select.value)) select.value = current;
+    });
+    void load();
+    return select;
+  }
+  function followPreview(preview, main) {
+    if (!preview) return;
+    let observer;
+    let timeout;
+    preview.addEventListener("click", () => {
+      const reveal = () => {
+        const panel = main.querySelector("#topic_preview");
+        if (!panel?.textContent.trim() && !panel?.querySelector("img, iframe")) return;
+        if (!panel.getClientRects().length) return;
+        observer.disconnect();
+        clearTimeout(timeout);
+        panel.scrollIntoView({ block: "nearest" });
+      };
+      observer?.disconnect();
+      clearTimeout(timeout);
+      observer = new MutationObserver(reveal);
+      observer.observe(main, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "style"] });
+      timeout = setTimeout(() => observer.disconnect(), 8e3);
+    }, { capture: true });
+  }
+  function mountNewTopic(page, { href, demo }) {
+    const { main } = page;
+    const title = main.querySelector('input#topic_title, textarea#topic_title, input[name="title"]:not([type="hidden"]), textarea[name="title"]');
+    const editor = title && bodyEditor(main);
+    if (!title || !editor) return;
+    const box = title.closest(".box");
+    const form = title.form || editor.element.form;
+    const host = form || box || main;
+    const node = main.querySelector('select#nodes, select[name="node"], select[name="node_name"]');
+    const syntax2 = main.querySelector('#select_syntax, select[name="syntax"]');
+    const publish = main.querySelector('[onclick*="publishTopic("], [data-action="publish"]') || [...form?.elements || host.querySelectorAll("button, input")].find((control) => control.type === "submit");
+    const preview = main.querySelector('#preview-button, [onclick*="previewTopic"], [data-action="preview"]');
+    const layout = document.createElement("div");
+    layout.className = "vcx-new-topic";
+    layout.innerHTML = `<div class="vcx-topic-title"><label class="vcx-visually-hidden">话题标题</label></div>
+    <section class="vcx-topic-card" aria-label="发帖编辑器">
+      <header class="vcx-topic-context">
+        <span class="vcx-topic-site">${icon("layers")}<span>V2EX</span></span>
+        <div class="vcx-topic-node">${icon("folder")}</div>
+      </header>
+      <div class="vcx-topic-body"></div>
+      <div class="vcx-topic-toolbar">
+        <details class="vcx-topic-files">
+          <summary aria-label="添加文件" title="添加文件">${icon("plus")}</summary>
+          <div class="vcx-topic-file-menu"></div>
+        </details>
+        <div class="vcx-topic-actions"></div>
+      </div>
+      <div class="vcx-topic-feedback"><div class="vcx-topic-status" role="status"></div></div>
+    </section>`;
+    const status = layout.querySelector(".vcx-topic-status");
+    const report = (message) => {
+      status.textContent = message;
+    };
+    const rows = /* @__PURE__ */ new Set();
+    function move(control, region) {
+      if (!control) return;
+      const row = control.closest(nativeRow);
+      if (row && !row.contains(host)) rows.add(row);
+      layout.querySelector(region).append(control);
+    }
+    title.id ||= "vcx-topic-title";
+    title.placeholder = "输入话题标题";
+    if (title.tagName === "TEXTAREA") title.rows = 1;
+    layout.querySelector("label").htmlFor = title.id;
+    move(title, ".vcx-topic-title");
+    move(editor.element, ".vcx-topic-body");
+    for (const action of [syntax2, preview, publish]) move(action, ".vcx-topic-actions");
+    publish?.classList.add("vcx-topic-publish");
+    for (const notice of main.querySelectorAll(".problem, #error_message")) move(notice, ".vcx-topic-feedback");
+    const busy = bindTopicFiles(layout.querySelector(".vcx-topic-files"), editor, {
+      demo,
+      status,
+      isMarkdown: () => /^(1|markdown)$/i.test(syntaxValue(host) ?? (/^\/write\/?$/.test(page.url.pathname) ? "markdown" : "0"))
+    });
+    if (node && !node.disabled) {
+      const widget = node.nextElementSibling?.matches(".select2-container") ? node.nextElementSibling : null;
+      if (!node.hasAttribute("aria-label")) node.setAttribute("aria-label", "选择节点");
+      move(node, ".vcx-topic-node");
+      move(widget, ".vcx-topic-node");
+    } else {
+      const select = fixedNodeSelect(page, (next) => {
+        if (busy()) {
+          report("请等文件处理完成再切换节点");
+          return false;
+        }
+        const path = newTopicPath({ node: next });
+        const titleText = title.value;
+        const text = editor.value();
+        writeSession("compose-transfer", titleText || text ? { path, title: titleText, text, syntax: syntaxValue(host) } : null);
+        const saved = readSession("compose-transfer");
+        if ((titleText || text) && (saved?.path !== path || saved.title !== titleText || saved.text !== text)) {
+          report("草稿无法保存，请复制内容后再切换节点");
+          return false;
+        }
+        location.assign(href(path));
+        return true;
+      }, report);
+      layout.querySelector(".vcx-topic-node").append(select);
+    }
+    const guardPublish = (event) => {
+      if (!busy()) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      report("文件处理完成后即可发布");
+    };
+    form?.addEventListener("submit", guardPublish, true);
+    publish?.addEventListener("click", guardPublish, true);
+    for (const row of rows) if (!row.querySelector(activeControl)) row.hidden = true;
+    const header = box?.querySelector(":scope > .header");
+    if (header && !header.querySelector('button, input, a[href]:not([href="/"], [href^="/go/"])')) header.hidden = true;
+    box?.classList.add("vcx-new-topic-box");
+    main.classList.add("vcx-new-topic-page");
+    host.prepend(layout);
+    if (!demo) {
+      const draft = restoreDraft(page, host, title, editor);
+      if (draft) layout.querySelector(".vcx-topic-actions").prepend(draft);
+    }
+    if (editor.refresh) requestAnimationFrame(editor.refresh);
+    followPreview(preview, main);
+  }
+
   // src/reader-activity.js
   var readerIcons = {
     search: `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>`,
@@ -946,7 +1459,7 @@ mod tests {
     "go vet ./...",
     "docker compose up -d",
     "kubectl get pods -n prod",
-    "curl -sI https://linux.do"
+    "curl -sI https://v2ex.com"
   ];
   var THINK_OPENERS = [
     "Okay, let me think through this properly.",
@@ -1141,8 +1654,12 @@ mod tests {
     return original;
   }
   function layoutTopicTags(original, replies) {
-    const tags = replies?.querySelectorAll(".reply-threads > :is(.vcx-reply-summary, .cell:first-child:not([id])) a.tag[href^='/tag/']");
-    if (!original?.classList.contains("vcx-original-post") || !tags?.length) return;
+    if (!original?.classList.contains("vcx-original-post") || !replies) return;
+    const tagLink = "a.tag[href^='/tag/']";
+    const emptySummary = replies.querySelector(`:scope > #no-comments-yet ~ .box:has(> .inner :is(.fa-tags, ${tagLink}))`);
+    emptySummary?.classList.add("vcx-reply-summary");
+    const tags = replies.querySelectorAll(`:is(.vcx-reply-summary, .reply-threads > .cell:first-child:not([id])) ${tagLink}`);
+    if (!tags.length) return;
     let nav = original.querySelector(":scope > .vcx-topic-tags");
     if (!nav) {
       nav = document.createElement("nav");
@@ -1245,6 +1762,8 @@ mod tests {
     const { main, url } = page;
     hideTopicReport(main);
     const replies = main.querySelector("#topic-replies");
+    const emptyNotice = replies?.querySelector(":scope > #no-comments-yet");
+    if (emptyNotice) emptyNotice.textContent = "暂无回复";
     const createActions = (id = "") => {
       const path = id ? url.pathname + url.search + "#" + id : url.pathname;
       return postActions(href(path), copy);
@@ -1326,7 +1845,9 @@ mod tests {
     if (stylesInstalled) return;
     const css = `${skin_default}
 ${native_default}
-${reader_default}`;
+${reader_default}
+${new_topic_default}
+${account_settings_default}`;
     if ("adoptedStyleSheets" in document && "replaceSync" in CSSStyleSheet.prototype) {
       const sheet = new CSSStyleSheet();
       sheet.replaceSync(css);
@@ -1387,9 +1908,11 @@ ${reader_default}`;
     document.body.prepend(wrapperContents);
     installCss();
     decorateNative(page, href, topics);
+    if (page.kind === "new") mountNewTopic(page, { href, demo });
     const composer = mountComposer(page, { href, account, demo, copy });
     if (page.main.tagName !== "MAIN") page.main.setAttribute("role", "main");
     const sidebar = document.getElementById("vcx-sidebar");
+    const settingsSearch = page.kind === "settings" ? mountAccountSettings(page, sidebar) : null;
     const strip = wrapperContents.querySelector(".vcx-strip");
     const panel = document.getElementById("vcx-code");
     const bar = wrapperContents.querySelector(".vcx-topbar");
@@ -1428,7 +1951,7 @@ ${reader_default}`;
     function sync() {
       const dark = setThemeClass(root, settings.theme, systemDark.matches);
       const navVisible = !boss && (small.matches ? mobileSidebar : desktopSidebar);
-      const codeVisible = boss || !focus && (wide.matches ? settings.codePanel !== "off" : mobilePanel ?? settings.codePanel === "on");
+      const codeVisible = boss || page.kind !== "settings" && !focus && (wide.matches ? settings.codePanel !== "off" : mobilePanel ?? settings.codePanel === "on");
       const overlay = !boss && (small.matches && navVisible || !wide.matches && codeVisible);
       root.classList.toggle("vcx-boss", boss);
       root.classList.toggle("vcx-focused", focus && !boss);
@@ -1445,7 +1968,7 @@ ${reader_default}`;
       wrapper.inert = boss || overlay;
       bar.inert = overlay;
       for (const button of sidebarButtons) button.setAttribute("aria-expanded", navVisible);
-      panelButton.setAttribute("aria-pressed", codeVisible);
+      panelButton?.setAttribute("aria-pressed", codeVisible);
       syncEditor();
     }
     function syncEditor() {
@@ -1539,7 +2062,7 @@ ${reader_default}`;
       } else desktopSidebar = !desktopSidebar;
       sync();
       if (small.matches) {
-        const target = mobileSidebar ? sidebar.querySelector(".vcx-brand") : bar.querySelector('[data-action="sidebar"]');
+        const target = mobileSidebar ? sidebar.querySelector('.vcx-brand, .vcx-account-navigation [aria-current="page"]:not([hidden])') || sidebar.querySelector('[data-action="sidebar"]') : bar.querySelector('[data-action="sidebar"]');
         target.focus({ preventScroll: true });
       }
       if (!small.matches && sidebar.hidden) bar.querySelector('[data-action="sidebar"]').focus({ preventScroll: true });
@@ -1611,7 +2134,11 @@ ${reader_default}`;
       },
       projects: toggleProjects,
       project: toggleProject,
-      search: dialogs.search,
+      search: settingsSearch ? () => {
+        if (dialog.open) dialogs.close(false);
+        if (sidebar.hidden) toggleSidebar();
+        settingsSearch.focus({ preventScroll: true });
+      } : dialogs.search,
       close: () => dialogs.close(),
       boss: toggleBoss,
       theme: () => {
@@ -1672,13 +2199,12 @@ ${reader_default}`;
       const element = event.target;
       const editing = element.matches?.("input, textarea, select") || element.isContentEditable;
       let action;
-      if (key === "k" && (event.ctrlKey || event.metaKey) && !boss) action = dialogs.search;
+      if (key === "k" && (event.ctrlKey || event.metaKey) && !boss) action = actions.search;
       else if (event.ctrlKey || event.metaKey || event.shiftKey) return;
       else if (key === "escape" && dialog.open) action = () => dialogs.close();
       else if (!editing && key === "b" && !event.repeat) action = toggleBoss;
-      else if (dialog.open || boss || editing) return;
       else if (key === "escape" && root.classList.contains("vcx-overlay")) action = closeOverlay;
-      else if (root.classList.contains("vcx-overlay")) return;
+      else if (dialog.open || boss || editing || root.classList.contains("vcx-overlay")) return;
       else if (key === "escape" && focus) action = preview;
       else if (key === "k" || key === "j") action = () => move(key === "k" ? 1 : -1);
       else if (key === "v" && !event.repeat) action = preview;
@@ -1913,11 +2439,9 @@ ${reader_default}`;
   function start(frame) {
     const url = new URL(location.href);
     const route = routeFor(url);
-    if (frame && route?.kind !== "topic") return;
+    if (!route || frame && route.kind !== "topic") return;
     const disabled = url.searchParams.get(parameter) === "off" || readSession("disabled") === true;
-    const restoreDraft = !disabled && /^\/new(?:\/[\w-]+)?\/?$/i.test(url.pathname);
-    if (!route && !restoreDraft) return;
-    const settings = route && !disabled ? loadSettings() : null;
+    const settings = disabled ? null : loadSettings();
     const waitingForSite = document.readyState === "loading" || document.readyState === "interactive" && performance.getEntriesByType("navigation")[0]?.domContentLoadedEventStart === 0;
     let rootObserver;
     let revealPage;
@@ -1941,8 +2465,7 @@ ${reader_default}`;
     function finish() {
       rootObserver?.disconnect();
       try {
-        if (restoreDraft) restoreTopicDraft(url.pathname);
-        if (route) run(url, route, disabled, settings, frame);
+        run(url, route, disabled, settings, frame);
       } finally {
         revealPage?.();
         if (frame) signalTopicReady(frame);

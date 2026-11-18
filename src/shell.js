@@ -1,3 +1,4 @@
+import { accountSettingsSidebar } from "./account-settings.js";
 import { codePanel } from "./code-panel.js";
 import { escape, icon, iconButton, link } from "./ui.js";
 import { defaultProject, newTopicPath, projects } from "./v2ex.js";
@@ -33,8 +34,13 @@ function projectTree(page, href, groups) {
 
 export function shell(page, { href, original, recent, groups, account, topics }) {
   const thread = page.kind === "topic";
+  const writing = page.kind === "new";
+  const settingsPage = page.kind === "settings";
+  const simpleContext = writing || settingsPage;
   const context = thread ? page.nodeName || "话题" : page.name;
   const contextPath = thread && page.node ? `/go/${page.node}` : page.path;
+  const contextLabel = simpleContext ? `<span aria-current="page">${escape(context)}</span>`
+    : `<a href="${escape(href(contextPath))}" title="${escape(context)}">${escape(context)}</a>`;
   const summary = thread ? `${page.name} · ${page.floors || "–"} 楼` : page.kind === "list" ? `全部线程 · ${topics.length || "–"}` : "全部节点";
   const newTopic = href(newTopicPath(page));
   const messages = href(account.signedIn ? "/notifications" : account.path);
@@ -44,22 +50,23 @@ export function shell(page, { href, original, recent, groups, account, topics })
 
   return `
     <nav class="vcx-strip" aria-label="工作区工具">
-      ${iconLink(href(defaultProject.path), "home", "首页", 'data-active')}
+      ${iconLink(href(defaultProject.path), "home", "首页", settingsPage ? "" : 'data-active')}
       ${iconLink(href("/recent"), "clock", "近期活动")}
       ${iconLink(messages, "at", "我的消息")}
       ${iconLink(href("/planes"), "grid", "节点目录")}
       <span class="vcx-flex"></span>
-      ${iconButton("settings", "gear", "设置")}
+      ${account.signedIn || settingsPage ? iconLink(href("/settings"), "person", "账户设置", settingsPage ? 'aria-current="page" data-active' : "") : ""}
+      ${iconButton("settings", "gear", "皮肤设置")}
     </nav>
     <button class="vcx-scrim" type="button" data-action="scrim" tabindex="-1" aria-hidden="true"></button>
-    <aside class="vcx-sidebar" id="vcx-sidebar" aria-label="V2EX 导航">
+    <aside class="vcx-sidebar" id="vcx-sidebar" aria-label="${settingsPage ? "账户设置" : "V2EX 导航"}">
       <div class="vcx-window-actions">
         ${iconButton("sidebar", "sidebar", "切换侧栏", 'aria-controls="vcx-sidebar"')}
         ${iconButton("back", "left", "后退")}${iconButton("forward", "right", "前进")}
         <span class="vcx-flex"></span>
         ${iconButton("theme", "moon", "切换明暗主题")}
       </div>
-      <header class="vcx-side-header">
+      ${settingsPage ? accountSettingsSidebar(page.setting, href) : `<header class="vcx-side-header">
         <a class="vcx-brand" href="${escape(href(defaultProject.path))}">Codex ${icon("down")}</a>
         <div class="vcx-brand-actions">
           ${iconButton("search", "search", "搜索（Ctrl / ⌘ + K）", 'aria-haspopup="dialog"')}
@@ -68,8 +75,8 @@ export function shell(page, { href, original, recent, groups, account, topics })
       </header>
       <div class="vcx-sidebar-body">
         <nav class="vcx-nav vcx-primary" aria-label="话题入口">
-          ${link(newTopic, "新话题", "pencil")}
-          ${link(href(defaultProject.path), "话题", "layers", page.kind !== "directory" ? 'aria-current="page"' : "")}
+          ${link(newTopic, "新话题", "pencil", writing ? 'aria-current="page"' : "")}
+          ${link(href(defaultProject.path), "话题", "layers", thread || page.kind === "list" ? 'aria-current="page"' : "")}
           ${link(favorites, "我的收藏", "bookmark")}
           ${link(messages, "我的消息", "inbox")}
           ${link(href("/?tab=hot"), "热门话题", "hot")}
@@ -85,19 +92,19 @@ export function shell(page, { href, original, recent, groups, account, topics })
           <h2 id="vcx-recent-label">最近</h2>
           <nav class="vcx-nav" aria-label="最近话题">${threadLinks(latest, page, href)}</nav>
         </section>` : ""}
-      </div>
+      </div>`}
     </aside>
     <header class="vcx-topbar">
-      ${iconButton("sidebar", "sidebar", "切换侧栏", 'aria-controls="vcx-sidebar"')}
-      ${iconLink(href(thread ? page.back : defaultProject.path), "folder", thread ? "返回话题列表" : "返回项目首页")}
+      ${iconButton("sidebar", "sidebar", settingsPage ? "设置分类" : "切换侧栏", 'aria-controls="vcx-sidebar"')}
+      ${iconLink(href(page.back || defaultProject.path), "folder", page.back ? "返回话题列表" : "返回项目首页")}
       <div class="vcx-crumb">
-        <a href="${escape(href(contextPath))}" title="${escape(context)}">${escape(context)}</a><span class="vcx-crumb-sep" aria-hidden="true">/</span>
-        <span class="vcx-context" title="${escape(summary)}">${escape(summary)}</span>
+        ${contextLabel}
+        ${simpleContext ? "" : `<span class="vcx-crumb-sep" aria-hidden="true">/</span><span class="vcx-context" title="${escape(summary)}">${escape(summary)}</span>`}
         ${thread && page.floors ? `<button class="vcx-floor" type="button" data-action="floors" aria-label="选择楼层" aria-haspopup="dialog">1 / ${page.floors}</button>` : ""}
       </div>
       <span class="vcx-flex"></span>
       <div class="vcx-top-actions">
-        ${iconButton("panel", "panel", "切换代码面板", 'aria-controls="vcx-code" aria-pressed="false"')}
+        ${settingsPage ? "" : iconButton("panel", "panel", "切换代码面板", 'aria-controls="vcx-code" aria-pressed="false"')}
         ${iconLink(original, "external", "在原站布局打开", 'target="_blank" rel="noopener"')}
         ${iconButton("more", "dots", "更多操作", 'aria-haspopup="dialog"')}
       </div>
@@ -134,7 +141,7 @@ export function moreDialog(href, account, canRead, focus) {
   ];
   return `${dialogHeader("更多操作")}<div class="vcx-dialog-body vcx-nav">${options.map(([action, glyph, text]) =>
     `<button class="vcx-action" type="button" data-action="${action}">${icon(glyph)}<span>${text}</span></button>`,
-  ).join("")}${link(href(account.path), account.name, "person")}</div>`;
+  ).join("")}${link(href("/settings"), "账户设置", "gear")}${link(href(account.path), account.name, "person")}</div>`;
 }
 
 export function settingsDialog(settings, demo) {

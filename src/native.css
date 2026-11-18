@@ -117,6 +117,80 @@ html.vcx[data-vcx-images="off"] #Main [data-vcx-image] { display: none !importan
 html.vcx[data-vcx-images="off"] #Main .vcx-image-note { display: inline-block; padding: 1px 6px; border: 1px solid var(--vcx-soft-line); border-radius: 4px; background: var(--vcx-rail); color: var(--vcx-muted); font: 11px/1.6 var(--vcx-mono); }
 html.vcx #Main :is(.reply-ad, .cell:has(ins.adsbygoogle):not(:has(.item_title, .topic_content, .reply_content))) { display: none !important; }
 
+html.vcx[data-vcx-page="new"] #Main {
+  --box-foreground-color: var(--vcx-fg);
+  --box-background-color: var(--vcx-raised);
+  --box-border-color: var(--vcx-soft-line);
+  --box-border-focus-color: var(--vcx-blue);
+  padding: 28px clamp(16px, 5%, 40px) 32px;
+}
+html.vcx[data-vcx-page="new"] #Main > .box { border-radius: 12px; }
+html.vcx[data-vcx-page="new"] #Main :is(.box, form) > :is(.header, .cell, .inner) {
+  padding: 12px clamp(12px, 3vw, 20px);
+}
+html.vcx[data-vcx-page="new"] #Main .header h1 { margin: 0; font: 600 18px/1.35 var(--vcx-font); }
+html.vcx[data-vcx-page="new"] #Main .flex-one-row { flex-wrap: wrap; }
+html.vcx[data-vcx-page="new"] #Main :is(#topic_title, #topic_content, .CodeMirror) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--vcx-line);
+  border-radius: 8px;
+  background: var(--vcx-editor);
+  color: var(--vcx-fg);
+  font: inherit;
+}
+html.vcx[data-vcx-page="new"] #Main #topic_title { font-size: 16px; font-weight: 600; }
+html.vcx[data-vcx-page="new"] #Main :is(#topic_content, .CodeMirror) { min-height: 160px; line-height: 1.65; }
+html.vcx[data-vcx-page="new"] #Main .CodeMirror-cursor { border-left-color: var(--vcx-fg); }
+html.vcx[data-vcx-page="new"] #Main .CodeMirror :is(.cm-header, .cm-link, .cm-url) { color: var(--vcx-blue); }
+html.vcx[data-vcx-page="new"] #Main :is(select, .select2-container) { max-width: 100%; }
+html.vcx[data-vcx-page="new"] #Main select:not(.select2-hidden-accessible) {
+  min-height: 34px;
+  padding: 4px 8px;
+  border: 1px solid var(--vcx-line);
+  border-radius: 8px;
+  font: inherit;
+}
+html.vcx[data-vcx-page="new"] :is(.select2-container .select2-selection--single, .select2-dropdown, .select2-search__field) {
+  border-color: var(--vcx-line);
+  background: var(--vcx-editor);
+  color: var(--vcx-fg);
+}
+html.vcx[data-vcx-page="new"] .select2-container .select2-selection--single .select2-selection__rendered { color: var(--vcx-fg); }
+html.vcx[data-vcx-page="new"] .select2-container .select2-results__option[aria-selected="true"] {
+  background: var(--vcx-selected);
+  color: var(--vcx-fg);
+}
+html.vcx[data-vcx-page="new"] .select2-container .select2-results__option--highlighted[aria-selected] {
+  background: var(--vcx-blue-bg);
+  color: var(--vcx-blue);
+}
+html.vcx[data-vcx-page="new"] #Main :is(.super, [type="submit"], [onclick*="publishTopic("], .vcx-restore-topic-draft) {
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 1px solid var(--vcx-line);
+  border-radius: 8px;
+  background: var(--vcx-raised);
+  color: var(--vcx-fg);
+  font: 500 13px/1.4 var(--vcx-font);
+  text-shadow: none;
+  box-shadow: none;
+}
+html.vcx[data-vcx-page="new"] #Main :is([type="submit"], [onclick*="publishTopic("]):not(:disabled) {
+  border-color: transparent;
+  background: var(--vcx-blue);
+  color: var(--vcx-main);
+}
+html.vcx[data-vcx-page="new"] #Main :is(.super, [type="submit"], [onclick*="publishTopic("], .vcx-restore-topic-draft):hover:not(:disabled) {
+  filter: brightness(.94);
+  cursor: pointer;
+}
+html.vcx[data-vcx-page="new"] #Main .vcx-restore-topic-draft { margin-top: 8px; }
+html.vcx[data-vcx-page="new"] #Main :is(.problem, #error_message) { color: var(--vcx-red); }
+html.vcx[data-vcx-page="new"] #Main .problem { border-color: var(--vcx-red); background: var(--vcx-remove); }
+
 @media (max-width: 900px) {
   html.vcx #Main { padding: 20px 16px 28px; }
   html.vcx #Main .ps_container { overflow-x: auto; }

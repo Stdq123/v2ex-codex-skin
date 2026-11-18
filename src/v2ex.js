@@ -1,3 +1,4 @@
+import { accountSettingFor } from "./account-settings.js";
 import { readSession, writeSession } from "./settings.js";
 import { icon, iconButton } from "./ui.js";
 
@@ -29,6 +30,13 @@ export function routeFor(url) {
   if (node) return { kind: "list", name: node[1], file: `${node[1]}.ts`, node: node[1] };
   const topic = pathname.match(/^\/t\/(\d+)\/?$/);
   if (topic) return { kind: "topic", id: topic[1], file: `#${topic[1]}` };
+  const newTopic = pathname.match(/^\/new(?:\/([\w-]+))?\/?$/i);
+  if (newTopic || /^\/write\/?$/.test(pathname)) {
+    const slug = newTopic ? newTopic[1] : searchParams.get("node");
+    return { kind: "new", name: "新话题", node: /^[\w-]+$/.test(slug || "") ? slug : undefined };
+  }
+  const setting = accountSettingFor(pathname);
+  if (setting) return { kind: "settings", setting, name: setting.name };
   return null;
 }
 
@@ -72,6 +80,12 @@ export function describePage(main, route, url) {
     page.back = listingFor(page.id)?.path || defaultProject.path;
     return page;
   }
+
+  if (page.kind === "new") {
+    page.back = page.node ? `/go/${page.node}` : defaultProject.path;
+    return page;
+  }
+  if (page.kind === "settings") return page;
 
   if (page.node) {
     const header = main.querySelector(".node-header, .box-title");
@@ -212,7 +226,7 @@ export function accountLink(document) {
     const url = new URL(anchor.href);
     return url.protocol === "https:" && /(^|\.)v2ex\.com$/i.test(url.hostname) && url.pathname === "/signin";
   });
-  return { path: signIn?.href || "/signin", name: "登录 V2EX", signedIn: false };
+  return { path: signIn?.href || "/signin", name: "登录", signedIn: false };
 }
 
 export function decorateNative(page, href, topics) {

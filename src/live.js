@@ -1,5 +1,4 @@
 import { mount, prepareSkin } from "./app.js";
-import { restoreTopicDraft } from "./composer.js";
 import { loadSettings, readSession, writeSession } from "./settings.js";
 import { bindTopicFrame, createTopicNavigation, signalTopicReady, topicFrameSelector } from "./topic-navigation.js";
 import { describePage, routeFor, withDefaultTab } from "./v2ex.js";
@@ -45,12 +44,10 @@ function run(url, route, disabled, settings, frame) {
 function start(frame) {
   const url = new URL(location.href);
   const route = routeFor(url);
-  if (frame && route?.kind !== "topic") return;
+  if (!route || (frame && route.kind !== "topic")) return;
   const disabled = url.searchParams.get(parameter) === "off" || readSession("disabled") === true;
-  const restoreDraft = !disabled && /^\/new(?:\/[\w-]+)?\/?$/i.test(url.pathname);
-  if (!route && !restoreDraft) return;
 
-  const settings = route && !disabled ? loadSettings() : null;
+  const settings = disabled ? null : loadSettings();
   const waitingForSite = document.readyState === "loading" ||
     (document.readyState === "interactive" && performance.getEntriesByType("navigation")[0]?.domContentLoadedEventStart === 0);
   let rootObserver;
@@ -77,8 +74,7 @@ function start(frame) {
   function finish() {
     rootObserver?.disconnect();
     try {
-      if (restoreDraft) restoreTopicDraft(url.pathname);
-      if (route) run(url, route, disabled, settings, frame);
+      run(url, route, disabled, settings, frame);
     } finally {
       revealPage?.();
       if (frame) signalTopicReady(frame);

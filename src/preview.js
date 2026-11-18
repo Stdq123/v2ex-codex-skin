@@ -90,8 +90,40 @@ function directory() {
   return `<div class="box"><div class="header"><h1>节点目录</h1></div>${topics.map(topic => `<div class="cell"><a href="/go/${topic.node}">${topic.name}</a></div>`).join("")}</div>`;
 }
 
-document.body.innerHTML = `<div id="Top"></div><div id="Wrapper"><div class="content"><main id="Main">${route.kind === "topic" ? thread() : route.kind === "directory" ? directory() : list()}</main></div></div>`;
+function newTopic() {
+  const nodes = topics.map(({ node, name }) => `<option value="${node}" ${route.node === node ? "selected" : ""}>${escape(name)}</option>`).join("");
+  return `<div class="box">
+    <div class="header"><h1>新话题</h1></div>
+    <form>
+      <div class="cell"><label for="topic_title">标题</label><input id="topic_title" name="title" type="text"></div>
+      <div class="cell"><label for="topic_content">正文</label><textarea id="topic_content" name="content"></textarea></div>
+      <div class="cell"><label for="nodes">节点</label> <select id="nodes" name="node"><option value="">选择节点</option>${nodes}</select></div>
+      <div class="inner"><button type="submit" disabled>发布话题</button> <small>离线预览</small></div>
+    </form>
+  </div>`;
+}
+
+function accountSettings() {
+  const url = new URL(route.setting.path, site);
+  const online = `<a class="vcx-button vcx-account-open" href="${escape(url.href)}" target="_blank" rel="noopener">打开账户设置</a>`;
+  if (route.setting.id !== "profile") {
+    return `<div class="box"><div class="cell">登录后可查看此分类的账户设置。</div><div class="inner">${online}</div></div>`;
+  }
+  return `<div class="box">
+    <form class="inner"><table><tbody>
+      <tr><td>用户名</td><td>示例账号</td></tr>
+      <tr><td><label for="demo-language">站点语言</label></td><td><select id="demo-language"><option>简体中文</option><option>English</option></select></td></tr>
+      <tr><td><label for="demo-appearance">夜间模式</label></td><td><select id="demo-appearance"><option>跟随系统</option><option>深色</option><option>浅色</option></select></td></tr>
+      <tr><td><label for="demo-notifications">站内通知</label></td><td><input id="demo-notifications" type="checkbox" checked></td></tr>
+    </tbody></table></form>
+    <div class="cell_ops">${online}</div>
+  </div>`;
+}
+
+const renderPage = { list, directory, topic: thread, new: newTopic, settings: accountSettings };
+document.body.innerHTML = `<div id="Top"></div><div id="Wrapper"><div class="content"><main id="Main">${renderPage[route.kind]()}</main></div></div>`;
 const main = document.getElementById("Main");
+main.querySelector("form")?.addEventListener("submit", event => event.preventDefault());
 main.addEventListener("click", event => {
   const anchor = event.target.closest("a[href^='/']");
   if (anchor) anchor.href = mappedHref(anchor.getAttribute("href"));

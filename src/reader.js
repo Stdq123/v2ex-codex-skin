@@ -82,8 +82,13 @@ function layoutOriginalPost(main, createActions) {
 }
 
 function layoutTopicTags(original, replies) {
-  const tags = replies?.querySelectorAll(".reply-threads > :is(.vcx-reply-summary, .cell:first-child:not([id])) a.tag[href^='/tag/']");
-  if (!original?.classList.contains("vcx-original-post") || !tags?.length) return;
+  if (!original?.classList.contains("vcx-original-post") || !replies) return;
+
+  const tagLink = "a.tag[href^='/tag/']";
+  const emptySummary = replies.querySelector(`:scope > #no-comments-yet ~ .box:has(> .inner :is(.fa-tags, ${tagLink}))`);
+  emptySummary?.classList.add("vcx-reply-summary");
+  const tags = replies.querySelectorAll(`:is(.vcx-reply-summary, .reply-threads > .cell:first-child:not([id])) ${tagLink}`);
+  if (!tags.length) return;
 
   let nav = original.querySelector(":scope > .vcx-topic-tags");
   if (!nav) {
@@ -193,6 +198,8 @@ export function setupReader(page, { href, copy }) {
   const { main, url } = page;
   hideTopicReport(main);
   const replies = main.querySelector("#topic-replies");
+  const emptyNotice = replies?.querySelector(":scope > #no-comments-yet");
+  if (emptyNotice) emptyNotice.textContent = "暂无回复";
   const createActions = (id = "") => {
     const path = id ? url.pathname + url.search + "#" + id : url.pathname;
     return postActions(href(path), copy);

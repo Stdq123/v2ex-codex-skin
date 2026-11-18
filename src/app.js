@@ -1,11 +1,15 @@
 import style from "./skin.css";
 import nativeStyle from "./native.css";
 import readerStyle from "./reader.css";
+import newTopicStyle from "./new-topic.css";
+import accountSettingsStyle from "./account-settings.css";
 import glyphs from "./assets/icons.woff2";
 import inter from "./assets/inter-latin.woff2";
+import { mountAccountSettings } from "./account-settings.js";
 import { example } from "./code-panel.js";
 import { mountComposer } from "./composer.js";
 import { createDialogs } from "./dialogs.js";
+import { mountNewTopic } from "./new-topic.js";
 import { setupReader } from "./reader.js";
 import { loadSettings, readSession, writeLocal, writeSession } from "./settings.js";
 import { dialogHeader, helpDialog, moreDialog, settingsDialog, shell } from "./shell.js";
@@ -17,7 +21,7 @@ let stylesInstalled = false;
 
 function installCss() {
   if (stylesInstalled) return;
-  const css = `${style}\n${nativeStyle}\n${readerStyle}`;
+  const css = `${style}\n${nativeStyle}\n${readerStyle}\n${newTopicStyle}\n${accountSettingsStyle}`;
   if ("adoptedStyleSheets" in document && "replaceSync" in CSSStyleSheet.prototype) {
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(css);
@@ -71,10 +75,12 @@ export function mount(page, {
   document.body.prepend(wrapperContents);
   installCss();
   decorateNative(page, href, topics);
+  if (page.kind === "new") mountNewTopic(page, { href, demo });
   const composer = mountComposer(page, { href, account, demo, copy });
   if (page.main.tagName !== "MAIN") page.main.setAttribute("role", "main");
 
   const sidebar = document.getElementById("vcx-sidebar");
+  const settingsSearch = page.kind === "settings" ? mountAccountSettings(page, sidebar) : null;
   const strip = wrapperContents.querySelector(".vcx-strip");
   const panel = document.getElementById("vcx-code");
   const bar = wrapperContents.querySelector(".vcx-topbar");
@@ -115,7 +121,7 @@ export function mount(page, {
   function sync() {
     const dark = setThemeClass(root, settings.theme, systemDark.matches);
     const navVisible = !boss && (small.matches ? mobileSidebar : desktopSidebar);
-    const codeVisible = boss || (!focus && (wide.matches ? settings.codePanel !== "off" : mobilePanel ?? settings.codePanel === "on"));
+    const codeVisible = boss || (page.kind !== "settings" && !focus && (wide.matches ? settings.codePanel !== "off" : mobilePanel ?? settings.codePanel === "on"));
     const overlay = !boss && ((small.matches && navVisible) || (!wide.matches && codeVisible));
 
     root.classList.toggle("vcx-boss", boss);
@@ -134,7 +140,7 @@ export function mount(page, {
     wrapper.inert = boss || overlay;
     bar.inert = overlay;
     for (const button of sidebarButtons) button.setAttribute("aria-expanded", navVisible);
-    panelButton.setAttribute("aria-pressed", codeVisible);
+    panelButton?.setAttribute("aria-pressed", codeVisible);
     syncEditor();
   }
 
@@ -237,7 +243,9 @@ export function mount(page, {
     } else desktopSidebar = !desktopSidebar;
     sync();
     if (small.matches) {
-      const target = mobileSidebar ? sidebar.querySelector(".vcx-brand") : bar.querySelector('[data-action="sidebar"]');
+      const target = mobileSidebar
+        ? sidebar.querySelector('.vcx-brand, .vcx-account-navigation [aria-current="page"]:not([hidden])') || sidebar.querySelector('[data-action="sidebar"]')
+        : bar.querySelector('[data-action="sidebar"]');
       target.focus({ preventScroll: true });
     }
     if (!small.matches && sidebar.hidden) bar.querySelector('[data-action="sidebar"]').focus({ preventScroll: true });
@@ -313,7 +321,11 @@ export function mount(page, {
     },
     projects: toggleProjects,
     project: toggleProject,
-    search: dialogs.search,
+    search: settingsSearch ? () => {
+      if (dialog.open) dialogs.close(false);
+      if (sidebar.hidden) toggleSidebar();
+      settingsSearch.focus({ preventScroll: true });
+    } : dialogs.search,
     close: () => dialogs.close(),
     boss: toggleBoss,
     theme: () => { settings.theme = root.classList.contains("vcx-dark") ? "light" : "dark"; saveSettings(); },
@@ -366,13 +378,12 @@ export function mount(page, {
     const element = event.target;
     const editing = element.matches?.("input, textarea, select") || element.isContentEditable;
     let action;
-    if (key === "k" && (event.ctrlKey || event.metaKey) && !boss) action = dialogs.search;
+    if (key === "k" && (event.ctrlKey || event.metaKey) && !boss) action = actions.search;
     else if (event.ctrlKey || event.metaKey || event.shiftKey) return;
     else if (key === "escape" && dialog.open) action = () => dialogs.close();
     else if (!editing && key === "b" && !event.repeat) action = toggleBoss;
-    else if (dialog.open || boss || editing) return;
     else if (key === "escape" && root.classList.contains("vcx-overlay")) action = closeOverlay;
-    else if (root.classList.contains("vcx-overlay")) return;
+    else if (dialog.open || boss || editing || root.classList.contains("vcx-overlay")) return;
     else if (key === "escape" && focus) action = preview;
     else if (key === "k" || key === "j") action = () => move(key === "k" ? 1 : -1);
     else if (key === "v" && !event.repeat) action = preview;

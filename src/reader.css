@@ -306,8 +306,18 @@ html.vcx #Main #topic-replies .vcx-turn > table { table-layout: fixed; width: 10
 html.vcx #Main #topic-replies :not(.reply-threads-d, .reply-threads-f) > .vcx-turn > table > tbody > tr > td:not(:has(.reply_content)) { display: none; }
 html.vcx #Main #topic-replies .vcx-turn > table > tbody > tr > td:has(.reply_content) { padding: 0; }
 html.vcx #Main #topic-replies .vcx-turn .reply_content { margin: 0; }
+html.vcx #Main #topic-replies > #no-comments-yet {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--vcx-reader-dim);
+  font: 400 12.5px/1.4 var(--vcx-font);
+}
 html.vcx #Main #topic-replies .vcx-reply-summary { min-height: 0; padding: 5px 0; border: 0; }
-html.vcx #Main #topic-replies .vcx-reply-summary:not(:has(a, button, .reply-lines)) { display: none; }
+html.vcx #Main #topic-replies > .vcx-reply-summary { background: transparent; }
+html.vcx #Main #topic-replies > .vcx-reply-summary > .inner { padding: 0; }
+html.vcx #Main #topic-replies .vcx-reply-summary:not(:has(a, button, form, input, .reply-lines)) { display: none; }
+html.vcx #Main #topic-replies > .vcx-reply-summary .fa-tags,
 html.vcx #Main #topic-replies .vcx-reply-summary > .gray { display: none; }
 
 @media (max-width: 900px) {

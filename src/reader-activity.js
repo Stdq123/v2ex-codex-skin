@@ -35,7 +35,7 @@ const RUN_CMDS = [
   "cargo build --release", "npm run build", "pytest -q tests/cache",
   "go test ./...", "git diff --stat", "ls src/", "make lint",
   "npm test -- --filter=auth", "cargo test --release", "go vet ./...",
-  "docker compose up -d", "kubectl get pods -n prod", "curl -sI https://linux.do"
+  "docker compose up -d", "kubectl get pods -n prod", "curl -sI https://v2ex.com"
 ];
 
 /* 英文思考语料（参考 cli 皮肤 decorationForPost 的素材池） */

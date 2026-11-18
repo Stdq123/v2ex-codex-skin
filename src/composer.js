@@ -2,6 +2,8 @@ import { readSession, writeSession } from "./settings.js";
 import { escape, icon } from "./ui.js";
 import { newTopicPath } from "./v2ex.js";
 
+export const composerPlaceholder = "和 Codex 一起工作";
+
 const formats = {
   bold: ["加粗", "**", "**", "粗体"],
   italic: ["斜体", "*", "*", "斜体"],
@@ -67,7 +69,7 @@ function mountReplyForm(wrap, card, field) {
 }
 
 export function mountComposer(page, { href, account, demo, copy }) {
-  if (page.kind === "directory") return null;
+  if (page.kind !== "list" && page.kind !== "topic") return null;
   const { main, url, path, id } = page;
   const reply = page.kind === "topic";
   const key = reply ? `draft:${id}` : "draft:new";
@@ -113,7 +115,7 @@ export function mountComposer(page, { href, account, demo, copy }) {
   const field = card.querySelector("textarea");
   field.classList.add("vcx-reply-input");
   field.rows = 1;
-  field.removeAttribute("placeholder");
+  field.placeholder = composerPlaceholder;
   field.setAttribute("aria-label", reply ? "回复内容" : "新话题草稿");
 
   const tools = card.querySelector(".vcx-reply-tools");
@@ -155,7 +157,8 @@ export function mountComposer(page, { href, account, demo, copy }) {
     if (native.submit) new MutationObserver(sync).observe(native.submit, { attributeFilter: ["disabled"] });
   }
   const saved = readSession(key);
-  if (!field.value && typeof saved === "string") {
+  if (field.value && !field.value.trim()) field.value = "";
+  if (!field.value && typeof saved === "string" && saved.trim()) {
     field.value = saved;
     if (native) {
       field.dispatchEvent(new Event("input", { bubbles: true }));
@@ -201,30 +204,5 @@ export function mountComposer(page, { href, account, demo, copy }) {
   });
   sync();
   return wrap;
-}
-
-export function restoreTopicDraft(path) {
-  const pending = readSession("compose-transfer");
-  if (pending?.path !== path || typeof pending.text !== "string" || !pending.text.trim()) return;
-  const field = document.querySelector("textarea#topic_content");
-  if (!field || !document.getElementById("topic_title")) return;
-  function restore() {
-    field.value = pending.text;
-    field.dispatchEvent(new Event("input", { bubbles: true }));
-    writeSession("compose-transfer", null);
-    if (readSession("draft:new") === pending.text) writeSession("draft:new", null);
-  }
-  if (!field.value) restore();
-  else {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = "载入 Codex 皮肤的发帖草稿";
-    button.addEventListener("click", () => {
-      restore();
-      button.remove();
-      field.focus();
-    });
-    field.after(button);
-  }
 }
 

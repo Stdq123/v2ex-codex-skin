@@ -301,6 +301,7 @@ html.vcx #Wrapper :is(.vcx-reply-input, .vcx-compose-preview) {
 }
 html.vcx #Wrapper .vcx-reply-input { field-sizing: content; resize: none; box-shadow: none; outline: none; }
 html.vcx #Wrapper .vcx-reply-input[data-vcx-empty] { max-height: var(--vcx-reply-min-height) !important; }
+html.vcx #Wrapper .vcx-reply-input::placeholder { color: var(--vcx-quiet); opacity: 1; }
 .vcx-compose-preview { white-space: pre-wrap; overflow-wrap: anywhere; }
 .vcx-reply-card #reply-parent {
   gap: 5px;
